@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css">
+<body>
+<!--<div id="sel_viz">
+<div id="viz">-->
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="sunburst.js"></script>
+<script type="text/javascript" src="selectedVisualization.js"></script>
+<script type="text/javascript" src="specimensVisualization.js"></script>
+
+<div id="tooltip" class="hidden">
+    <p><strong><span id="name">100</span></strong></p>
+    <p><span id="value">100</span></p>
+</div>
+
+
+<script>
+    var selection = [];
+
+    var sunburst = new Sunburst;
+    sunburst.create();
+    
+    var selectedViz = new selectedVisualization;
+    selectedViz.create();
+    
+    var specimensViz = new specimensVisualization;
+    specimensViz.create();
+
+</script>

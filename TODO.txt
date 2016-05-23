@@ -1,0 +1,13 @@
+TODO:
+
+    - mudar cores
+    - passar banco de dados p/ json
+    - conseguir pegar tamanho real de largura e altura de cada path para poder ajustar os textos corretamente
+    - separar labels com " " adicionando um 'enter' entre elas para ficar mais facil de caber.
+    - visualizar selecionados
+        - fazer grafico de verdade...
+    - alterar hover para que nodos com o mouse em cima também tenha os seus pais selecionados
+    - achar local para colocar açoes de add, edit, remove, visualize
+        - add
+        - edit
+        -remove

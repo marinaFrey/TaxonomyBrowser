@@ -1,7 +1,7 @@
 function Sunburst()
 {
     //console.log($("viz"));
-    console.log(document.getElementById('viz'));
+    //console.log(document.getElementById('viz'));
     var width = 700,//$("#viz").parent().width(),
         height = 700,//$("#viz").parent().height(),
         radius = Math.min(width, height) / 2;
@@ -18,7 +18,7 @@ function Sunburst()
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+        .attr("transform", "translate(" + ((width) / 2)  + "," + (height / 2 + 10) + ")");
     
     var g;
     var partition = d3.layout.partition()
@@ -38,7 +38,7 @@ function Sunburst()
     
     this.create = function()
     {
-        d3.json("flare.json", function(error, root) 
+        d3.json("data.json", function(error, root) 
         {
           g = svg.selectAll("g")
               .data(partition.nodes(root))

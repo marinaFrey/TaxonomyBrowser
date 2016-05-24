@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" href="style.css">
+<head>
+    <title>Taxonomy Browser</title>
+    <meta charset="utf-8">
+    
+    <!--BOOTSTRAP-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!--D3-->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="sunburst.js"></script>
+    <script type="text/javascript" src="selectedVisualization.js"></script>
+    <script type="text/javascript" src="specimensVisualization.js"></script>
+    
+    <!--JQUERY-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  
+</head>
+<body>
+
+<div class="container-fluid">
+  <h1>Taxonomy Browser</h1>
+  <p>Select Specimens for visualization using de right mouse button</p>
+  <div class="row">
+    <div class="col-sm-4" style="background-color:lavender;">
+        <img name="addButton" src="images/add.png" width="64" height="64" border="0" alt="javascript button" onClick="return addNode();">
+        <img name="editButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" onClick="return editNode();">
+        <img name="removeButton" src="images/remove.png" width="64" height="64" border="0" alt="javascript button" onClick="return removeNode();">
+    </div>
+    <div class="col-sm-8" style="background-color:lavenderblush;">
+        <h1>Visualization</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"  id="viz" style="background-color:lavenderblush;">
+        <!--<div id="viz"></div>-->
+    </div>
+    <div class="col-sm-8" style="background-color:lavender;">
+        <div id="sel_viz"></div>
+    </div>
+    
+  </div>
+</div>
+
+<div id="tooltip" class="hidden">
+    <p><strong><span id="name">100</span></strong></p>
+    <p><span id="value">100</span></p>
+</div>
+
+<script>
+    var selection = [];
+
+    var sunburst = new Sunburst;
+    sunburst.create();
+    
+    var selectedViz = new selectedVisualization;
+    selectedViz.create();
+    
+    //var specimensViz = new specimensVisualization;
+    //specimensViz.create();
+    
+    var add_button = document.images["addButton"];
+    var edit_button = document.images["editButton"];
+    var remove_button = document.images["removeButton"];
+
+    function addNode()
+    {
+        console.log("add");
+        //document.images["addButton"].src= "images/edit2.png";
+    }
+    
+    function editNode()
+    {
+        console.log("edit");
+    }
+    
+    function removeNode()
+    {
+        console.log("remove");
+    }
+
+</script>
+</body>
+</html>

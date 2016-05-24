@@ -16,9 +16,9 @@ html header.entry-header {
 }
 #viz {
   float:left;
-  width:685px;
+  /*width:685px;
   left:-35px;
-  position:relative;
+  position:relative;*/
 }
 #messageText {
   clear:both;
@@ -32,17 +32,17 @@ html .x-container-fluid.width {
     width: 100%;
 }
 #vizContainer {
-  height:600px;
+  /*height:600px;*/
   width:100%;
 }
 .x-navbar-fixed-top {
   display:none !important;
 }
 #vizKey {
- position:relative;
+ position:relative;/*
  float:right;
  left:35px; 
-  height:20px;
+  height:20px;*/
 }
 
 text {

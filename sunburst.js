@@ -1,9 +1,11 @@
 function Sunburst()
 {
-    var width = 700,
-        height = 700,
+    //console.log($("viz"));
+    console.log(document.getElementById('viz'));
+    var width = 700,//$("#viz").parent().width(),
+        height = 700,//$("#viz").parent().height(),
         radius = Math.min(width, height) / 2;
-
+        
     //x is the rotation of the element, relative to the center of the circle, defined by the "transform" property
     var x = d3.scale.linear()
         .range([0, 2 * Math.PI]);
@@ -12,12 +14,12 @@ function Sunburst()
     var y = d3.scale.linear()
         .range([0, radius]);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#viz").append("svg")//d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
-
+    
     var g;
     var partition = d3.layout.partition()
         .value(function(d) { return size(d.size); });

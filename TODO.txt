@@ -6,7 +6,7 @@ TODO:
     - separar labels com " " adicionando um 'enter' entre elas para ficar mais facil de caber.
     - visualizar selecionados
         - fazer grafico de verdade...
-    - alterar hover para que nodos com o mouse em cima também tenha os seus pais selecionados
+    - alterar hover para que nodos com o mouse em cima também tenha os seus pais selecionados (ideia apenas, talvez polua demais)
     - achar local para colocar açoes de add, edit, remove, visualize
         - add
         - edit

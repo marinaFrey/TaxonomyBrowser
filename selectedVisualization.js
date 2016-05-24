@@ -10,7 +10,7 @@ function selectedVisualization()
     
     this.create = function()
     {
-        svg_selected = d3.select("body").append("svg")
+        svg_selected = d3.select("#sel_viz").append("svg")//d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height)
             .append("g");

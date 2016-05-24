@@ -1,18 +1,19 @@
 function specimensVisualization()
 {
-    var height = 300;
-    var width = window.innerWidth;
-    
-    var svg_specimens;
+    var height = 600;
+    var width = 700;
+ 
     var xScale;
     var yScale;
     var rScale;
     
     this.create = function()
     {
-        svg_specimens = d3.select("body").append("svg")
+		 svg_selected.selectAll("*").remove();
+		/*
+        svg_selected = d3.select("#sel_viz").append("svg")
             .attr("width", width)
-            .attr("height", height);
+            .attr("height", height);*/
             //.append("g");
             
         xScale = d3.scale.ordinal();
@@ -33,9 +34,9 @@ function specimensVisualization()
         yScale.domain([0,d3.max(dataset, function(d){return d.size;})]);
         rScale.domain([0,d3.max(dataset, function(d){return d.size;})]);
         
-        svg_specimens.selectAll("*").remove();
+        svg_selected.selectAll("*").remove();
         
-        svg_specimens.selectAll("circle")
+        svg_selected.selectAll("circle")
                 .data(dataset)
                 .enter()
                 .append("circle")  

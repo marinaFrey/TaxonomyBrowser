@@ -15,10 +15,15 @@
     <script type="text/javascript" src="sunburst.js"></script>
     <script type="text/javascript" src="selectedVisualization.js"></script>
     <script type="text/javascript" src="specimensVisualization.js"></script>
+	<script type="text/javascript" src="events.js"></script>
+	<script type="text/javascript" src="dotsVisualization.js"></script>
     
     <!--JQUERY-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-  
+	
+	<!-- TOOLTIP -->
+
+	
 </head>
 <body>
 
@@ -64,7 +69,7 @@
 	<!-- SETTINGS -->
 	<div class="row">
 		<div class="col-sm-4" ></div>
-		<div class="col-sm-2" style="background-color:lavender;webkit-border-radius: 11px;border-radius: 15px;">
+		<div class="col-sm-2" style="background-color:lavender;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
 		
 			<img name="addButton" data-toggle="modal" data-target="#basicModal" src="images/add.png" width="64" height="64" border="0" alt="javascript button" onClick="return addNode();">
 			<img name="editButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" onClick="return editNode();">
@@ -76,37 +81,25 @@
 	
 	<!-- VISUALIZATIONS -->
 	<div class="row">
-		<div class="col-sm-6"  id="viz">
-		</div>
-		<div class="col-sm-6">
-			<div id="sel_viz"></div>
-		</div>
+		<div class="col-sm-6"  id="viz" style="text-align:center"></div>
+		<div class="col-sm-6" id="sel_viz" style="text-align:center"></div>
 	</div>
   
   <!-- CHOOSING VISUALIZATION -->
   <div class="row">
     <div class="col-sm-6" style="background-color:lavenderblush;"></div>
-    <div class="col-sm-1" style="background-color:lavender;">
-        <img name="coord" src="images/coord.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
-    </div>
-    <div class="col-sm-1" style="background-color:lavender;">
-        <img name="matrix" src="images/matriz.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
-    </div>
-    <div class="col-sm-1" style="background-color:lavender;">
-        <img name="bullet" src="images/bullets.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
-    </div>
-    <div class="col-sm-1" style="background-color:lavender;">
-        <img name="bars" src="images/bars.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
-    </div>
-    <div class="col-sm-1" style="background-color:lavender;">
-        <img name="map" src="images/map.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
-    </div>
-    
-  </div>
+    <div class="col-sm-6" style="text-align:center">
+		<img name="bars" src="images/bars.png" width="128" height="95" border="0" alt="javascript button" onClick="return showBars();"style=" border: 2px solid yellow;border-radius: 22px;">
+        <img name="matrix" src="images/matriz.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();"style=" border: 2px solid #6D6D6D;border-radius: 22px;">
+		<img name="coord" src="images/coord.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();"style=" border: 2px solid #6D6D6D;border-radius: 22px;" >
+		<img name="dots" src="images/bullets.png" width="128" height="95" border="0" alt="javascript button" onClick="return showDots();"style=" border: 2px solid #6D6D6D;border-radius: 22px;">
+		<img name="map" src="images/map.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();"style=" border: 2px solid #6D6D6D;border-radius: 22px;">
+	</div>
   
 </div>
 
 <!-- TOOLTIP -->
+
 <div id="tooltip" class="hidden">
     <p><strong><span id="name">100</span></strong></p>
     <p><span id="value">100</span></p>
@@ -132,7 +125,11 @@
 
 <script>
     var selection = [];
-
+	var svg_selected = d3.select("#sel_viz").append("svg")
+            .attr("width", $("#sel_viz").width())
+            .attr("height", 700)
+			.append("g");
+	
     var sunburst = new Sunburst;
     sunburst.create();
     
@@ -146,21 +143,6 @@
     var edit_button = document.images["editButton"];
     var remove_button = document.images["removeButton"];
 
-    function addNode()
-    {
-        console.log("add");
-        //document.images["addButton"].src= "images/edit2.png";
-    }
-    
-    function editNode()
-    {
-        console.log("edit");
-    }
-    
-    function removeNode()
-    {
-        console.log("remove");
-    }
 
 </script>
 </body>

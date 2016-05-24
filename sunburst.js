@@ -2,8 +2,8 @@ function Sunburst()
 {
     //console.log($("viz"));
     //console.log(document.getElementById('viz'));
-    var width = 700,//$("#viz").parent().width(),
-        height = 700,//$("#viz").parent().height(),
+    var width = $("#viz").width(),
+        height = 700,
         radius = Math.min(width, height) / 2;
         
     //x is the rotation of the element, relative to the center of the circle, defined by the "transform" property
@@ -244,7 +244,7 @@ function Sunburst()
             d.selected = true;
             
             selectedViz.update(selection);
-            specimensViz.update(selection);
+            //specimensViz.update(selection);
         }
         else
         {
@@ -255,7 +255,7 @@ function Sunburst()
             d.selected = false;
             
             selectedViz.update(selection);
-            specimensViz.update(selection);
+            //specimensViz.update(selection);
         }
     }
     

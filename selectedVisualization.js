@@ -3,17 +3,17 @@ function selectedVisualization()
     var height = 600;
     var width = 700;
     
-    var svg_selected;
+    
     var xScale;
     var yScale;
     var rScale;
     
     this.create = function()
-    {
+    {/*
         svg_selected = d3.select("#sel_viz").append("svg")//d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height)
-            .append("g");
+            .append("g");*/
             
         xScale = d3.scale.ordinal();
         xScale.rangeRoundBands([0,width],0.05);

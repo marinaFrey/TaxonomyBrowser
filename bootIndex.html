@@ -22,9 +22,45 @@
 </head>
 <body>
 
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" rel="home" href="#">Taxonomy Browser</a>
+	</div>
+	
+	<div class="collapse navbar-collapse">
+		
+		<ul class="nav navbar-nav">
+			<li><a href="#">Analysis</a></li>
+			<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Options <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">See Tables</a></li>
+                <li class="divider"></li>
+                <li><a href="#">About</a></li>
+              </ul>
+            </li>
+		</ul>
+		
+		<div class="col-sm-1 col-md-1 pull-right">
+        <button type="button" class="btn btn-default navbar-btn">Login</button>
+		</form>
+		</div>
+		
+	</div>
+</div>
+
+
 <div class="container-fluid">
-  <h1>Taxonomy Browser</h1>
-  <p>Select Specimens for visualization using de right mouse button</p>
+  <h1> - </h1>
+
+  <!-- SETTINGS -->
   <div class="row">
     <div class="col-sm-4" style="background-color:lavender;">
         <img name="addButton" src="images/add.png" width="64" height="64" border="0" alt="javascript button" onClick="return addNode();">
@@ -35,6 +71,7 @@
         <h1>Visualization</h1>
     </div>
   </div>
+  <!-- VISUALIZATIONS -->
   <div class="row">
     <div class="col-sm-4"  id="viz" style="background-color:lavenderblush;">
         <!--<div id="viz"></div>-->
@@ -44,6 +81,28 @@
     </div>
     
   </div>
+  
+  <!-- CHOOSING VISUALIZATION -->
+  <div class="row">
+    <div class="col-sm-6" style="background-color:lavenderblush;"></div>
+    <div class="col-sm-1" style="background-color:lavender;">
+        <img name="coord" src="images/coord.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
+    </div>
+    <div class="col-sm-1" style="background-color:lavender;">
+        <img name="matrix" src="images/matriz.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
+    </div>
+    <div class="col-sm-1" style="background-color:lavender;">
+        <img name="bullet" src="images/bullets.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
+    </div>
+    <div class="col-sm-1" style="background-color:lavender;">
+        <img name="bars" src="images/bars.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
+    </div>
+    <div class="col-sm-1" style="background-color:lavender;">
+        <img name="map" src="images/map.png" width="128" height="95" border="0" alt="javascript button" onClick="return addNode();">
+    </div>
+    
+  </div>
+  
 </div>
 
 <div id="tooltip" class="hidden">

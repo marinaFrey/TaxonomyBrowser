@@ -21,8 +21,9 @@
     <!--JQUERY-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 	
-	<!-- TOOLTIP -->
-
+	<!-- TOOLTIP 
+	<link href="tooltip/jquery.toolbar.css" rel="stylesheet" />
+	<script src="tooltip/jquery.toolbar.js"></script>-->
 	
 </head>
 <body>
@@ -73,7 +74,7 @@
 		
 			<img name="addButton" data-toggle="modal" data-target="#basicModal" src="images/add.png" width="64" height="64" border="0" alt="javascript button" onClick="return addNode();">
 			<img name="editButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" onClick="return editNode();">
-			<img name="removeButton" src="images/remove.png" width="64" height="64" border="0" alt="javascript button" onClick="return removeNode();">
+			<img name="removeButton" src="images/remove.png" width="64" height="64" border="0" alt="javascript button" ><!--onClick="return removeNode();">-->
 			
 		</div>
 		<div class="col-sm-6" ></div>
@@ -99,6 +100,11 @@
 </div>
 
 <!-- TOOLTIP -->
+<!--<div id="toolbar-options" class="hidden">
+   <a href="#"><i class="fa fa-plane"></i></a>
+   <a href="#"><i class="fa fa-car"></i></a>
+   <a href="#"><i class="fa fa-bicycle"></i></a>
+</div>-->
 
 <div id="tooltip" class="hidden">
     <p><strong><span id="name">100</span></strong></p>
@@ -142,7 +148,14 @@
     var add_button = document.images["addButton"];
     var edit_button = document.images["editButton"];
     var remove_button = document.images["removeButton"];
-
+/*
+	$('remove_button').toolbar(
+	{
+		content: '#toolbar-options',
+		position: 'left',
+		style: 'primary',
+		event: 'click'
+	});*/
 
 </script>
 </body>

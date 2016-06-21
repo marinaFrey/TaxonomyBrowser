@@ -22,7 +22,7 @@ function Sunburst()
     
     var g;
     var partition = d3.layout.partition()
-        .value(function(d) { return size(d.size); });
+        .value(function(d) { return size(1); });
 
     var size = d3.scale.linear()
         .domain([0,1500])
@@ -38,13 +38,14 @@ function Sunburst()
     
     this.create = function()
     {
-        d3.json("data.json", function(error, root) 
+        d3.json("real_full.json", function(error, root) 
         {
           g = svg.selectAll("g")
               .data(partition.nodes(root))
               .enter().append("g");
 
           var path = g.append("path")
+			.filter(function (d){return d.children})
             .attr("d", arc)
             .attr("id", function(d) { return d.name.replace(' ', '_');})
             .style("fill", function(d) 
@@ -57,6 +58,7 @@ function Sunburst()
             .on("click", click);
              
           var text = g.append("text")
+			.filter(function (d){return d.children})
 		    .attr("text-anchor", function(d) {return getAnchor(d, this);})
 			.attr("transform", function(d) { return computeTextTransform(d, this); })
             //.attr("dy", function(d){ return getDY(this);})

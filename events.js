@@ -45,3 +45,16 @@ function showDots()
     dotsViz.create();
 	dotsViz.update(selection);
 }
+
+function showMap()
+{
+	document.images["bars"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
+	document.images["matrix"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
+	document.images["dots"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
+	document.images["coord"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
+	document.images["map"].style = " border: 2px solid yellow;border-radius: 22px;" 
+	
+	var mapsViz = new mapVisualization;
+    mapsViz.create();
+	mapsViz.update(selection);
+}

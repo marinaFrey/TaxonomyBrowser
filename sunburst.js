@@ -2,6 +2,7 @@ function Sunburst()
 {
     //console.log($("viz"));
     //console.log(document.getElementById('viz'));
+    var normalOpacity = 0.3;
     var width = $("#viz").width(),
         height = 700,
         radius = Math.min(width, height) / 2;
@@ -45,7 +46,7 @@ function Sunburst()
               .enter().append("g");
 
           var path = g.append("path")
-			.filter(function (d){return d.children})
+			//.filter(function (d){return d.children})
             .attr("d", arc)
             .attr("id", function(d) { return d.name.replace(' ', '_');})
             .style("fill", function(d) 
@@ -54,11 +55,12 @@ function Sunburst()
                 d.selected = false;
                 d.color = color((d.children ? d : d.parent).name);
                 return d.color; 
-            })    
+            })
+            .style("opacity",normalOpacity)
             .on("click", click);
              
           var text = g.append("text")
-			.filter(function (d){return d.children})
+			//.filter(function (d){return d.children})
 		    .attr("text-anchor", function(d) {return getAnchor(d, this);})
 			.attr("transform", function(d) { return computeTextTransform(d, this); })
             //.attr("dy", function(d){ return getDY(this);})
@@ -240,7 +242,7 @@ function Sunburst()
         if( d.selected == false)
         {      
             //d3.select(this.parentNode.childNodes[0]).style("fill", "yellow");
-            d3.select(this.parentNode.childNodes[0]).style("opacity", 0.3);
+            d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
             selection.push(d);
             if(d.children)
                 setSelectionOnChildren(d);
@@ -252,7 +254,7 @@ function Sunburst()
         else
         {
             d3.select(this.parentNode.childNodes[0]).style("fill", d.color);
-            d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
+            d3.select(this.parentNode.childNodes[0]).style("opacity", normalOpacity);
             selection.splice(selection.indexOf(d),1);
             if(d.children)
                 unsetSelectionOnChildren(d);
@@ -271,7 +273,7 @@ function Sunburst()
             if(d.children[i].selected == false)
             {
                 //d3.select(d.children[i].path).style("fill", "yellow");
-                d3.select(d.children[i].path).style("opacity", 0.3);
+                d3.select(d.children[i].path).style("opacity", 1);
                 selection.push(d.children[i]);
                 d.children[i].selected = true;
             } 
@@ -288,7 +290,7 @@ function Sunburst()
             if(d.children[i].selected == true)
             {
                 d3.select(d.children[i].path).style("fill", d.children[i].color);
-                d3.select(d.children[i].path).style("opacity", 1);
+                d3.select(d.children[i].path).style("opacity", normalOpacity);
                 selection.splice(selection.indexOf(d.children[i]),1);
                 d.children[i].selected = false;
             }

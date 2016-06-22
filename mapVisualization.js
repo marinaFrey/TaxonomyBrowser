@@ -3,15 +3,16 @@ function mapVisualization()
     var height = 600;
     var width = 700;
     var map;
-    var myCenter=new google.maps.LatLng(-30.069093,-51.164871);
+    var myCenter=new google.maps.LatLng(-29.8998873,-51.6375691);
     var markers=[];
     
     this.create = function()
     {
+		svg_selected.selectAll("*").remove();
         var mapProp = 
         {
           center:myCenter,
-          zoom:11,
+          zoom:7,
           //mapTypeId:google.maps.MapTypeId.HYBRID
         };
 
@@ -22,7 +23,7 @@ function mapVisualization()
     this.update = function(dataset)
     {
         //console.log(dataset);
-        
+        svg_selected.selectAll("*").remove();
         for (var i = 0; i < dataset.length; i++)
         {
             if(dataset[i].latitude && dataset[i].latitude != "")
@@ -42,32 +43,23 @@ function mapVisualization()
                 var marker = new google.maps.Marker(
                 {
                    position: new google.maps.LatLng(parseFloat(dataset[i].latitude),parseFloat(dataset[i].longitude)),
-                   //icon: pinSymbol("#FFF"),
+                   icon: pinSymbol(dataset[i].color),
                 });
                 
                 //google.maps.event.addListener(marker,'click',onClick);
                 marker.setMap(map); 
-                
-                
+                map.setCenter(marker.position);
+				
+				markers.push(marker);
+                google.maps.event.addListener(marker,'click',onClick);
             }
            
         }
         
-        var marker = new google.maps.Marker(
-        {
-           position: new google.maps.LatLng(parseFloat(dataset[2].latitude),parseFloat(dataset[2].longitude)),
-           //icon: pinSymbol("#FFF"),
-        });
-        
-        //google.maps.event.addListener(marker,'click',onClick);
-        marker.setMap(map); 
-        //markers.push(marker);
-        //map.setCenter(marker.center);
-        
     }
     
     
-    /*
+    
     function pinSymbol(color) 
     {
     console.log("log");
@@ -79,7 +71,7 @@ function mapVisualization()
             strokeWeight: 2,
             scale: 1,
         };
-    }*/
+    }
         
 /*
     var infowindow = new google.maps.InfoWindow(

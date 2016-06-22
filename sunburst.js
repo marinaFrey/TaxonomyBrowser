@@ -235,7 +235,7 @@ function Sunburst()
     }
 
     /* selects node right clicked and all its children 
-    painting it yellow and adding it to a list */
+    painting it with full opacity and adding it to the selected list */
     function rightClick(d)
     {
         d3.event.preventDefault();
@@ -253,7 +253,7 @@ function Sunburst()
         }
         else
         {
-            d3.select(this.parentNode.childNodes[0]).style("fill", d.color);
+            //d3.select(this.parentNode.childNodes[0]).style("fill", d.color);
             d3.select(this.parentNode.childNodes[0]).style("opacity", normalOpacity);
             selection.splice(selection.indexOf(d),1);
             if(d.children)
@@ -289,7 +289,7 @@ function Sunburst()
         {
             if(d.children[i].selected == true)
             {
-                d3.select(d.children[i].path).style("fill", d.children[i].color);
+                //d3.select(d.children[i].path).style("fill", d.children[i].color);
                 d3.select(d.children[i].path).style("opacity", normalOpacity);
                 selection.splice(selection.indexOf(d.children[i]),1);
                 d.children[i].selected = false;

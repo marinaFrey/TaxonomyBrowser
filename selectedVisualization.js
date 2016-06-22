@@ -23,8 +23,7 @@ function selectedVisualization()
         
         rScale = d3.scale.linear();
         rScale.range([2,5]);
-        
-        console.log("created");
+
     }
     
     this.update = function(dataset)

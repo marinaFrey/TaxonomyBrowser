@@ -1,13 +1,15 @@
 TODO:
 
-    - mudar cores
-    - passar banco de dados p/ json
-    - conseguir pegar tamanho real de largura e altura de cada path para poder ajustar os textos corretamente
-    - separar labels com " " adicionando um 'enter' entre elas para ficar mais facil de caber.
+    - variar mais cores
+    - ajustar os textos corretamente
+        - separar labels com " " adicionando um 'enter' entre elas para ficar mais facil de caber.
+    - fazer combo box com parametros
+        - conseguir popular combo box
+        - conseguir pegar valor selecionado
+        - conseguir filtrar nodos selecionados para os que tem o valor
+        - mostrar resultados nas visualizações
     - visualizar selecionados
-        - fazer grafico de verdade...
-    - alterar hover para que nodos com o mouse em cima também tenha os seus pais selecionados (ideia apenas, talvez polua demais)
-    - achar local para colocar açoes de add, edit, remove, visualize
-        - add
-        - edit
-        -remove
+        - fazer bubble com todos os specimes selecionados
+        - fazer dots chart
+    - fazer funcionar açao de info que vai aparecer na tooltip
+        

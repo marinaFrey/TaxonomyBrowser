@@ -39,9 +39,17 @@ html .x-container-fluid.width {
 #sel_viz
 {
     height:700px;
-    width:50%;
+    width:100%;
     position:relative;
 }
+
+#maps
+{
+    height:700px;
+    width:100%;
+    position:relative;
+}
+
 .x-navbar-fixed-top {
   display:none !important;
 }

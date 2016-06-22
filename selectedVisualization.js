@@ -28,6 +28,9 @@ function selectedVisualization()
     
     this.update = function(dataset)
     {
+        document.getElementById("maps").style = "display:none;";
+        document.getElementById("sel_viz").style = "display:block;";
+        
         xScale.domain(d3.range(dataset.length));
         yScale.domain([0,d3.max(dataset)]);
         rScale.domain([0,d3.max(dataset, function(d){return d.size;})]);

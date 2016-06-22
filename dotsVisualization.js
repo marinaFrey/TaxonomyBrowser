@@ -19,8 +19,10 @@ function dotsVisualization()
 
 	this.create = function()
     {
-		 svg_selected.selectAll("*").remove();
-
+		svg_selected.selectAll("*").remove();
+        document.getElementById("maps").style = "display:none;";
+        document.getElementById("sel_viz").style = "display:block;";
+        
 		 var xScale = d3.scale.linear();
 		xScale.domain([0,d3.max(dataset2, function(d){return d[0];})]);
 		xScale.range([circlePadding,w - circlePadding]);

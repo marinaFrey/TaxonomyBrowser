@@ -44,6 +44,12 @@ function showDots()
 	var dotsViz = new dotsVisualization;
     dotsViz.create();
 	dotsViz.update(selection);
+	
+	
+	
+	var c = new ComboBox();
+	c.create("X","attrCombo");
+	c.updateOptions(generateMeasuresList());
 }
 
 function showMap()

@@ -141,7 +141,9 @@
 </div>
 
 <script>
+
     var selection = [];
+	
 	var svg_selected = d3.select("#sel_viz").append("svg")
             .attr("width", $("#sel_viz").width())
             .attr("height", 700)
@@ -150,8 +152,7 @@
     var sunburst = new Sunburst;
     sunburst.create();
     
-    var selectedViz = new selectedVisualization;
-    selectedViz.create();
+	showBars();
     
     //var specimensViz = new specimensVisualization;
     //specimensViz.create();

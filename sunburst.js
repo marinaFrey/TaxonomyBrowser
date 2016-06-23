@@ -248,7 +248,8 @@ function Sunburst()
 			
             d.selected = true;
             
-            selectedViz.update(selection);
+            //selectedViz.update(selection);
+			updateShownVisualization();
         }
         else
         {
@@ -259,7 +260,8 @@ function Sunburst()
 			
             d.selected = false;
             
-            selectedViz.update(selection);
+            //selectedViz.update(selection);
+			updateShownVisualization();
         }
     }
     

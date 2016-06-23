@@ -2,6 +2,15 @@ function dotsVisualization()
 {
 	var h = 700;
 	var w = $("#sel_viz").width();
+	var circlePadding = 40;
+	var borderBarPadding = 7;
+	
+	var xScale;
+	var yScale;
+	var rScale;
+	var xAxis;
+	var yAxis;
+	
 	 //Dynamic, random dataset
 	 // TEMPORARY UNTIL DATA AVAILABLE
 	var dataset2 = [];
@@ -14,8 +23,6 @@ function dotsVisualization()
 		dataset2.push([newNumber1, newNumber2]);
 	}
 	
-	var circlePadding = 40;
-	var borderBarPadding = 7;
 
 	this.create = function()
     {
@@ -23,27 +30,109 @@ function dotsVisualization()
         document.getElementById("maps").style = "display:none;";
         document.getElementById("sel_viz").style = "display:block;";
         
-		 var xScale = d3.scale.linear();
-		xScale.domain([0,d3.max(dataset2, function(d){return d[0];})]);
+		xScale = d3.scale.linear();		
 		xScale.range([circlePadding,w - circlePadding]);
 		
-		var yScale = d3.scale.linear();
-		yScale.domain([0,d3.max(dataset2, function(d){return d[1];})]);
+		yScale = d3.scale.linear();		
 		yScale.range([h - circlePadding,circlePadding]);
 		
-		var rScale = d3.scale.linear();
-		rScale.domain([0,d3.max(dataset2, function(d){return d[1];})]);
+		rScale = d3.scale.linear();
 		rScale.range([2,5]);
 		
-		var xAxis = d3.svg.axis();
-		xAxis.scale(xScale);
+		xAxis = d3.svg.axis();	
 		xAxis.orient("bottom")
 		.ticks(5);
 		
-		var yAxis = d3.svg.axis();
-		yAxis.scale(yScale);
+		yAxis = d3.svg.axis();
 		yAxis.orient("left")
 		.ticks(5);
+	
+    }
+    
+    this.update = function(dataset)
+    {
+		document.getElementById("maps").style = "display:none;";
+        document.getElementById("sel_viz").style = "display:block;";
+		svg_selected.selectAll("*").remove();
+		
+		var xName = comboX.getSelectedOption();
+		var yName = comboY.getSelectedOption();
+		var sizeName = comboSize.getSelectedOption();
+		var measureIDx;
+		var measureIDy;
+		var measureIDsize;
+		
+		xScale.domain([0,d3.max(dataset, function(d)
+		{
+			if(d.rank = "7" && d.children)
+			{
+				if(d.children)
+				{
+					if(d.children[0].measures)
+					{
+						for(var j = 0; j < d.children[0].measures.length; j++)
+						{
+								if(d.children[0].measures[j].name == xName)
+								{
+									measureIDx = j;	
+									return parseFloat(d.children[0].measures[j].value);
+								}
+						}
+					}
+					
+				}
+
+			}
+		})]);
+		
+		
+		yScale.domain([0,d3.max(dataset, function(d)
+		{
+			if(d.rank = "7" && d.children)
+			{
+				if(d.children)
+				{
+					if(d.children[0].measures)
+					{
+						for(var j = 0; j < d.children[0].measures.length; j++)
+						{
+								if(d.children[0].measures[j].name == yName)
+								{
+									measureIDy = j;	
+									return parseFloat(d.children[0].measures[j].value);
+								}
+						}
+					}
+					
+				}
+
+			}
+		})]);
+		rScale.domain([0,d3.max(dataset, function(d)
+		{
+			if(d.rank = "7" && d.children)
+			{
+				if(d.children)
+				{
+					if(d.children[0].measures)
+					{
+						for(var j = 0; j < d.children[0].measures.length; j++)
+						{
+								if(d.children[0].measures[j].name == sizeName)
+								{
+									measureIDsize = j;	
+									return parseFloat(d.children[0].measures[j].value);
+								}
+						}
+					}
+					
+				}
+
+			}
+		})]);
+		
+		xAxis.scale(xScale);
+		yAxis.scale(yScale);
 		
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
@@ -57,13 +146,23 @@ function dotsVisualization()
 			.attr("id","circles")
 			.attr("clip-path", "url(#chart-area)")
 			.selectAll("circle")
-			.data(dataset2)
+			.data(dataset)
 			.enter()
 			.append("circle")
-			.attr("cx", function(d){return xScale(d[0]);})
-			.attr("cy", function(d){return yScale(d[1]);})
-			.attr("r", function(d){return rScale(d[1]);})
-			.attr("fill", function(d){return "rgb("+ ( d[1]*2 ) +"," + (100 ) + ","+ (d[0]*2) + ")";});;
+			.filter(function (d){return !d.children})
+			.attr("cx", function(d)
+			{
+				return xScale(parseFloat(d.measures[measureIDx].value));
+			})
+			.attr("cy", function(d)
+			{
+				return yScale(parseFloat(d.measures[measureIDy].value));
+			})
+			.attr("r", function(d)
+			{
+				return rScale(parseFloat(d.measures[measureIDsize].value));
+			})
+			.attr("fill", function(d){return d.color;});
 			
 			/*
 		svg2.selectAll("text")
@@ -87,13 +186,6 @@ function dotsVisualization()
 			.attr("class","y axis")
 			.attr("transform", "translate(" + (circlePadding - 10) +",0)")
 			.call(yAxis);
-			
-		 
-        console.log("dots created");
-    }
-    
-    this.update = function(dataset)
-    {
 	}
 
 }

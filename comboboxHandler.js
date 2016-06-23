@@ -2,13 +2,14 @@
 function ComboBox()
 {
 	var combo;
+	var txtLabel;
 	var id;
 	
 	this.create = function(name, combo_id)
 	{
 		id = combo_id;
 		
-		var txtLabel = document.createElement("H0");
+		txtLabel = document.createElement("H0");
 		var t = document.createTextNode("   " + name + "  ");
 		txtLabel.appendChild(t);
 		document.getElementById("comboboxes").appendChild(txtLabel);
@@ -17,6 +18,10 @@ function ComboBox()
 		combo.setAttribute("id", id);
 		document.getElementById("comboboxes").appendChild(combo);
 		
+		combo.addEventListener("click", function()
+		{
+			updateShownVisualization();
+		});
 		
 	}
 	

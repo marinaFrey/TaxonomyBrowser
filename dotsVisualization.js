@@ -56,7 +56,7 @@ function dotsVisualization()
                     {
                             if(d.measures[j].name == xName)
                             {
-                                //console.log( "nro " + parseFloat(d.measures[j].value) + "sem parse" + d.measures[j].value);
+                                //console.log( "X " + parseFloat(d.measures[j].value));
                                 return parseFloat(d.measures[j].value);
                             }
                     }
@@ -77,6 +77,7 @@ function dotsVisualization()
 						{
 								if(d.measures[j].name == yName)
 								{
+									//console.log( "Y " + parseFloat(d.measures[j].value));
 									return parseFloat(d.measures[j].value);
 								}
 						}
@@ -109,15 +110,15 @@ function dotsVisualization()
         
 		xAxis.scale(xScale);
 		yAxis.scale(yScale);
-		
-        /*
+	
+        
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
 			.append("rect")
 			.attr("x",borderBarPadding)
 			.attr("y",borderBarPadding)
 			.attr("width", w - borderBarPadding*3)
-			.attr("height", h - borderBarPadding*2);*/
+			.attr("height", h - borderBarPadding*2);
 		
 		svg_selected.append("g")
 			.attr("id","circles")
@@ -135,7 +136,7 @@ function dotsVisualization()
                     {
                             if(d.measures[j].name == xName)
                             {
-                                console.log("X " +xScale(parseFloat(d.measures[j].value)));
+                                d.xValue = parseFloat(d.measures[j].value);
                                 return xScale(parseFloat(d.measures[j].value));
                             }
                     }
@@ -151,7 +152,8 @@ function dotsVisualization()
                             if(d.measures[j].name == yName)
                             {
                                 //console.log("Y " + yScale(parseFloat(d.measures[j].value))+ " range "+ yScale.range() + " real "+ d.measures[j].value + " dominio " + yScale.domain());
-                                return yScale(parseFloat(d.measures[j].value));
+                                d.yValue = parseFloat(d.measures[j].value);
+								return yScale(parseFloat(d.measures[j].value));
                             }
                     }
                 }
@@ -165,13 +167,17 @@ function dotsVisualization()
                     {
                             if(d.measures[j].name == sizeName)
                             {
-                                return rScale(10);
-                                //return rScale(parseFloat(d.measures[j].value));
+								d.rValue = parseFloat(d.measures[j].value);
+                                return rScale(parseFloat(d.measures[j].value));
                             }
                     }
                 }
 			})
-			.attr("fill", function(d){return d.color;});
+			.attr("fill", function(d){return d.color;})
+			.on("click", function(d)
+			{
+				makeSpecimenPopup(d);
+			});
 			
 			/*
 		svg2.selectAll("text")

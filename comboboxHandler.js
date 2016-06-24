@@ -52,6 +52,13 @@ function ComboBox()
 	{
 		return combo.value;
 	}
+	
+	this.remove = function()
+	{
+		var parent = document.getElementById("comboboxes");
+		parent.removeChild(txtLabel);
+		parent.removeChild(combo);
+	}
 }
 
 function generateMeasuresList()

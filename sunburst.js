@@ -113,12 +113,12 @@ function Sunburst()
                 .attr("xlink:href",function(d){console.log(d);console.log(this);return "#" + d.path.id;})	
 				.text(function(d){ return d.name;})
                 ;*/
-            
+            /*
             d3.selectAll('text')
               .on("click", click)
               .on("contextmenu", rightClick)
               .on("mouseover", doHover)
-              .on("mouseout", unDoHover);
+              .on("mouseout", unDoHover);*/
             
             d3.selectAll('path')
               .on("contextmenu", rightClick)
@@ -135,7 +135,7 @@ function Sunburst()
             text.transition().style("opacity", 0);
             var arcText = [];
             var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
-            if (rootDepth == 4) 
+            if (rootDepth == 7) 
             {
               d3.select(this.parentNode).select("text").append('tspan').text(function(d){ 
                   return "Format: " + d.ClaimFormat;})
@@ -174,6 +174,7 @@ function Sunburst()
             var index = 0;
             path.transition()
               .duration(1000)
+			  //.filter(function (d){return d.children})
               .attrTween("d", arcTween(d))
               .each("end", function(e, i) 
               {

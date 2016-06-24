@@ -135,7 +135,7 @@ function dotsVisualization()
                     {
                             if(d.measures[j].name == xName)
                             {
-                                console.log("X " +xScale(parseFloat(d.measures[j].value)));
+                                //console.log("X " +xScale(parseFloat(d.measures[j].value)));
                                 return xScale(parseFloat(d.measures[j].value));
                             }
                     }

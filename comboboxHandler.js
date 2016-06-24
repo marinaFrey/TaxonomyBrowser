@@ -54,6 +54,21 @@ function ComboBox()
 	}
 }
 
+function initializeComboboxes()
+{
+    comboX = new ComboBox();
+	comboX.create("X","comboX");
+	
+	comboY = new ComboBox();
+	comboY.create("Y","comboY");
+	
+	comboSize = new ComboBox();
+	comboSize.create("Size","comboSize");
+    
+    comboColor = new ComboBox();
+	comboColor.create("Color","comboColor");
+}
+
 function generateMeasuresList()
 {
 	var m_list = [];

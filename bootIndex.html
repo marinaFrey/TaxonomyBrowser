@@ -141,7 +141,10 @@
 </div>
 
 <script>
-
+    var comboX;
+    var comboY;
+    var comboSize;
+    var comboColor;
     var selection = [];
 	
 	var svg_selected = d3.select("#sel_viz").append("svg")
@@ -151,9 +154,10 @@
 	
     var sunburst = new Sunburst;
     sunburst.create();
-    
-	showBars();
-    
+
+    initializeComboboxes();
+    showBars();
+    //updateShownVisualization();
     //var specimensViz = new specimensVisualization;
     //specimensViz.create();
     

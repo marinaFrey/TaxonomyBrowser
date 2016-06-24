@@ -5,9 +5,7 @@ var DOTS_VIZ = 3;
 var MAPS_VIZ = 4;
 var active_visualization = 0;
 
-var comboX;
-var comboY;
-var comboSize;
+
 
 var mapsViz;
 var selViz;
@@ -42,6 +40,11 @@ function showBars()
 	document.images["map"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
 	
 	active_visualization = SELECTED_VIZ;
+    
+    comboX.updateOptions([]);
+    comboY.updateOptions([]);
+    comboSize.updateOptions(generateNumericMeasuresList());
+    comboColor.updateOptions(["specimen"]);
 
 	selViz = new selectedVisualization;
     selViz.create();
@@ -59,21 +62,14 @@ function showDots()
 	document.images["map"].style = " border: 2px solid #6D6D6D;border-radius: 22px;"
 	
 	active_visualization = DOTS_VIZ;
-	
+	 
+    comboX.updateOptions(generateNumericMeasuresList());
+    comboY.updateOptions(generateNumericMeasuresList());
+    comboSize.updateOptions(generateNumericMeasuresList());
+    comboColor.updateOptions(["specimen"]);
+    
 	dotsViz = new dotsVisualization;
     dotsViz.create();
-	
-	comboX = new ComboBox();
-	comboX.create("X","comboX");
-	comboX.updateOptions(generateNumericMeasuresList());
-	
-	comboY = new ComboBox();
-	comboY.create("Y","comboY");
-	comboY.updateOptions(generateNumericMeasuresList());
-	
-	comboSize = new ComboBox();
-	comboSize.create("Size","comboSize");
-	comboSize.updateOptions(generateNumericMeasuresList());
 	
 	if(selection[0])
 		dotsViz.update(selection);
@@ -89,6 +85,11 @@ function showMap()
 	
 	active_visualization = MAPS_VIZ;
 	
+    comboX.updateOptions([]);
+    comboY.updateOptions([]);
+    comboSize.updateOptions([]);
+    comboColor.updateOptions(["specimen"]);
+    
 	mapsViz = new mapVisualization;
     mapsViz.create();
 	if(selection[0])
@@ -102,7 +103,9 @@ function updateShownVisualization()
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
+
 			selViz.update(selection);
+            //showBars();
 		break;
 		
 		case SCATTERPLOT_VIZ:
@@ -114,11 +117,44 @@ function updateShownVisualization()
 		break;
 		
 		case DOTS_VIZ:
+            
 			dotsViz.update(selection);
+            //showDots();
 		break;
 		
 		case MAPS_VIZ:
 			mapsViz.update(selection);
+            //showMap();
+		break;
+	}
+	
+}
+
+function updateShownVisualizationAndOptions()
+{
+	switch(active_visualization)
+	{
+		case SELECTED_VIZ:
+
+            showBars();
+		break;
+		
+		case SCATTERPLOT_VIZ:
+		
+		break;
+		
+		case COORD_PARAL_VIZ:
+		
+		break;
+		
+		case DOTS_VIZ:
+
+            showDots();
+		break;
+		
+		case MAPS_VIZ:
+
+            showMap();
 		break;
 	}
 	

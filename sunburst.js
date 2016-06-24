@@ -46,19 +46,22 @@ function Sunburst()
               .enter().append("g");
 
           var path = g.append("path")
-			//.filter(function (d){return d.children})
+			.filter(function (d){return d.children})
             .attr("d", arc)
             .attr("id", function(d) { return d.name.replace(' ', '_');})
             .style("fill", function(d) 
-            {
+            {   
                 d.path = this;
+                d.startAngle = arc.startAngle()(d);
+                d.endAngle = arc.endAngle()(d);
                 d.selected = false;
                 d.color = color((d.children ? d : d.parent).name);
                 return d.color; 
             })
             .style("opacity",normalOpacity)
             .on("click", click);
-             
+            
+             /*
           var text = g.append("text")
 			//.filter(function (d){return d.children})
 		    .attr("text-anchor", function(d) {return getAnchor(d, this);})
@@ -72,8 +75,9 @@ function Sunburst()
             .attr('root', 0)
             .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
             .text(function(d){return d.name;})
-            ;
-
+            ;*/
+            
+            /*
             for(var i = 0; i < text[0].length; i++)
             { 
                 var fontSize = 12;
@@ -93,26 +97,56 @@ function Sunburst()
                         
                     }
                 }
-            }
-            /*
-            d3.selectAll("text")
-                .filter(function (d){return d.path.getTotalLength() > 1000})
-                .attr("transform", "translate(20)rotate(45)" )
-				//.style("opacity",0)
-                //.attr("text-anchor", "middle")
-				// .attr("x", 5) //Move the text from the start angle of the arc
-				.attr("x",5)
-				.attr("dy",18)
-                //.attr("dy", 18) //Move the text down
+            }*/
+            
+            var text = g.append("text")
+                //.filter(function (d){return d.path.getTotalLength() > 100})
+                .filter(function (d){return (d.children);})
+                .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
+                .attr("dy", function(d,i) 
+                {   
+                    if(d.endAngle - d.startAngle == Math.PI*2)
+                    {
+                        return 30;
+                    }
+                    if(d.endAngle == Math.PI*2) 
+                    {
+                        return -30;
+                    }
+                    return (d.endAngle > 90 * Math.PI/180 ? 30 : -30); 
+                })
+                .style("font-size","15px")
+                .style("opacity", function(d) 
+                {
+                    return opacity(d)
+                })
+                .attr('depth', function(d){return d.depth})
+                .attr('root', 0)
+                .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
                 .append("textPath")
-				//.style("opacity",1)
-                //.attr("x", 5) //Move the text from the start angle of the arc
-				//.attr("y",5)
-				//.attr("dx",18)
-                //.attr("dy", 18) //Move the text down
-                .attr("xlink:href",function(d){console.log(d);console.log(this);return "#" + d.path.id;})	
+                .attr("startOffset", function(d,i) 
+                {   //console.log(d.startAngle);
+                    if(d.endAngle - d.startAngle == Math.PI*2)
+                    {
+                        return "25%";
+                    }
+                    if(d.endAngle == Math.PI*2) 
+                    {
+                        return "25%";
+                    }
+                    if(d.endAngle >= 270*Math.PI/180)
+                    {
+                        return "25%";
+                    }
+                    return (d.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
+                })
+                .style("text-anchor", "middle")
+                
+                .attr("xlink:href",function(d){return "#" + d.path.id;})	
 				.text(function(d){ return d.name;})
-                ;*/
+
+                ;
+
             /*
             d3.selectAll('text')
               .on("click", click)
@@ -135,7 +169,8 @@ function Sunburst()
             text.transition().style("opacity", 0);
             var arcText = [];
             var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
-            if (rootDepth == 7) 
+
+            if (false) 
             {
               d3.select(this.parentNode).select("text").append('tspan').text(function(d){ 
                   return "Format: " + d.ClaimFormat;})
@@ -190,19 +225,20 @@ function Sunburst()
                     arcText = d3.select(this.parentNode).select("text");
                     // fade in the text element and recalculate positions
                     arcText.transition().duration(1000)
+                      .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
                       .attr("text-anchor", function(d) 
-                      {
+                      { 
                         return getAnchor(d, this);
                       })
-                      .attr("transform", function() { return computeTextTransform(e, this); })
+                      //.attr("transform", function() { return computeTextTransform(e, this); })
                       .attr("root", function(d) { return rootDepth; })
-                      .attr("dy", function(d){ return getDY(this);})
+                      //.attr("dy", function(d){ return getDY(this);})
                       // .attr("x", function(d) { return y(d.y); })
                       .style("opacity", function(d) 
                       {
                         return opacity(d)
                       });
-                    
+                    /*
                     var fontSize = 12;
                     arcText[0][0].style.fontSize = fontSize + "px";
                     if(this.getTotalLength() < 155)
@@ -217,7 +253,7 @@ function Sunburst()
                             arcText[0][0].style.fontSize = fontSize + "px";
                             
                         }
-                    }
+                    }*/
                     
                   }
               });
@@ -244,13 +280,14 @@ function Sunburst()
         {      
             d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
             selection.push(d);
+            console.log(d.children);
             if(d.children)
                 setSelectionOnChildren(d);
-			
+			console.log(selection);
             d.selected = true;
             
             //selectedViz.update(selection);
-			updateShownVisualization();
+			updateShownVisualizationAndOptions();
         }
         else
         {
@@ -262,13 +299,13 @@ function Sunburst()
             d.selected = false;
             
             //selectedViz.update(selection);
-			updateShownVisualization();
+			updateShownVisualizationAndOptions();
         }
     }
     
     // BEWARE recursive function
     function setSelectionOnChildren(d)
-    {
+    {   
         for( var i = 0; i < d.children.length; i++)
         {
             if(d.children[i].selected == false)

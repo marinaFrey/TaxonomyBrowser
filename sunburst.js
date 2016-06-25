@@ -29,6 +29,7 @@ function Sunburst()
         .domain([0,1500])
         .range([100, 200]);
 
+
     var arc = d3.svg.arc()
         .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
         .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
@@ -39,7 +40,7 @@ function Sunburst()
     
     this.create = function()
     {
-        d3.json("real_full.json", function(error, root) 
+        d3.json("real_s.json", function(error, root) 
         {
           g = svg.selectAll("g")
               .data(partition.nodes(root))
@@ -115,7 +116,10 @@ function Sunburst()
                     }
                     return (d.endAngle > 90 * Math.PI/180 ? 30 : -30); 
                 })
-                .style("font-size","15px")
+                .style("font-size",function(d) 
+				{
+					return "15px";
+				})
                 .style("opacity", function(d) 
                 {
                     return opacity(d)
@@ -147,12 +151,12 @@ function Sunburst()
 
                 ;
 
-            /*
+            
             d3.selectAll('text')
               .on("click", click)
               .on("contextmenu", rightClick)
               .on("mouseover", doHover)
-              .on("mouseout", unDoHover);*/
+              .on("mouseout", unDoHover);
             
             d3.selectAll('path')
               .on("contextmenu", rightClick)
@@ -214,17 +218,18 @@ function Sunburst()
               .each("end", function(e, i) 
               {
                 index ++;
-                if (index == 199) 
+                //if (index == 199) 
                 { //TODO change this. will break with other data.
-                  setHover(true);
+                  //setHover(true);
                 }
                   // check if the animated element's data e lies within the visible angle span given in d
                   if (e.x >= d.x && e.x < (d.x + d.dx)) 
                   {
+					  
                     // get a selection of the associated text element
                     arcText = d3.select(this.parentNode).select("text");
                     // fade in the text element and recalculate positions
-                    arcText.transition().duration(1000)
+                    arcText.transition().duration(100)
                       .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
                       .attr("text-anchor", function(d) 
                       { 
@@ -236,8 +241,14 @@ function Sunburst()
                       // .attr("x", function(d) { return y(d.y); })
                       .style("opacity", function(d) 
                       {
-                        return opacity(d)
-                      });
+                        //return opacity(d)
+						return 1;
+                      })
+					  .attr("pointer-events", null);
+					  //.on("click", click)
+					  //.on("contextmenu", rightClick);
+					  //.on("mouseover", doHover)
+					  //.on("mouseout", unDoHover)
                     /*
                     var fontSize = 12;
                     arcText[0][0].style.fontSize = fontSize + "px";
@@ -256,9 +267,18 @@ function Sunburst()
                     }*/
                     
                   }
+				  else
+				  {
+						arcText = d3.select(this.parentNode).select("text");
+						// fade in the text element and recalculate positions
+						arcText
+						.attr("root", function(d) { return rootDepth; })
+						.attr("pointer-events", "none")
+						.style("opacity", 0);
+				  }
               });
             
-
+			
             
             }
         });
@@ -280,10 +300,10 @@ function Sunburst()
         {      
             d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
             selection.push(d);
-            console.log(d.children);
+            //console.log(d.children);
             if(d.children)
                 setSelectionOnChildren(d);
-			console.log(selection);
+			//console.log(selection);
             d.selected = true;
             
             //selectedViz.update(selection);
@@ -311,8 +331,10 @@ function Sunburst()
             if(d.children[i].selected == false)
             {
                 d3.select(d.children[i].path).style("opacity", 1);
-                selection.push(d.children[i]);
+				if(!d.children[i].children)
+					d.children[i].color = d.color;
                 d.children[i].selected = true;
+				selection.push(d.children[i]);
             } 
             if(d.children[i].children)
                 setSelectionOnChildren(d.children[i]);

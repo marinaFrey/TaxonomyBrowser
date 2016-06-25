@@ -1,7 +1,7 @@
 function selectedVisualization()
 {
-    var height = 600;
-    var width = 700;
+    var height = 700;
+    var width = $("#selected_view").width();
     
     var xScale;
     var yScale;
@@ -16,7 +16,7 @@ function selectedVisualization()
     
     var bubble = d3.layout.pack()
     .sort(null)
-    .size([diameter, diameter])
+    .size([width, height])
     .padding(1.5);
     
     this.create = function()
@@ -25,9 +25,9 @@ function selectedVisualization()
             .attr("width", width)
             .attr("height", height)
             .append("g");*/
-        document.getElementById("maps").style = "display:none;";
-        document.getElementById("sel_viz").style = "display:block;";
-        svg_selected.selectAll("*").remove();
+        //document.getElementById("maps").style = "display:none;";
+        //document.getElementById("sel_viz").style = "display:block;";
+        //svg_selected.selectAll("*").remove();
         
         xScale = d3.scale.linear();
         xScale.range([0,width]);
@@ -42,9 +42,9 @@ function selectedVisualization()
     
     this.update = function(dataset)
     {
-        document.getElementById("maps").style = "display:none;";
-        document.getElementById("sel_viz").style = "display:block;";
-        svg_selected.selectAll("*").remove();
+        //document.getElementById("maps").style = "display:none;";
+        //document.getElementById("sel_viz").style = "display:block;";
+        //svg_selected.selectAll("*").remove();
         
         var sizeName = comboSize.getSelectedOption();
         
@@ -87,7 +87,7 @@ function selectedVisualization()
          
             
         
-        node = svg_selected.selectAll(".node")
+        node = svg_selected_specimens.selectAll(".node")
             .data(bubble.nodes(classes(dataset,sizeName))
             .filter(function(d) { return !d.children; }))
             .enter().append("g")
@@ -100,13 +100,7 @@ function selectedVisualization()
             //.attr("cy", function(d){ return d.y; })
             .style("fill", function(d) { return d.color });
             
-        var force = d3.layout.force()
-            .nodes(svg_selected.selectAll(".node"))
-            .size([width, height])
-            .gravity(0)
-            .charge(0)
-            .on("tick", tick)
-            .start();
+
         /*
         node.append("title")
             .text(function(d) { return d.className + ": " + format(d.value); });
@@ -157,7 +151,7 @@ function selectedVisualization()
             recurse(null, root);
             return {children: classes};*/
     }
-    
+    /*
     function tick(e) 
     {
         circle
@@ -167,27 +161,27 @@ function selectedVisualization()
           .attr("cy", function(d) { return d.y; });
     }
     
-        // Move d to be adjacent to the cluster node.
-        function cluster(alpha) 
-        {
-            return function(d) 
-            {
-                var cluster = clusters[d.cluster];
-                if (cluster === d) return;
-                var x = d.x - cluster.x,
-                y = d.y - cluster.y,
-                l = Math.sqrt(x * x + y * y),
-                r = d.radius + cluster.radius;
-                if (l != r) 
-                {
-                    l = (l - r) / l * alpha;
-                    d.x -= x *= l;
-                    d.y -= y *= l;
-                    cluster.x += x;
-                    cluster.y += y;
-                }
-            };
-        }
+	// Move d to be adjacent to the cluster node.
+	function cluster(alpha) 
+	{
+		return function(d) 
+		{
+			var cluster = clusters[d.cluster];
+			if (cluster === d) return;
+			var x = d.x - cluster.x,
+			y = d.y - cluster.y,
+			l = Math.sqrt(x * x + y * y),
+			r = d.radius + cluster.radius;
+			if (l != r) 
+			{
+				l = (l - r) / l * alpha;
+				d.x -= x *= l;
+				d.y -= y *= l;
+				cluster.x += x;
+				cluster.y += y;
+			}
+		};
+	}
     
     function collide(alpha) 
     {
@@ -219,6 +213,6 @@ function selectedVisualization()
                 return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
             });
         };
-    }
+    }*/
 
 }

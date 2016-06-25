@@ -2,12 +2,10 @@ TODO:
 
     - variar mais cores
     - ajustar os textos corretamente
-        - separar labels com " " adicionando um 'enter' entre elas para ficar mais facil de caber. (dificilmente vai ser util, n tem nomes duplos)
-		- fazer texto em curva p espaços grandes
+		- sumir com textos que nao cabem no espaço
+		- textos que nao cabem curvos - fazer outro esquema p mostrar
     - fazer funcionar açao de info que vai aparecer na tooltip
 		- fazer janela de info
 		- colocar janela de info pra aparecer quando clicado em especime em todas as visualizações
-	- gerenciar criaçao das comboboxes
-		- fazer com que as comboboxes que aparecem façam sentido com a visualização selecionada
 	- fazer especimes no sunburst aparecerem sem deixar lento e de forma clara
         

@@ -94,7 +94,8 @@
 	
 	<!-- VISUALIZATIONS -->
 	<div class="row">
-		<div class="col-sm-6"  id="viz" style="text-align:center"></div>
+		<div class="col-sm-4"  id="viz" style="text-align:center"></div>
+		<div class="col-sm-2"  id="selected_view" ></div>
 		<div class="col-sm-6" id="right_viz" style="text-align:center">
             <div id="sel_viz"> </div>
             <div id="maps"> </div>
@@ -154,10 +155,16 @@
             .attr("height", 700)
 			.append("g");
 	
+	var svg_selected_specimens = d3.select("#selected_view").append("svg")
+            .attr("width", $("#selected_view").width())
+            .attr("height", 700)
+			.append("g");
+	
     var sunburst = new Sunburst;
     sunburst.create();
 
     initializeComboboxes();
+	document.getElementById("maps").style = "display:none;";
     showBars();
     //updateShownVisualization();
     //var specimensViz = new specimensVisualization;

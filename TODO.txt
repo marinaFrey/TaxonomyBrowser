@@ -1,12 +1,24 @@
 TODO:
+	- sunburst
+		- variar mais cores
+		- ajustar os textos corretamente
+			- textos que nao cabem curvos - fazer outro esquema p mostrar
+				- texto central do root
+				- outros nodos
+				
+	- fazer funcionar açao de info que vai aparecer na tooltip
+		- fazer janela de info pra taxonomia
+			- fazer botao da tooltip funcionar
 
-    - variar mais cores
-    - ajustar os textos corretamente
-		- sumir com textos que nao cabem no espaço
-		- textos que nao cabem curvos - fazer outro esquema p mostrar
-    - fazer funcionar açao de info que vai aparecer na tooltip
-		- fazer janela de info
-		- colocar janela de info pra aparecer quando clicado em especime em todas as visualizações
-	- fazer especimes no sunburst aparecerem sem deixar lento e de forma clara
-	- colocar legenda nos eixos
+	- dots viz		
+		- colocar legenda nos eixos
+		- colocar tooltip mostrando exatamente o valor de x, y, cor e tamanho
+		
+	- filtrar specimens selecionados
+		- criar janela de filtragem
+		- aplicar os filtros nos selecionados
+		
+	- selected viz
+		- descelecionar com o botao direito (diminui opacidade p 0.3)
+			- fazer sumir da lista de selected
         

@@ -38,11 +38,11 @@ function removeNode()
 
 function showBars()
 {
-	document.images["bars"].style = " border: 2px solid yellow;border-radius: 22px;" 
-	document.images["matrix"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["dots"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["coord"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["map"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
+	document.images["bars"].style = " border: 4px solid yellow;border-radius: 38px;" 
+	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	
 	//active_visualization = SELECTED_VIZ;
     
@@ -60,11 +60,11 @@ function showBars()
 
 function showDots()
 {
-	document.images["bars"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["matrix"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["dots"].style = " border: 2px solid yellow;border-radius: 22px;" 
-	document.images["coord"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["map"].style = " border: 2px solid #6D6D6D;border-radius: 22px;"
+	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["dots"].style = " border: 4px solid yellow;border-radius: 38px;" 
+	document.images["coord"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	
 	active_visualization = DOTS_VIZ;
 	 
@@ -82,11 +82,11 @@ function showDots()
 
 function showMap()
 {
-	document.images["bars"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["matrix"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["dots"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["coord"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
-	document.images["map"].style = " border: 2px solid yellow;border-radius: 22px;" 
+	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["dots"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["map"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	
 	active_visualization = MAPS_VIZ;
 	

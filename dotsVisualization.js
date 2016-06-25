@@ -151,7 +151,6 @@ function dotsVisualization()
                     {
                             if(d.measures[j].name == yName)
                             {
-                                //console.log("Y " + yScale(parseFloat(d.measures[j].value))+ " range "+ yScale.range() + " real "+ d.measures[j].value + " dominio " + yScale.domain());
                                 d.yValue = parseFloat(d.measures[j].value);
 								return yScale(parseFloat(d.measures[j].value));
                             }
@@ -174,6 +173,15 @@ function dotsVisualization()
                 }
 			})
 			.attr("fill", function(d){return d.color;})
+			.style("opacity", function(d) 
+			{
+				if(d.rValue && (d.yValue && d.xValue))
+				{
+					return 1;
+				}
+				
+				return 0;
+			})
 			.on("click", function(d)
 			{
 				makeSpecimenPopup(d);

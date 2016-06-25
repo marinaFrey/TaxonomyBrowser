@@ -87,7 +87,11 @@ function selectedVisualization()
             .attr("r", function(d) { return d.r; })
             //.attr("cx", function(d){ return d.x; })
             //.attr("cy", function(d){ return d.y; })
-            .style("fill", function(d) { return d.color });
+            .style("fill", function(d) { return d.color })
+			.on("click", function(d)
+			{
+				makeSpecimenPopup(dataset[d.id]);
+			});;
             
     
     }
@@ -106,7 +110,7 @@ function selectedVisualization()
                         if(root[i].measures[j].name == measureName)
                         {
                             //console.log("X " +xScale(parseFloat(d.measures[j].value)));
-                            classes.push({color: root[i].color, className: root[i].name, value: parseFloat(root[i].measures[j].value)});
+                            classes.push({color: root[i].color, className: root[i].name, id: i, value: parseFloat(root[i].measures[j].value)});
                         }
                 }
             }

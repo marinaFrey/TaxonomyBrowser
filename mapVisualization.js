@@ -33,11 +33,12 @@ function mapVisualization()
         for (var i = 0; i < dataset.length; i++)
         {
             if(dataset[i].latitude && dataset[i].latitude != "")
-            {          
+            {   
+				var sp = dataset[i];
                 var marker = new google.maps.Marker(
                 {
-                   position: new google.maps.LatLng(parseFloat(dataset[i].latitude),parseFloat(dataset[i].longitude)),
-                   icon: pinSymbol(dataset[i].color),
+                   position: new google.maps.LatLng(parseFloat(sp.latitude),parseFloat(sp.longitude)),
+                   icon: pinSymbol(sp.color),
                 });
 
                 marker.setMap(map); 
@@ -45,10 +46,10 @@ function mapVisualization()
 				markers.push(marker);
                 
                 var infowindow = new google.maps.InfoWindow();
-                var info = "<p> <b>" + dataset[i].name +"</b><br />" +
-                           "ID da coleção: " + dataset[i].collection_id +"<br />" +
-                           "Coletado por: " + dataset[i].collected_by + "<br />" +
-                           "Coletado em: " + dataset[i].collected_data + "</p>";
+                var info = "<p><h4> <b>" + sp.name +"</b></h4><br />" +
+                           "<b>Collection ID: </b>" + sp.collection_id +"<br />" +
+                           "<b>Collected by: </b>" + sp.collected_by + "<br />" +
+                           "<b>Date: </b>" + sp.collected_data + "</p>";
                            
                 google.maps.event.addListener(marker,'mouseover',(function(marker, infowindow,info)
                 {
@@ -70,6 +71,15 @@ function mapVisualization()
                     closeInfos();
                    
                 }));
+				
+				google.maps.event.addListener(marker,'click',(function(sp)
+                {
+                    return function()
+                    {
+                        closeInfos();
+                        makeSpecimenPopup(sp);
+                    };
+                })(sp));
                 
                 
             }

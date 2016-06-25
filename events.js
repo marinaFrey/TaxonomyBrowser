@@ -3,7 +3,7 @@ var SCATTERPLOT_VIZ = 1;
 var COORD_PARAL_VIZ = 2;
 var DOTS_VIZ = 3;
 var MAPS_VIZ = 4;
-var active_visualization = 0;
+var active_visualization = 3;
 
 
 
@@ -12,6 +12,11 @@ var selViz;
 var dotsViz;
 
 /* SUNBURST EVENTS */
+
+function showNodeInfo()
+{
+	console.log("info");
+}
 
 function addNode()
 {
@@ -39,7 +44,7 @@ function showBars()
 	document.images["coord"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
 	document.images["map"].style = " border: 2px solid #6D6D6D;border-radius: 22px;" 
 	
-	active_visualization = SELECTED_VIZ;
+	//active_visualization = SELECTED_VIZ;
     
     comboX.updateOptions([]);
     comboY.updateOptions([]);
@@ -100,6 +105,7 @@ function showMap()
 
 function updateShownVisualization()
 {
+	selViz.update(selection);
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
@@ -132,6 +138,7 @@ function updateShownVisualization()
 
 function updateShownVisualizationAndOptions()
 {
+	showBars();
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:

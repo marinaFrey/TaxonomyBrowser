@@ -8,4 +8,5 @@ TODO:
 		- fazer janela de info
 		- colocar janela de info pra aparecer quando clicado em especime em todas as visualizações
 	- fazer especimes no sunburst aparecerem sem deixar lento e de forma clara
+	- colocar legenda nos eixos
         

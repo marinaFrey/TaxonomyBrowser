@@ -11,7 +11,6 @@ function selectedVisualization()
     var padding = 1.5; // separation between same-color circles
     var clusterPadding = 6; // separation between different-color circles
     var node;
-    var diameter = 600,
     format = d3.format(",d");
     
     var bubble = d3.layout.pack()
@@ -20,15 +19,8 @@ function selectedVisualization()
     .padding(1.5);
     
     this.create = function()
-    {/*
-        svg_selected = d3.select("#sel_viz").append("svg")//d3.select("body").append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g");*/
-        //document.getElementById("maps").style = "display:none;";
-        //document.getElementById("sel_viz").style = "display:block;";
-        //svg_selected.selectAll("*").remove();
-        
+    {
+		
         xScale = d3.scale.linear();
         xScale.range([0,width]);
 
@@ -42,9 +34,8 @@ function selectedVisualization()
     
     this.update = function(dataset)
     {
-        //document.getElementById("maps").style = "display:none;";
-        //document.getElementById("sel_viz").style = "display:block;";
-        //svg_selected.selectAll("*").remove();
+
+        svg_selected_specimens.selectAll("*").remove();
         
         var sizeName = comboSize.getSelectedOption();
         
@@ -69,9 +60,7 @@ function selectedVisualization()
 				}
 
 		}));
-        
-        
-        
+ 
         //svg_selected.attr("transform", "translate(" + ((width) / 2)  + "," + (height / 2 + 10) + ")");
         /*
         svg_selected.selectAll("rect")
@@ -100,15 +89,6 @@ function selectedVisualization()
             //.attr("cy", function(d){ return d.y; })
             .style("fill", function(d) { return d.color });
             
-
-        /*
-        node.append("title")
-            .text(function(d) { return d.className + ": " + format(d.value); });
-
-        node.append("text")
-            .attr("dy", ".3em")
-            .style("text-anchor", "middle")
-            .text(function(d) { return d.className.substring(0, d.r / 3); });*/
     
     }
     
@@ -133,24 +113,8 @@ function selectedVisualization()
         }
         return {children: classes};
 
-        
-        /*
-        function recurse(name, node) 
-        {
-            if (node.children) 
-            {
-                node.children.forEach(function(child) 
-                { 
-                    recurse(node.name, child); 
-                });
-            }
-            else 
-                classes.push({packageName: name, className: node.name, value: 200});
-        }
-
-            recurse(null, root);
-            return {children: classes};*/
     }
+	
     /*
     function tick(e) 
     {

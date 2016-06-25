@@ -2,6 +2,7 @@ function Sunburst()
 {
     //console.log($("viz"));
     //console.log(document.getElementById('viz'));
+	var databaseSize;
     var normalOpacity = 0.3;
     var width = $("#viz").width(),
         height = 700,
@@ -62,6 +63,8 @@ function Sunburst()
             .style("opacity",normalOpacity)
             .on("click", click);
             
+			databaseSize = path[0].length;
+
              /*
           var text = g.append("text")
 			//.filter(function (d){return d.children})
@@ -173,7 +176,7 @@ function Sunburst()
             text.transition().style("opacity", 0);
             var arcText = [];
             var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
-
+			
             if (false) 
             {
               d3.select(this.parentNode).select("text").append('tspan').text(function(d){ 
@@ -218,9 +221,9 @@ function Sunburst()
               .each("end", function(e, i) 
               {
                 index ++;
-                //if (index == 199) 
-                { //TODO change this. will break with other data.
-                  //setHover(true);
+                if (index == databaseSize) 
+                { 
+                  setHover(true);
                 }
                   // check if the animated element's data e lies within the visible angle span given in d
                   if (e.x >= d.x && e.x < (d.x + d.dx)) 
@@ -242,13 +245,13 @@ function Sunburst()
                       .style("opacity", function(d) 
                       {
                         //return opacity(d)
+						console.log("NAME "+d.name+"r"+rootDepth+"d"+d.depth);
+						if(rootDepth > d.depth)
+							return 0;
 						return 1;
                       })
 					  .attr("pointer-events", null);
-					  //.on("click", click)
-					  //.on("contextmenu", rightClick);
-					  //.on("mouseover", doHover)
-					  //.on("mouseout", unDoHover)
+
                     /*
                     var fontSize = 12;
                     arcText[0][0].style.fontSize = fontSize + "px";
@@ -401,10 +404,10 @@ function Sunburst()
           .select("#name")
           .text(d.name);
           
-          
+          /*
         d3.select("#tooltip") 
             .select("#value")
-            .text(d.size);  
+            .text(d.size);  */
         //Show the tooltip
         d3.select("#tooltip").classed("hidden", false);
       

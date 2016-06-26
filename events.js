@@ -138,7 +138,10 @@ function updateShownVisualization()
 
 function updateShownVisualizationAndOptions()
 {
-	showBars();
+	//showBars();
+	
+
+	selectedSpecimens();
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:

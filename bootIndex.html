@@ -22,6 +22,7 @@
 	<script type="text/javascript" src="mapVisualization.js"></script>
 	<script type="text/javascript" src="comboboxHandler.js"></script>
 	<script type="text/javascript" src="popup.js"></script>
+	<script type="text/javascript" src="selectedSpecimens.js"></script>
     
     <!--JQUERY-->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>-->
@@ -165,8 +166,10 @@
     sunburst.create();
 
     initializeComboboxes();
+	
 	document.getElementById("maps").style = "display:none;";
-    showBars();
+	
+    //showBars();
     //updateShownVisualization();
     //var specimensViz = new specimensVisualization;
     //specimensViz.create();

@@ -19,6 +19,8 @@ TODO:
 		- aplicar os filtros nos selecionados
 		
 	- selected viz
+		- fazer nodos aperecerem proximo ao spawn correto
+		- fazer caber bem no espaço dado
 		- descelecionar com o botao direito (diminui opacidade p 0.3)
 			- fazer sumir da lista de selected
         

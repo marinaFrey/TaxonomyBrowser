@@ -9,10 +9,6 @@ TODO:
 	- fazer funcionar açao de info que vai aparecer na tooltip
 		- fazer janela de info pra taxonomia
 			- fazer botao da tooltip funcionar
-
-	- dots viz		
-		- colocar legenda nos eixos
-		- colocar tooltip mostrando exatamente o valor de x, y, cor e tamanho
 		
 	- filtrar specimens selecionados
 		- criar janela de filtragem
@@ -21,6 +17,7 @@ TODO:
 	- selected viz
 		- fazer nodos aperecerem proximo ao spawn correto
 		- fazer caber bem no espaço dado
-		- descelecionar com o botao direito (diminui opacidade p 0.3)
-			- fazer sumir da lista de selected
+
         
+	-dotsviz
+		- alterar chamada de evento das comboboxes pra so chamar quando for selecionada opçao

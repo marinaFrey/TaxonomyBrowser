@@ -105,7 +105,7 @@ function showMap()
 
 function updateShownVisualization()
 {
-	selViz.update(selection);
+	//selViz.update(selection);
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:

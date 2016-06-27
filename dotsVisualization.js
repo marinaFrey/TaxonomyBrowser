@@ -46,6 +46,7 @@ function dotsVisualization()
 		var yName = comboY.getSelectedOption();
 		var sizeName = comboSize.getSelectedOption();
 		
+
 		xScale.domain(d3.extent(dataset, function(d)
 		{   
             if(!d.children)
@@ -87,7 +88,7 @@ function dotsVisualization()
 			
 		}));
         yScale.range([h - circlePadding,circlePadding]);
-        
+
 		rScale.domain(d3.extent(dataset, function(d)
 		{
 				if(!d.children)
@@ -111,7 +112,10 @@ function dotsVisualization()
 		xAxis.scale(xScale);
 		yAxis.scale(yScale);
 	
-        
+		var div = d3.select("body").append("div")   
+			.attr("class", "tooltip")               
+			.style("opacity", 0);
+		
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
 			.append("rect")
@@ -139,6 +143,8 @@ function dotsVisualization()
                                 d.xValue = parseFloat(d.measures[j].value);
                                 return xScale(parseFloat(d.measures[j].value));
                             }
+							else
+								d.xValue = null;
                     }
                 }
 				
@@ -154,6 +160,8 @@ function dotsVisualization()
                                 d.yValue = parseFloat(d.measures[j].value);
 								return yScale(parseFloat(d.measures[j].value));
                             }
+							else
+								d.yValue = null;
                     }
                 }
 				
@@ -169,18 +177,37 @@ function dotsVisualization()
 								d.rValue = parseFloat(d.measures[j].value);
                                 return rScale(parseFloat(d.measures[j].value));
                             }
+							else
+								d.rValue = null;
                     }
                 }
 			})
 			.attr("fill", function(d){return d.color;})
 			.style("opacity", function(d) 
 			{
-				if(d.rValue && (d.yValue && d.xValue))
+				if((d.rValue && (d.yValue && d.xValue)))
 				{
 					return 1;
 				}
 				
 				return 0;
+			})
+			.on("mouseover", function(d) 
+			{      
+				div.transition()        
+				.duration(200)      
+				.style("opacity", .9);      
+				div .html("<b>"+xName+": </b>"+d.xValue+" <br/>"+
+								"<b>"+yName+": </b>"+d.yValue+" <br/>"+
+								"<b>"+sizeName+": </b>"+d.rValue+" <br/>")  
+				.style("left", (d3.event.pageX + 10) + "px")     
+				.style("top", (d3.event.pageY - 60) + "px");    
+			})                  
+			.on("mouseout", function(d) 
+			{       
+				div.transition()        
+				.duration(500)      
+				.style("opacity", 0);   
 			})
 			.on("click", function(d)
 			{
@@ -202,13 +229,28 @@ function dotsVisualization()
 		
 		svg_selected.append("g")
 			.attr("class","x axis")
-			.attr("transform", "translate(0," + ( h - circlePadding) + ")")
+			.attr("transform", "translate(0," + ( h - circlePadding ) + ")")
 			.call(xAxis);
 			
 		svg_selected.append("g")
 			.attr("class","y axis")
 			.attr("transform", "translate(" + (circlePadding - 10) +",0)")
 			.call(yAxis);
+			
+		svg_selected.append("text")
+			.attr("class", "x label")
+			.attr("text-anchor", "end")
+			.attr("x", w - 20)
+			.attr("y", h - circlePadding - 10)
+			.text(xName);
+			
+		svg_selected.append("text")
+			.attr("class", "y label")
+			.attr("text-anchor", "end")
+			.attr("y", (circlePadding ) )
+			.attr("dy", ".75em")
+			.attr("transform", "rotate(-90)")
+			.text(yName);
 	}
 
 }

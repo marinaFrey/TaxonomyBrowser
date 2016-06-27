@@ -106,7 +106,7 @@ svg {
     -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
     -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    pointer-events: none;
+    pointer-events: none;*
     }
 
 #tooltip.hidden {
@@ -119,6 +119,20 @@ svg {
     font-size: 16px;
     line-height: 20px;
     color: #000000;
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;                        
+  padding: 10px;             
+  font: 16px sans-serif;        
+  background: white;/*lightsteelblue;  */ 
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  border: 20px;      
+  border-radius: 8px;           
+  pointer-events: none;         
 }
 
 /* dots visualization */

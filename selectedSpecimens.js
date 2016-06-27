@@ -1,18 +1,21 @@
 function selectedSpecimens()
 {
 var width = $("#selected_view").width(),
-    height = 700,
+    height = $("#selected_view").height() -10,
     padding = 6, // separation between nodes
     maxRadius = 12;
 
-//var n = 700; // total number of nodes
+var n = 700; // total number of nodes
 var m= 0;//m = 6; // number of distinct clusters
 var nodes = [];
+
+var groups = [];
 
 for(var i = 0; i < selection.length; i++)
 {
 	if(selection[i].children && selection[i].children[0].measures)
 	{
+		groups.push({name:selection[i].name, num_children: selection[i].children.length});
 		m++;
 	}
 }
@@ -20,12 +23,27 @@ var y = d3.scale.ordinal()
     .domain(d3.range(m))
     .rangePoints([0, height], 1);
 	
+var k = 0;
+groups.sort(function() {
+  return .5 - Math.random();
+});
+
 for(var i = 0; i < selection.length; i++)
 {
+	
 	if(selection[i].measures)
 	{
-		var pos = Math.floor(Math.random() * m);
-		nodes.push({radius: 5,color: selection[i].color, cx: width / 2,cy: y(pos)});
+		//var pos = groups.indexOf(selection[i].name);
+		var pos =groups.map(function(e) { return e.name; }).indexOf(selection[i].name);
+		
+		nodes.push(
+		{
+			radius: 5,
+			color: selection[i].color, 
+			cx: width / 2,
+			cy:  y(pos), 
+			specimen: selection[i]
+		});
 	}
 	
 }
@@ -45,7 +63,7 @@ var nodes = d3.range(n).map(function()
 		radius: 5,//Math.sqrt(v) * maxRadius,
 		color: color(i),
 		cx: width / 2,
-		cy: x(i)
+		cy: y(i)
 	};
 });*/
 
@@ -54,8 +72,8 @@ var nodes = d3.range(n).map(function()
 var force = d3.layout.force()
     .nodes(nodes)
     .size([width, height])
-    .gravity(0)
-    .charge(-7)
+    .gravity(0.3)
+    .charge(-15)//(-7)
     .on("tick", tick)
     .start();
 
@@ -64,7 +82,19 @@ var circle = svg_selected_specimens.selectAll("circle")
 	.enter().append("circle")
 	.attr("r", function(d) { return d.radius; })
 	.style("fill", function(d) { return d.color; })
+	.on("click", function(d)
+	{
+		makeSpecimenPopup(d.specimen);
+	})
 	.call(force.drag);
+	
+circle.transition()
+    .duration(750)
+    .delay(function(d, i) { return i * 5; })
+    .attrTween("r", function(d) {
+      var i = d3.interpolate(0, d.radius);
+      return function(t) { return d.radius = i(t); };
+    });
 	
 
 function tick(e) 
@@ -72,8 +102,8 @@ function tick(e)
   circle
       .each(gravity(.2 * e.alpha))
       .each(collide(.5))
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
+      .attr("cx", function(d) { return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x)); })//; })
+      .attr("cy", function(d) { return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y)); });//; });
 }
 
 // Move nodes toward cluster focus.

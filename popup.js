@@ -1,7 +1,6 @@
 
 function makeSpecimenPopup(specimen)
 {
-	
 	var txtLabel = document.getElementById("myModalLabel");
 	txtLabel.className = "modal-title";
 	txtLabel.innerHTML = "<h1>"+specimen.name+"</h1>";

@@ -245,7 +245,6 @@ function Sunburst()
                       .style("opacity", function(d) 
                       {
                         //return opacity(d)
-						console.log("NAME "+d.name+"r"+rootDepth+"d"+d.depth);
 						if(rootDepth > d.depth)
 							return 0;
 						return 1;

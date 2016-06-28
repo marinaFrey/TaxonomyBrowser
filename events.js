@@ -35,6 +35,13 @@ function removeNode()
 	console.log("remove");
 }
 
+/* SELECTED SPECIMEN EVENTS */
+
+function openFilters()
+{
+    makeFilterPopup();
+}
+
 /* VISUALIZATION EVENTS */
 
 function showBars()
@@ -67,6 +74,9 @@ function showParallelCoord()
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	
+    if(active_visualization != COORD_PARAL_VIZ)
+        initializeParallelComboboxes();
+    
 	active_visualization = COORD_PARAL_VIZ;
 	
 	comboX.hide();
@@ -74,7 +84,8 @@ function showParallelCoord()
     comboSize.hide();
     comboColor.hide();
 	
-	initializeParallelComboboxes();
+    
+	
 	
 	var list = generateNumericMeasuresList();
 	

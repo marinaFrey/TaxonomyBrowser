@@ -26,3 +26,31 @@ function makeSpecimenPopup(specimen)
 	
 	$('#basicModal').modal('show');
 }
+
+function makeFilterPopup()
+{
+    var txtLabel = document.getElementById("myModalLabel");
+    txtLabel.className = "modal-title";
+	txtLabel.innerHTML = "<h1> Filters </h1>";
+    
+    var infoLabel = document.getElementById("info_text");
+    infoLabel.innerHTML = "";
+    
+    combo = document.createElement("SELECT");
+    combo.setAttribute("id", "sel");
+    infoLabel.appendChild(combo);
+    
+    var oImg=document.createElement("img");
+    oImg.setAttribute('src', 'images/remove.png');
+    oImg.style.width= '32px';
+    oImg.style.width= '32px';
+    infoLabel.appendChild(oImg);
+    
+    var oImg=document.createElement("img");
+    oImg.setAttribute('src', 'images/add.png');
+    oImg.style.width= '32px';
+    oImg.style.width= '32px';
+    infoLabel.appendChild(oImg);
+    
+    $('#basicModal').modal('show');
+}

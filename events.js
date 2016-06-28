@@ -69,6 +69,22 @@ function showParallelCoord()
 	
 	active_visualization = COORD_PARAL_VIZ;
 	
+	comboX.hide();
+    comboY.hide();
+    comboSize.hide();
+    comboColor.hide();
+	
+	initializeParallelComboboxes();
+	
+	var list = generateNumericMeasuresList();
+	
+	combo1.updateOptions(list);
+	combo2.updateOptions(list);
+	combo3.updateOptions(list);
+	combo4.updateOptions(list);
+	combo5.updateOptions(list);
+	combo6.updateOptions(list);
+	
 	ParallelCoordinates();
 	
 	/*
@@ -88,10 +104,12 @@ function showDots()
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	
 	active_visualization = DOTS_VIZ;
-	 
-    comboX.updateOptions(generateNumericMeasuresList());
-    comboY.updateOptions(generateNumericMeasuresList());
-    comboSize.updateOptions(generateNumericMeasuresList());
+	
+	var list = generateNumericMeasuresList();
+	
+    comboX.updateOptions(list);
+    comboY.updateOptions(list);
+    comboSize.updateOptions(list);
     comboColor.updateOptions(["specimen"]);
     
 	dotsViz = new dotsVisualization;
@@ -111,9 +129,9 @@ function showMap()
 	
 	active_visualization = MAPS_VIZ;
 	
-    comboX.updateOptions([]);
-    comboY.updateOptions([]);
-    comboSize.updateOptions([]);
+    comboX.hide();
+    comboY.hide();
+    comboSize.hide();
     comboColor.updateOptions(["specimen"]);
     
 	mapsViz = new mapVisualization;

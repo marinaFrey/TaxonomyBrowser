@@ -53,6 +53,18 @@ function ComboBox()
 		return combo.value;
 	}
 	
+	this.hide = function()
+	{
+		combo.style.display = 'none';
+		txtLabel.style.display = 'none';
+	}
+	
+	this.show = function()
+	{
+		combo.style.display = 'block';
+		txtLabel.style.display = 'block';
+	}
+	
 	this.remove = function()
 	{
 		var parent = document.getElementById("comboboxes");
@@ -74,6 +86,29 @@ function initializeComboboxes()
     
     comboColor = new ComboBox();
 	comboColor.create("Color","comboColor");
+}
+
+function initializeParallelComboboxes()
+{
+    combo1 = new ComboBox();
+	combo1.create("X1","combo1");
+	
+	combo2 = new ComboBox();
+	combo2.create("X2","combo2");
+	
+	combo3 = new ComboBox();
+	combo3.create("X3","combo3");
+	
+	combo4 = new ComboBox();
+	combo4.create("X4","combo4");
+	
+	combo5 = new ComboBox();
+	combo5.create("X5","combo5");
+	
+	combo6 = new ComboBox();
+	combo6.create("X6","combo6");
+	
+
 }
 
 function generateMeasuresList()

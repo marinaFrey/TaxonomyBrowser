@@ -17,7 +17,14 @@ function ParallelCoordinates()
 	
 	svg_selected
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+		
+	var x1Name = combo1.getSelectedOption();
+	var x2Name = combo2.getSelectedOption();
+	var x3Name = combo3.getSelectedOption();
+	var x4Name = combo4.getSelectedOption();
+	var x5Name = combo5.getSelectedOption();
+	var x6Name = combo6.getSelectedOption();
+	
 	d3.csv("iris.csv", function(error, cars) 
 	{
 
@@ -28,7 +35,7 @@ function ParallelCoordinates()
 				.domain(d3.extent(cars, function(p) { return +p[d]; }))
 				.range([height, 0]));
 		  }));
-
+		
 		  // Add grey background lines for context.
 		background = svg_selected.append("g")
 			.attr("class", "background")

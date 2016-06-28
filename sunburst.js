@@ -24,7 +24,11 @@ function Sunburst()
     
     var g;
     var partition = d3.layout.partition()
-        .value(function(d) { return size(1); });
+        .value(function(d) 
+		{ 
+				return size(1); 
+		});
+	
 
     var size = d3.scale.linear()
         .domain([0,1500])
@@ -38,6 +42,7 @@ function Sunburst()
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
     var color = d3.scale.category20c();
+	var childrenColor = d3.scale.category10();
     
     this.create = function()
     {
@@ -56,8 +61,19 @@ function Sunburst()
                 d.path = this;
                 d.startAngle = arc.startAngle()(d);
                 d.endAngle = arc.endAngle()(d);
+				//d.outerRadius = arc.outerRadius()(d);
                 d.selected = false;
-                d.color = color((d.children ? d : d.parent).name);
+				if(!d.children[0].measures)
+				{
+					d.color = color(d.name);
+					d.size = d.children.length;
+				}
+				else
+				{
+					d.color = childrenColor(d.name);
+					d.size = 1;
+				}
+                //d.color = color((d.children ? d : d.parent).name);
                 return d.color; 
             })
             .style("opacity",normalOpacity)
@@ -107,6 +123,7 @@ function Sunburst()
                 //.filter(function (d){return d.path.getTotalLength() > 100})
                 .filter(function (d){return (d.children);})
                 .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
+				.filter(function (d){return d.depth != 0})
                 .attr("dy", function(d,i) 
                 {   
                     if(d.endAngle - d.startAngle == Math.PI*2)
@@ -127,7 +144,10 @@ function Sunburst()
                 {
                     return opacity(d)
                 })
-                .attr('depth', function(d){return d.depth})
+                .attr('depth', function(d)
+				{
+					return d.depth
+				})
                 .attr('root', 0)
                 .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
                 .append("textPath")
@@ -154,7 +174,6 @@ function Sunburst()
 
                 ;
 
-            
             d3.selectAll('text')
               .on("click", click)
               .on("contextmenu", rightClick)
@@ -212,7 +231,6 @@ function Sunburst()
             }
             d3.select(".isCenter").classed('isCenter', false);
             d3.select(this.parentNode).select("text").attr('class', 'isCenter');
-            console.log('setcenter');
             var index = 0;
             path.transition()
               .duration(1000)
@@ -287,6 +305,7 @@ function Sunburst()
 
     d3.select('svg').style("height", height + "px");
     }
+	
     //make the last row invisible
     function opacity(d) 
     {
@@ -390,31 +409,30 @@ function Sunburst()
 
     function doHover(d) 
     {
-      d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "0.6");
+      //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "0.6");
       
-      // tooltip 
-      var xPosition = d3.event.pageX;
-      var yPosition = d3.event.pageY; 
-        
-        //Update the tooltip position and value
-        d3.select("#tooltip")
-          .style("left", xPosition + "px")
-          .style("top", yPosition - 50 + "px")
-          .select("#name")
-          .text(d.name);
-          
-          /*
-        d3.select("#tooltip") 
-            .select("#value")
-            .text(d.size);  */
-        //Show the tooltip
-        d3.select("#tooltip").classed("hidden", false);
+	if((d.endAngle - d.startAngle < 10*Math.PI/180 ) || d.depth == 0)
+	{
+		// tooltip 
+		var xPosition = d3.event.pageX;
+		var yPosition = d3.event.pageY; 
+
+		//Update the tooltip position and value
+		d3.select("#tooltip")
+		  .style("left", xPosition + "px")
+		  .style("top", yPosition - 50 + "px")
+		  .select("#name")
+		  .text(d.name);
+
+		d3.select("#tooltip").classed("hidden", false);
+	}
+    
       
     };
 
     function unDoHover(d) 
     {
-      d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "1");
+      //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "1");
       
       // hiding tooltip
       d3.select("#tooltip").classed("hidden", true);

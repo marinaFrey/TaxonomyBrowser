@@ -10,6 +10,7 @@ var active_visualization = 3;
 var mapsViz;
 var selViz;
 var dotsViz;
+var paralCoordViz;
 
 /* SUNBURST EVENTS */
 
@@ -56,6 +57,26 @@ function showBars()
 	if(selection[0])
 		selViz.update(selection);
 
+}
+
+function showParallelCoord()
+{
+	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
+	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	
+	active_visualization = COORD_PARAL_VIZ;
+	
+	ParallelCoordinates();
+	
+	/*
+	paralCoordViz = new ParallelCoordinates();
+	paralCoordViz.create();
+	if(selection[0])
+		paralCoordViz.update(selection);*/
+	
 }
 
 function showDots()

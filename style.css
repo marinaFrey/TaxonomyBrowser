@@ -61,8 +61,8 @@ html .x-container-fluid.width {
 }
 
 text {
-  font-family: "Oswald",Helvetica,sans-serif;
-  font-size: 12px;
+  font-family: "Lucida Console", Monaco, monospace;/*"Oswald",Helvetica,sans-serif;*/
+  font-size: 15px;
   font-weight:400;
 }
 g:hover, g text:hover{
@@ -73,8 +73,9 @@ text[depth="0"] {
 }
 text.isCenter,text[depth="0"][root="0"] {
 /*  transform:rotate(0) !important;*/
-  font-family:"Oswald",Helvetica, sans-serif !important;
-  font-weight:700;
+  font-family:  "Lucida Console", Monaco, monospace; /*"Oswald",Helvetica, sans-serif !important;*/
+  font-size: 18px;
+  /*font-weight:700;*/
 }
 
 .benefitDetails {
@@ -88,6 +89,7 @@ text.isCenter,text[depth="0"][root="0"] {
 }
 svg {
   height:730px !important;
+  font: 10px sans-serif;
 }
 
 #tooltip {
@@ -146,5 +148,26 @@ div.tooltip {
 .axis text
 {
 	font-family: sans-serif;
+	text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 	font-size: 11px;
 }
+
+/* PARARELL COORDINATES */
+
+.background path {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke: steelblue;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+

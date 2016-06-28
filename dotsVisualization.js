@@ -4,7 +4,7 @@ function dotsVisualization()
 	var w = $("#sel_viz").width();
 	var circlePadding = 40;
 	var borderBarPadding = 7;
-	
+	var div;
 	var xScale;
 	var yScale;
 	var rScale;
@@ -25,6 +25,9 @@ function dotsVisualization()
 		
 		rScale = d3.scale.linear();
 		
+		div = d3.select("body").append("div")   
+			.attr("class", "tooltip")               
+			.style("opacity", 0);
 		
 		xAxis = d3.svg.axis();	
 		xAxis.orient("bottom")
@@ -112,9 +115,6 @@ function dotsVisualization()
 		xAxis.scale(xScale);
 		yAxis.scale(yScale);
 	
-		var div = d3.select("body").append("div")   
-			.attr("class", "tooltip")               
-			.style("opacity", 0);
 		
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")

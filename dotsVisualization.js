@@ -49,6 +49,15 @@ function dotsVisualization()
 		var yName = comboY.getSelectedOption();
 		var sizeName = comboSize.getSelectedOption();
 		
+		
+		if(filteredSelection[0] != "all")
+		{
+			dataset = [];
+			for (var i = 0; i < filteredSelection.length; i++)
+			{
+				dataset.push(selection[filteredSelection[i]]);
+			}
+		}
 
 		xScale.domain(d3.extent(dataset, function(d)
 		{   
@@ -240,6 +249,7 @@ function dotsVisualization()
 		svg_selected.append("text")
 			.attr("class", "x label")
 			.attr("text-anchor", "end")
+			.style("font-size",function(d){return "15px";})
 			.attr("x", w - 20)
 			.attr("y", h - circlePadding - 10)
 			.text(xName);
@@ -247,6 +257,7 @@ function dotsVisualization()
 		svg_selected.append("text")
 			.attr("class", "y label")
 			.attr("text-anchor", "end")
+			.style("font-size",function(d){return "15px";})
 			.attr("y", (circlePadding ) )
 			.attr("dy", ".75em")
 			.attr("transform", "rotate(-90)")

@@ -188,8 +188,9 @@ function updateShownVisualization()
 
 function updateShownVisualizationAndOptions()
 {
-	//showBars();
-	
+	var newOptionsList = generateMeasuresList();
+	updateFilterOptions(newOptionsList);
+	filteredSelection = ["all"];
 
 	selectedSpecimens();
 	switch(active_visualization)

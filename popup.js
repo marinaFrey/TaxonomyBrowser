@@ -44,9 +44,7 @@ function FilterPopup()
 		
 		infoLabel = document.getElementById("filters_info");
 		infoLabel.innerHTML = "";
-		
-		
-		
+
 		addButton=document.createElement("img");
 		addButton.setAttribute('src', 'images/add.png');
 		addButton.style.width= '64px';
@@ -78,6 +76,11 @@ function FilterPopup()
 	
 		comboOption.createFilterCombo("comboOption", function()
 		{
+			if(comboOption.getSelectedOption() == "exists" || comboOption.getSelectedOption() == "doesn't exist")
+				input.disabled = true;
+			else
+				input.disabled = false;
+			
             if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
             {
                 comboOption.setNumericDataType(true);
@@ -91,6 +94,7 @@ function FilterPopup()
 		comboOption.updateOptions(operationsListNumeric);
 
         input.type = "text";
+		input.disabled = true;
 		//infoLabel.insertBefore(input, addButton);
         infoLabel.appendChild(input);
         
@@ -289,13 +293,28 @@ function applyFilters()
             }
         }
     }
-         
+    /*     
     for (var i = 0; i < filteredSelection.length; i++)
     {
         console.log(selection[filteredSelection[i]]);
-    }
+    }*/
         
-        
+     selectedSpecimens();
+	showDots();	 
     $('#filterModal').modal('hide');
+}
+
+function updateFilterOptions(newOptions)
+{
+	for (var i = 0; i < filters.length; i++)
+	{
+		var measure = filters[i].comboMeasure.getSelectedOption();
+		var newIndex = newOptions.indexOf(measure);
+		filters[i].comboMeasure.updateOptions(newOptions);
+		if(newIndex != -1)
+			filters[i].comboMeasure.setSelectedOption(newIndex);
+		else
+			filters[i].comboMeasure.setSelectedOption(0);
+	}
 }
 

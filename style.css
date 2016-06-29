@@ -170,6 +170,11 @@ input {
 
 }
 
+input:disabled {
+	background:white;
+	border: white;
+}
+
 /* PARARELL COORDINATES */
 
 .background path {

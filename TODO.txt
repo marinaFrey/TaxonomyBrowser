@@ -4,7 +4,7 @@ TODO:
 		- adicionar opçao de dividir o espaço pra cada especie igualmente, independente do numero de especimes
 				
 	- filtrar specimens selecionados
-		- alterar opçoes quando alterar selecionados
+		- quando measure nao existe ver se mostra mensagem de erro ao lado ou o que
         - mudar opçoes quando selecionado measures de numeros ou strings
 		
 	- selected viz

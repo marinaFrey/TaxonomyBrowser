@@ -73,6 +73,11 @@ function ComboBox()
 		return combo.value;
 	}
 	
+	this.setSelectedOption = function(itemId)
+	{
+		combo.selectedIndex = itemId;
+	}
+	
 	this.hide = function()
 	{
 		combo.style.display = 'none';

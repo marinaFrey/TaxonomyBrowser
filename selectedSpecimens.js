@@ -29,24 +29,46 @@ groups.sort(function() {
   return .5 - Math.random();
 });
 
-for(var i = 0; i < selection.length; i++)
+if(filteredSelection[0] == "all")
 {
-	
-	if(selection[i].measures)
+	for(var i = 0; i < selection.length; i++)
 	{
-		var pos = groups.indexOf(selection[i].name);
-		//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
-		nodes.push(
+		
+		if(selection[i].measures)
 		{
-			radius: 5,
-			color: selection[i].color, 
-			cx: width / 2,
-			cy:  y(pos), 
-			specimen: selection[i]
-		});
+			var pos = groups.indexOf(selection[i].name);
+			//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
+			nodes.push(
+			{
+				radius: 5,
+				color: selection[i].color, 
+				cx: width / 2,
+				cy:  y(pos), 
+				specimen: selection[i]
+			});
+		}
+		
 	}
-	
 }
+else
+{
+	for (var i = 0; i < filteredSelection.length; i++)
+	{
+		var pos = groups.indexOf(selection[filteredSelection[i]].name);
+			//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
+			nodes.push(
+			{
+				radius: 5,
+				color: selection[filteredSelection[i]].color, 
+				cx: width / 2,
+				cy:  y(pos), 
+				specimen: selection[filteredSelection[i]]
+			});
+	}
+}
+
+
+
 
 svg_selected_specimens.selectAll("*").remove();
 

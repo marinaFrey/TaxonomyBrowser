@@ -32,8 +32,8 @@ function FilterPopup()
 	var infoLabel;
 	var addButton;
 	var measuresList;
-	var operationsListNumeric = ["exists","is","is not","is smaller than","is bigger than","is smaller or equal to","is bigger or equal to"];
-	var operationsListString = ["exists","is", "is not"]
+	var operationsListNumeric = ["exists","doesn't exist","is","is not","is smaller than","is bigger than","is smaller or equal to","is bigger or equal to"];
+	var operationsListString = ["exists","doesn't exist","is", "is not"]
 	var ptr = this;
 	
 	this.create = function()
@@ -51,7 +51,7 @@ function FilterPopup()
 		addButton.setAttribute('src', 'images/add.png');
 		addButton.style.width= '64px';
 		addButton.style.width= '64px';
-		infoLabel.appendChild(addButton);
+		document.getElementById("filters_add_button").appendChild(addButton);
 		addButton.onclick = function()
 		{
 			ptr.addFilter();
@@ -64,26 +64,36 @@ function FilterPopup()
 	{
 
 		var comboMeasure = new ComboBox();
-		comboMeasure.createFilterCombo("comboMeasure", addButton, function()
+        var comboOption = new ComboBox();
+        var input = document.createElement("input");
+        var oImg=document.createElement("img");
+        var br = document.createElement("br");
+        
+		comboMeasure.createFilterCombo("comboMeasure", function()
 		{
+            
 			console.log("hello world");
 		});
 		comboMeasure.updateOptions(generateMeasuresList());
-		
-		var comboOption = new ComboBox();
-		comboOption.createFilterCombo("comboOption", addButton, function()
+	
+		comboOption.createFilterCombo("comboOption", function()
 		{
-			console.log("hello world");
+            if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
+            {
+                comboOption.setNumericDataType(true);
+            }
+            else
+            {
+                comboOption.setNumericDataType(false);
+            }
+			console.log("options");
 		});
 		comboOption.updateOptions(operationsListNumeric);
-		
-		var input = document.createElement("input");
+
         input.type = "text";
-		infoLabel.insertBefore(input, addButton);
-		
-		var br = document.createElement("br");
-		
-		var oImg=document.createElement("img");
+		//infoLabel.insertBefore(input, addButton);
+        infoLabel.appendChild(input);
+        
 		oImg.setAttribute('src', 'images/remove.png');
 		oImg.style.width= '32px';
 		oImg.style.width= '32px';
@@ -91,10 +101,12 @@ function FilterPopup()
 		{
 			ptr.removeFilter(comboMeasure, comboOption, input, br, this);
 		};
-		infoLabel.insertBefore(oImg, addButton);
+		//infoLabel.insertBefore(oImg, addButton);
+		infoLabel.appendChild(oImg);
 		
 		
-		infoLabel.insertBefore(br, addButton);
+		//infoLabel.insertBefore(br, addButton);
+		infoLabel.appendChild(br);
 		
 		filters.push({comboMeasure: comboMeasure, comboOption: comboOption, input: input});
 	}
@@ -114,5 +126,176 @@ function FilterPopup()
 	{
 		$('#filterModal').modal('show');
 	}
+}
+
+function applyFilters()
+{
+    filteredSelection = [];
+    
+    for (var i = 0; i < selection.length; i++)
+    {
+        if(selection[i].measures)
+        {
+            var accept = true;
+            for (var k = 0; k < filters.length && accept; k++)
+            {
+                var measure = filters[k].comboMeasure.getSelectedOption();
+                var option = filters[k].comboOption.getSelectedOption();
+                var value = filters[k].input.value;
+                
+                switch(option)
+                {
+                    case "exists":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if(selection[i].measures[j].name == measure) 
+                            {
+                                exists = true;
+                            }  
+                        }
+                        if(exists == false)
+                            accept = false;
+                        
+                    break;
+                    case "doesn't exist":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if(selection[i].measures[j].name == measure) 
+                            {
+                                exists = true;
+                            }  
+                        }
+                        if(exists == true)
+                            accept = false;
+                    
+                    break;
+                    case "is":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if(comboOption.isNum)
+                            {
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }  
+                            }
+                            else
+                            {
+                                if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                {
+                                    exists = true;
+                                }  
+                            }
+                            
+                        }
+                        if(exists == false)
+                            accept = false;
+                    
+                    break;
+                    
+                    case "is not":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if(comboOption.isNum)
+                            {
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }  
+                            }
+                            else
+                            {
+                                if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                {
+                                    exists = true;
+                                }  
+                            }
+                            
+                        }
+                        if(exists == true)
+                            accept = false;
+                    
+                    break;
+                    case "is smaller than":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) < parseFloat(value))) 
+                            {
+                                exists = true;
+                            }         
+                        }
+                        if(exists == false)
+                            accept = false;
+                    
+                    break;
+                    case "is bigger than":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) > parseFloat(value))) 
+                            {
+                                exists = true;
+                            }         
+                        }
+                        if(exists == false)
+                            accept = false;
+                        
+                    break;
+                    case "is smaller or equal to":
+                    
+                        var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) <= parseFloat(value))) 
+                            {
+                                exists = true;
+                            }         
+                        }
+                        if(exists == false)
+                            accept = false;
+                    
+                    break;
+                    case "is bigger or equal to":
+                    
+                    var exists = false;
+                        for(var j = 0; j < selection[i].measures.length; j++)
+                        {
+                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) >= parseFloat(value))) 
+                            {
+                                exists = true;
+                            }         
+                        }
+                        if(exists == false)
+                            accept = false;
+                    
+                    break;
+                }
+                
+            }
+            if(accept == true)
+            {
+                filteredSelection.push(i);
+            }
+        }
+    }
+         
+    for (var i = 0; i < filteredSelection.length; i++)
+    {
+        console.log(selection[filteredSelection[i]]);
+    }
+        
+        
+    $('#filterModal').modal('hide');
 }
 

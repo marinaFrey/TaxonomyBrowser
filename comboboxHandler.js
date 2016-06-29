@@ -7,6 +7,7 @@ function ComboBox()
 	var txtLabel;
 	var id;
 	var type;
+    var isNum;
 	
 	this.create = function(name, combo_id)
 	{
@@ -30,14 +31,15 @@ function ComboBox()
 		
 	}
 	
-	this.createFilterCombo = function(combo_id, addBtn, clickFunction)
+	this.createFilterCombo = function(combo_id, clickFunction)
 	{
 		id = combo_id;
 
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
 		var parent = document.getElementById("filters_info")
-		parent.insertBefore(combo, addBtn);
+		//parent.insertBefore(combo, addBtn);
+        parent.appendChild(combo);
 		combo.addEventListener("click", clickFunction);
 		
 		type = FILTER_COMBO;
@@ -90,6 +92,16 @@ function ComboBox()
 			parent.removeChild(txtLabel);
 		parent.removeChild(combo);
 	}
+    
+    this.setNumericDataType = function(dataType)
+    {
+        isNum = dataType;
+    }
+    
+    this.isNumeric = function()
+    {
+        return isNum;
+    }
 }
 
 function initializeComboboxes()

@@ -4,8 +4,8 @@ TODO:
 		- adicionar opçao de dividir o espaço pra cada especie igualmente, independente do numero de especimes
 				
 	- filtrar specimens selecionados
-		- criar janela de filtragem
-		- aplicar os filtros nos selecionados
+		- alterar opçoes quando alterar selecionados
+        - mudar opçoes quando selecionado measures de numeros ou strings
 		
 	- selected viz
 		- fazer nodos aperecerem proximo ao spawn correto

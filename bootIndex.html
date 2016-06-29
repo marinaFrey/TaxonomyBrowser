@@ -158,11 +158,12 @@
 				<h4 class="modal-title" id="filterModalLabel"></h4>
             </div>
             <div class="modal-body" id="info-body">
-				<div id="filters_info"></div>
+				<div id="filters_info" style="text-align: center"></div>
+				<div id="filters_add_button" style="text-align: left"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Apply Filters</button>
+                <button type="button" class="btn btn-primary" onClick="applyFilters();">Apply Filters</button>
         </div>
     </div>
   </div>
@@ -184,6 +185,7 @@
 	
     var selection = [];
 	var filters = [];
+    var filteredSelection = [];
 	
 	var svg_selected = d3.select("#sel_viz").append("svg")
             .attr("width", $("#sel_viz").width())

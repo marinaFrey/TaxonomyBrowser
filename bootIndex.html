@@ -132,7 +132,7 @@
 	<img name="removeButton" src="images/remove.png" width="32" height="32" border="0" alt="javascript button" ><!--onClick="return removeNode();">-->
 </div>
 
-<!-- POPUP MODAL -->
+<!-- POPUP MODAL SPECIMENS-->
 <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -145,6 +145,24 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP MODAL FILTERS-->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" id="hder">
+				<h4 class="modal-title" id="filterModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="info-body">
+				<div id="filters_info"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Apply Filters</button>
         </div>
     </div>
   </div>
@@ -165,6 +183,7 @@
 	var combo6;
 	
     var selection = [];
+	var filters = [];
 	
 	var svg_selected = d3.select("#sel_viz").append("svg")
             .attr("width", $("#sel_viz").width())
@@ -180,6 +199,9 @@
     sunburst.create();
 
     initializeComboboxes();
+	
+	var filterPopup = new FilterPopup();
+	filterPopup.create();
 	
 	document.getElementById("maps").style = "display:none;";
 	

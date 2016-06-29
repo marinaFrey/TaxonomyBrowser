@@ -15,7 +15,8 @@ for(var i = 0; i < selection.length; i++)
 {
 	if(selection[i].children && selection[i].children[0].measures)
 	{
-		groups.push({name:selection[i].name, num_children: selection[i].children.length});
+		//groups.push({name:selection[i].name, num_children: selection[i].children.length});
+		groups.push(selection[i].name);
 		m++;
 	}
 }
@@ -33,9 +34,8 @@ for(var i = 0; i < selection.length; i++)
 	
 	if(selection[i].measures)
 	{
-		//var pos = groups.indexOf(selection[i].name);
-		var pos =groups.map(function(e) { return e.name; }).indexOf(selection[i].name);
-		
+		var pos = groups.indexOf(selection[i].name);
+		//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
 		nodes.push(
 		{
 			radius: 5,
@@ -47,7 +47,6 @@ for(var i = 0; i < selection.length; i++)
 	}
 	
 }
-
 
 svg_selected_specimens.selectAll("*").remove();
 

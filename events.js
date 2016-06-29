@@ -39,7 +39,7 @@ function removeNode()
 
 function openFilters()
 {
-    makeFilterPopup();
+    filterPopup.show();
 }
 
 /* VISUALIZATION EVENTS */

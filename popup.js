@@ -27,30 +27,92 @@ function makeSpecimenPopup(specimen)
 	$('#basicModal').modal('show');
 }
 
-function makeFilterPopup()
+function FilterPopup()
 {
-    var txtLabel = document.getElementById("myModalLabel");
-    txtLabel.className = "modal-title";
-	txtLabel.innerHTML = "<h1> Filters </h1>";
-    
-    var infoLabel = document.getElementById("info_text");
-    infoLabel.innerHTML = "";
-    
-    combo = document.createElement("SELECT");
-    combo.setAttribute("id", "sel");
-    infoLabel.appendChild(combo);
-    
-    var oImg=document.createElement("img");
-    oImg.setAttribute('src', 'images/remove.png');
-    oImg.style.width= '32px';
-    oImg.style.width= '32px';
-    infoLabel.appendChild(oImg);
-    
-    var oImg=document.createElement("img");
-    oImg.setAttribute('src', 'images/add.png');
-    oImg.style.width= '32px';
-    oImg.style.width= '32px';
-    infoLabel.appendChild(oImg);
-    
-    $('#basicModal').modal('show');
+	var infoLabel;
+	var addButton;
+	var measuresList;
+	var operationsListNumeric = ["exists","is","is not","is smaller than","is bigger than","is smaller or equal to","is bigger or equal to"];
+	var operationsListString = ["exists","is", "is not"]
+	var ptr = this;
+	
+	this.create = function()
+	{
+		var txtLabel = document.getElementById("filterModalLabel");
+		txtLabel.className = "modal-title";
+		txtLabel.innerHTML = "<h1> Filters </h1>";
+		
+		infoLabel = document.getElementById("filters_info");
+		infoLabel.innerHTML = "";
+		
+		
+		
+		addButton=document.createElement("img");
+		addButton.setAttribute('src', 'images/add.png');
+		addButton.style.width= '64px';
+		addButton.style.width= '64px';
+		infoLabel.appendChild(addButton);
+		addButton.onclick = function()
+		{
+			ptr.addFilter();
+		};
+		
+		
+	}
+	
+	this.addFilter = function()
+	{
+
+		var comboMeasure = new ComboBox();
+		comboMeasure.createFilterCombo("comboMeasure", addButton, function()
+		{
+			console.log("hello world");
+		});
+		comboMeasure.updateOptions(generateMeasuresList());
+		
+		var comboOption = new ComboBox();
+		comboOption.createFilterCombo("comboOption", addButton, function()
+		{
+			console.log("hello world");
+		});
+		comboOption.updateOptions(operationsListNumeric);
+		
+		var input = document.createElement("input");
+        input.type = "text";
+		infoLabel.insertBefore(input, addButton);
+		
+		var br = document.createElement("br");
+		
+		var oImg=document.createElement("img");
+		oImg.setAttribute('src', 'images/remove.png');
+		oImg.style.width= '32px';
+		oImg.style.width= '32px';
+		oImg.onclick = function()
+		{
+			ptr.removeFilter(comboMeasure, comboOption, input, br, this);
+		};
+		infoLabel.insertBefore(oImg, addButton);
+		
+		
+		infoLabel.insertBefore(br, addButton);
+		
+		filters.push({comboMeasure: comboMeasure, comboOption: comboOption, input: input});
+	}
+	
+	this.removeFilter = function(comboM, comboO, inputLine, br, rmvButton)
+	{
+		infoLabel.removeChild(rmvButton);
+		comboM.remove("filters_info");
+		comboO.remove("filters_info");
+		infoLabel.removeChild(inputLine);
+		infoLabel.removeChild(br);
+		filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(comboM),1);
+		
+	}
+	
+	this.show = function()
+	{
+		$('#filterModal').modal('show');
+	}
 }
+

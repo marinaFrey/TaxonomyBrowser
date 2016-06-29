@@ -1,9 +1,12 @@
+var VIZ_COMBO = 0;
+var FILTER_COMBO = 1;
 
 function ComboBox()
 {
 	var combo;
 	var txtLabel;
 	var id;
+	var type;
 	
 	this.create = function(name, combo_id)
 	{
@@ -18,11 +21,26 @@ function ComboBox()
 		combo.setAttribute("id", id);
 		document.getElementById("comboboxes").appendChild(combo);
 		
+		type = VIZ_COMBO;
+		
 		combo.addEventListener("click", function()
 		{
 			updateShownVisualization();
 		});
 		
+	}
+	
+	this.createFilterCombo = function(combo_id, addBtn, clickFunction)
+	{
+		id = combo_id;
+
+		combo = document.createElement("SELECT");
+		combo.setAttribute("id", id);
+		var parent = document.getElementById("filters_info")
+		parent.insertBefore(combo, addBtn);
+		combo.addEventListener("click", clickFunction);
+		
+		type = FILTER_COMBO;
 	}
 	
 	this.clearOptions = function()
@@ -65,10 +83,11 @@ function ComboBox()
 		txtLabel.style.display = 'block';
 	}
 	
-	this.remove = function()
+	this.remove = function(parent)
 	{
-		var parent = document.getElementById("comboboxes");
-		parent.removeChild(txtLabel);
+		var parent = document.getElementById(parent);
+		if(type == VIZ_COMBO)
+			parent.removeChild(txtLabel);
 		parent.removeChild(combo);
 	}
 }

@@ -33,7 +33,7 @@ function FilterPopup()
 	var addButton;
 	var measuresList;
 	var operationsListNumeric = ["exists","doesn't exist","is","is not","is smaller than","is bigger than","is smaller or equal to","is bigger or equal to"];
-	var operationsListString = ["exists","doesn't exist","is", "is not"]
+	var operationsListString = ["exists","doesn't exist","is", "is not"];
 	var ptr = this;
 	
 	this.create = function()
@@ -67,12 +67,8 @@ function FilterPopup()
         var oImg=document.createElement("img");
         var br = document.createElement("br");
         
-		comboMeasure.createFilterCombo("comboMeasure", function()
-		{
-            
-			console.log("hello world");
-		});
-		comboMeasure.updateOptions(generateMeasuresList());
+		comboMeasure.createFilterCombo("comboMeasure", function(){});
+		comboMeasure.updateOptions(["Collection ID", "Collected by", "Data", "Latitude", "Longitude"].concat(generateMeasuresList()));
 	
 		comboOption.createFilterCombo("comboOption", function()
 		{
@@ -82,19 +78,28 @@ function FilterPopup()
 				input.disabled = false;
 			
             if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
-            {
                 comboOption.setNumericDataType(true);
-            }
             else
-            {
                 comboOption.setNumericDataType(false);
-            }
-			console.log("options");
 		});
 		comboOption.updateOptions(operationsListNumeric);
 
         input.type = "text";
 		input.disabled = true;
+		input.addEventListener("input", function()  // ou "change" se soh chama quando troca de contexto
+		{
+			if(comboOption.isNumeric())
+			{
+				if(!parseFloat(input.value))
+				{
+					input.style.borderColor="red";
+				}
+				else
+				{
+					input.style.borderColor="#ddd";
+				}
+			}
+		});
 		//infoLabel.insertBefore(input, addButton);
         infoLabel.appendChild(input);
         
@@ -146,86 +151,284 @@ function applyFilters()
                 var measure = filters[k].comboMeasure.getSelectedOption();
                 var option = filters[k].comboOption.getSelectedOption();
                 var value = filters[k].input.value;
-                
+
+				
                 switch(option)
                 {
                     case "exists":
                     
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
-                        {
-                            if(selection[i].measures[j].name == measure) 
-                            {
-                                exists = true;
-                            }  
-                        }
-                        if(exists == false)
-                            accept = false;
+						switch(measure)
+						{
+							case "Collection ID":
+								if(selection[i].collection_id == "") 
+								{
+									accept = false;
+								}  
+							break;
+							
+							case "Collected by":
+							
+								if(selection[i].collected_by == "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Data":
+							
+								if(selection[i].collected_data == "") 
+								{
+									accept = false;
+								}  
+								
+							break;
+							
+							case "Latitude":
+							
+								if(selection[i].latitude == "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Longitude":
+							
+								if(selection[i].longitude == "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							default:
+								var exists = false;
+								for(var j = 0; j < selection[i].measures.length; j++)
+								{
+									if(selection[i].measures[j].name == measure) 
+									{
+										exists = true;
+									}  
+								}
+								if(exists == false)
+									accept = false;
+							break;
+						}
                         
                     break;
                     case "doesn't exist":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
-                        {
-                            if(selection[i].measures[j].name == measure) 
-                            {
-                                exists = true;
-                            }  
-                        }
-                        if(exists == true)
-                            accept = false;
-                    
+						switch(measure)
+						{
+							case "Collection ID":
+								if(selection[i].collection_id != "") 
+								{
+									accept = false;
+								}  
+							break;
+							
+							case "Collected by":
+							
+								if(selection[i].collected_by != "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Data":
+							
+								if(selection[i].collected_data != "") 
+								{
+									accept = false;
+								}  
+								
+							break;
+							
+							case "Latitude":
+							
+								if(selection[i].latitude != "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Longitude":
+							
+								if(selection[i].longitude != "") 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							default:
+								
+								var exists = false;
+								for(var j = 0; j < selection[i].measures.length; j++)
+								{
+									if(selection[i].measures[j].name == measure) 
+									{
+										exists = true;
+									}  
+								}
+								if(exists == true)
+									accept = false;
+								
+							break;
+						}
+ 
                     break;
                     case "is":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
-                        {
-                            if(comboOption.isNum)
-                            {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }  
-                            }
-                            else
-                            {
-                                if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
-                                {
-                                    exists = true;
-                                }  
-                            }
-                            
-                        }
-                        if(exists == false)
-                            accept = false;
-                    
+					
+						switch(measure)
+						{
+							case "Collection ID":
+								if(selection[i].collection_id != value) 
+								{
+									accept = false;
+								}  
+							break;
+							
+							case "Collected by":
+							
+								if(selection[i].collected_by !=  value) 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Data":
+							
+								if(selection[i].collected_data !=  value) 
+								{
+									accept = false;
+								}  
+								
+							break;
+							
+							case "Latitude":
+							
+								if(selection[i].latitude !=  value) 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Longitude":
+							
+								if(selection[i].longitude !=  value)  
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							default:
+								
+								var exists = false;
+								for(var j = 0; j < selection[i].measures.length; j++)
+								{
+									if(comboOption.isNum)
+									{
+										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+										{
+											exists = true;
+										}  
+									}
+									else
+									{
+										if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+										{
+											exists = true;
+										}  
+									}
+									
+								}
+								if(exists == false)
+									accept = false;
+
+							break;
+						}
+                        
                     break;
                     
                     case "is not":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
-                        {
-                            if(comboOption.isNum)
-                            {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }  
-                            }
-                            else
-                            {
-                                if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
-                                {
-                                    exists = true;
-                                }  
-                            }
-                            
-                        }
-                        if(exists == true)
-                            accept = false;
+						switch(measure)
+						{
+							case "Collection ID":
+								if(selection[i].collection_id == value) 
+								{
+									accept = false;
+								}  
+							break;
+							
+							case "Collected by":
+							
+								if(selection[i].collected_by ==  value) 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Data":
+							
+								if(selection[i].collected_data ==  value) 
+								{
+									accept = false;
+								}  
+								
+							break;
+							
+							case "Latitude":
+							
+								if(selection[i].latitude ==  value) 
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							case "Longitude":
+							
+								if(selection[i].longitude ==  value)  
+								{
+									accept = false;
+								}  
+							
+							break;
+							
+							default:
+								
+								var exists = false;
+								for(var j = 0; j < selection[i].measures.length; j++)
+								{
+									if(comboOption.isNum)
+									{
+										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+										{
+											exists = true;
+										}  
+									}
+									else
+									{
+										if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+										{
+											exists = true;
+										}  
+									}
+									
+								}
+								if(exists == true)
+									accept = false;
+
+							break;
+						}
+                        
                     
                     break;
                     case "is smaller than":
@@ -299,8 +502,7 @@ function applyFilters()
         console.log(selection[filteredSelection[i]]);
     }*/
         
-     selectedSpecimens();
-	showDots();	 
+	updateFromFiltering();
     $('#filterModal').modal('hide');
 }
 

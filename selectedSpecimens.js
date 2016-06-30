@@ -138,7 +138,8 @@ function gravity(alpha)
 }
 
 // Resolve collisions between nodes.
-function collide(alpha) {
+function collide(alpha) 
+{
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
     var r = d.radius + maxRadius + padding,
@@ -164,7 +165,7 @@ function collide(alpha) {
     });
   };
 }
-
+/*
 function update() 
 {
 
@@ -192,6 +193,5 @@ function update()
 
     // Restart the force layout.
     force.start();
-}
-
+}*/
 }

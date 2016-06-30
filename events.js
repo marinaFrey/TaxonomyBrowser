@@ -46,7 +46,7 @@ function openFilters()
 
 function showBars()
 {
-	document.images["bars"].style = " border: 4px solid yellow;border-radius: 38px;" 
+	//document.images["bars"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -68,7 +68,7 @@ function showBars()
 
 function showParallelCoord()
 {
-	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
@@ -108,7 +108,7 @@ function showParallelCoord()
 
 function showDots()
 {
-	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -118,6 +118,7 @@ function showDots()
 	
 	var list = generateNumericMeasuresList();
 	
+
     comboX.updateOptions(list);
     comboY.updateOptions(list);
     comboSize.updateOptions(list);
@@ -132,7 +133,7 @@ function showDots()
 
 function showMap()
 {
-	document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -140,9 +141,12 @@ function showMap()
 	
 	active_visualization = MAPS_VIZ;
 	
-    comboX.hide();
-    comboY.hide();
-    comboSize.hide();
+    //comboX.hide();
+    //comboY.hide();
+    //comboSize.hide();
+	comboX.updateOptions([]);
+    comboY.updateOptions([]);
+    comboSize.updateOptions([]);
     comboColor.updateOptions(["specimen"]);
     
 	mapsViz = new mapVisualization;
@@ -155,13 +159,12 @@ function showMap()
 
 function updateShownVisualization()
 {
-	//selViz.update(selection);
+	
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
 
-			selViz.update(selection);
-            //showBars();
+			//selViz.update(selection);
 		break;
 		
 		case SCATTERPLOT_VIZ:
@@ -172,23 +175,49 @@ function updateShownVisualization()
 		
 		break;
 		
-		case DOTS_VIZ:
-            
+		case DOTS_VIZ:    
 			dotsViz.update(selection);
-            //showDots();
 		break;
 		
 		case MAPS_VIZ:
 			mapsViz.update(selection);
-            //showMap();
 		break;
 	}
 	
 }
 
+function updateFromFiltering()
+{
+	selectedSpecimens();
+	
+	switch(active_visualization)
+	{
+		case SELECTED_VIZ:
+
+			//selViz.update(selection);
+		break;
+		
+		case SCATTERPLOT_VIZ:
+		
+		break;
+		
+		case COORD_PARAL_VIZ:
+		
+		break;
+		
+		case DOTS_VIZ:    
+			showDots();
+		break;
+		
+		case MAPS_VIZ:
+			showMap();
+		break;
+	}
+}
+
 function updateShownVisualizationAndOptions()
 {
-	var newOptionsList = generateMeasuresList();
+	var newOptionsList = ["Collection ID", "Collected by", "Data", "Latitude", "Longitude"].concat(generateMeasuresList())
 	updateFilterOptions(newOptionsList);
 	filteredSelection = ["all"];
 

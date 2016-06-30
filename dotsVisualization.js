@@ -221,7 +221,9 @@ function dotsVisualization()
 			.on("click", function(d)
 			{
 				makeSpecimenPopup(d);
-			});
+			})
+			
+			;
 			
 			/*
 		svg2.selectAll("text")

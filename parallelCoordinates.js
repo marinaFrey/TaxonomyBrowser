@@ -14,17 +14,164 @@ function ParallelCoordinates()
 		foreground;
 
 	svg_selected.selectAll("*").remove();
+    document.getElementById("maps").style = "display:none;";
+    document.getElementById("sel_viz").style = "display:block;";
 	
 	svg_selected
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		
 	var x1Name = combo1.getSelectedOption();
+    var x1Value;	
 	var x2Name = combo2.getSelectedOption();
+    var x2Value;
 	var x3Name = combo3.getSelectedOption();
+    var x3Value;
 	var x4Name = combo4.getSelectedOption();
+    var x4Value;
 	var x5Name = combo5.getSelectedOption();
+    var x5Value;
 	var x6Name = combo6.getSelectedOption();
-	
+    var x6Value;
+    
+    var dataset = [];
+    
+    if(filteredSelection[0] != "all")
+    {
+        for (var i = 0; i < filteredSelection.length; i++)
+        {
+            if(selection[filteredSelection[i]].measures)
+            {
+                x1Value = false;
+                x2Value = false;
+                x3Value = false;
+                x4Value = false;
+                x5Value = false;
+                x6Value = false;
+                for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+                {
+                    var n = selection[filteredSelection[i]].measures[j].name
+                    if( n == x1Name)
+                        x1Value = selection[filteredSelection[i]].measures[j].value;
+
+                    if( n == x2Name)
+                        x2Value = selection[filteredSelection[i]].measures[j].value;
+                        
+                    if( n == x3Name)
+                        x3Value = selection[filteredSelection[i]].measures[j].value;
+                        
+                    if( n == x4Name)
+                        x4Value = selection[filteredSelection[i]].measures[j].value;
+                        
+                    if( n == x5Name)
+                        x5Value = selection[filteredSelection[i]].measures[j].value;
+                        
+                    if( n == x5Name)
+                        x6Value = selection[filteredSelection[i]].measures[j].value;                   
+                    
+                }
+                if((x1Value && x2Value) && ((x3Value && x4Value) && (x5Value && x6Value)))
+                {
+                    dataset.push({x1: x1Value, x2: x2Value, x3: x3Value, x4: x4Value, x5: x5Value, x6: x6Value, specimen: selection[filteredSelection[i]]});
+                }
+            }
+        }
+    }
+    else
+    {
+        for (var i = 0; i < selection.length; i++)
+        {
+            if(selection[i].measures)
+            {
+                x1Value = false;
+                x2Value = false;
+                x3Value = false;
+                x4Value = false;
+                x5Value = false;
+                x6Value = false;
+                for(var j = 0; j < selection[i].measures.length; j++)
+                {
+                    var n = selection[i].measures[j].name
+                    if( n == x1Name)
+                        x1Value = selection[i].measures[j].value;
+
+                    if( n == x2Name)
+                        x2Value = selection[i].measures[j].value;
+                        
+                    if( n == x3Name)
+                        x3Value = selection[i].measures[j].value;
+                        
+                    if( n == x4Name)
+                        x4Value = selection[i].measures[j].value;
+                        
+                    if( n == x5Name)
+                        x5Value = selection[i].measures[j].value;
+                        
+                    if( n == x5Name)
+                        x6Value = selection[i].measures[j].value;                   
+                    
+                }
+                if((x1Value && x2Value) && ((x3Value && x4Value) && (x5Value && x6Value)))
+                {
+                    dataset.push({x1: x1Value, x2: x2Value, x3: x3Value, x4: x4Value, x5: x5Value, x6: x6Value, specimen: selection[i]});
+                }
+            }
+        }
+    }
+    
+    console.log(dataset);
+    
+    
+    // Create a scale and brush for each trait.
+
+    y[0] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x1); }))
+        .range([height, 0]);
+
+    y[0].brush = d3.svg.brush()
+        .y(y[0])
+        .on("brush", brush);
+        
+    y[1] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x2); }))
+        .range([height, 0]);
+
+    y[1].brush = d3.svg.brush()
+        .y(y[1])
+        .on("brush", brush);
+        
+    y[2] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x3); }))
+        .range([height, 0]);
+
+    y[2].brush = d3.svg.brush()
+        .y(y[2])
+        .on("brush", brush);
+
+	y[3] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x4); }))
+        .range([height, 0]);
+
+    y[3].brush = d3.svg.brush()
+        .y(y[3])
+        .on("brush", brush);
+    
+    y[4] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x5); }))
+        .range([height, 0]);
+
+    y[4].brush = d3.svg.brush()
+        .y(y[4])
+        .on("brush", brush);
+    
+    y[5] = d3.scale.linear()
+        .domain(d3.extent(dataset, function(p) { return parseFloat(p.x6); }))
+        .range([height, 0]);
+
+    y[5].brush = d3.svg.brush()
+        .y(y[5])
+        .on("brush", brush);
+
+     
 	d3.csv("iris.csv", function(error, cars) 
 	{
 

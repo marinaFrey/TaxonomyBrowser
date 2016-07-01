@@ -109,8 +109,8 @@ function ComboBox()
 	
 	this.show = function()
 	{
-		combo.style.display = 'block';
-		txtLabel.style.display = 'block';
+		combo.style.display = 'inline';
+		txtLabel.style.display = 'inline';
 	}
 	
 	this.remove = function(parent)
@@ -168,6 +168,7 @@ function MultipleComboboxes()
 	{
 		combos[comboNumber] = new ComboBox();
 		combos[comboNumber].createBefore("X"+(comboNumber+1),"mcombo"+(comboNumber+1), addButton); 		
+        combos[comboNumber].updateOptions(generateNumericMeasuresList());
 		comboNumber++;
 		
 		if(comboNumber == 6)
@@ -222,7 +223,7 @@ function MultipleComboboxes()
 		{
 			combos[i].show();
 		}
-		addButton.style.display = 'block';
+		addButton.style.display = 'inline';
 	}
 	
 }

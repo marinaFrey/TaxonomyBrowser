@@ -99,7 +99,7 @@ function ParallelCoordinates()
 		y[dimensions[i]] = d3.scale.linear()
 			.domain(d3.extent(dataset, function(p) { return parseFloat(p.values[i]); }))
 			.range([height, 0]);
-/*
+        /*
 		y[dimensions[i]].brush = d3.svg.brush()
 			.y(y[i])
 			.on("brush", brush);*/

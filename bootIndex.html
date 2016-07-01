@@ -115,7 +115,7 @@
     <div class="col-sm-6" style="background-color:lavenderblush;"></div>
     <div class="col-sm-6" style="text-align:center">
 		<!--<img name="bars" src="images/bars.png" width="180" height="140" border="0" alt="javascript button" onClick="return showBars();"style= " border: 4px solid yellow;border-radius: 38px;" >-->
-        <img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >
+        <!--<img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >-->
 		<img name="coord" src="images/coord.png" width="180" height="140" border="0" alt="javascript button" onClick="return showParallelCoord();"style=" border: 4px solid #6D6D6D;border-radius: 38px;"  >
 		<img name="dots" src="images/bullets.png" width="180" height="140" border="0" alt="javascript button" onClick="return showDots();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >
 		<img name="map" src="images/map.png" width="180" height="140" border="0" alt="javascript button" onClick="return showMap();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >
@@ -198,14 +198,13 @@
 	
 	var multipleCombos = new MultipleComboboxes();
 	multipleCombos.initialize();
-	//multipleCombos.hide();
+	multipleCombos.hide();
 	
 	var filterPopup = new FilterPopup();
 	filterPopup.create();
 	
 	document.getElementById("maps").style = "display:none;";
-	
-    //showBars();
+
     //updateShownVisualization();
     //var specimensViz = new specimensVisualization;
     //specimensViz.create();

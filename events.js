@@ -47,7 +47,7 @@ function openFilters()
 function showBars()
 {
 	//document.images["bars"].style = " border: 4px solid yellow;border-radius: 38px;" 
-	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -69,22 +69,22 @@ function showBars()
 function showParallelCoord()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
     
 	active_visualization = COORD_PARAL_VIZ;
-	/*
+	
 	comboX.hide();
     comboY.hide();
     comboSize.hide();
-    comboColor.hide();*/
+    comboColor.hide();
 	
 	var list = generateNumericMeasuresList();
 	
 	multipleCombos.updateOptions(list);
-	//multipleCombos.show();
+	multipleCombos.show();
 
 	ParallelCoordinates();
 	
@@ -99,16 +99,21 @@ function showParallelCoord()
 function showDots()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	
 	active_visualization = DOTS_VIZ;
 	
+    multipleCombos.hide();
+    comboX.show();
+    comboY.show();
+    comboSize.show();
+    comboColor.show();
+    
 	var list = generateNumericMeasuresList();
 	
-
     comboX.updateOptions(list);
     comboY.updateOptions(list);
     comboSize.updateOptions(list);
@@ -124,16 +129,19 @@ function showDots()
 function showMap()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+	//document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["dots"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	
 	active_visualization = MAPS_VIZ;
 	
-    //comboX.hide();
-    //comboY.hide();
-    //comboSize.hide();
+    multipleCombos.hide();
+    comboX.hide();
+    comboY.hide();
+    comboSize.hide();
+    comboColor.show();
+    
 	comboX.updateOptions([]);
     comboY.updateOptions([]);
     comboSize.updateOptions([]);
@@ -153,12 +161,10 @@ function updateShownVisualization()
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
-
 			//selViz.update(selection);
 		break;
 		
-		case SCATTERPLOT_VIZ:
-		
+		case SCATTERPLOT_VIZ:	
 		break;
 		
 		case COORD_PARAL_VIZ:
@@ -185,7 +191,6 @@ function updateFromFiltering()
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
-
 			//selViz.update(selection);
 		break;
 		
@@ -217,25 +222,21 @@ function updateShownVisualizationAndOptions()
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
-
             showBars();
 		break;
 		
-		case SCATTERPLOT_VIZ:
-		
+		case SCATTERPLOT_VIZ:		
 		break;
 		
 		case COORD_PARAL_VIZ:
-		
+            showParallelCoord();          
 		break;
 		
 		case DOTS_VIZ:
-
             showDots();
 		break;
 		
 		case MAPS_VIZ:
-
             showMap();
 		break;
 	}

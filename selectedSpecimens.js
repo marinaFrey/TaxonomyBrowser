@@ -110,10 +110,10 @@ var circle = svg_selected_specimens.selectAll("circle")
 	.call(force.drag);
 	
 circle.transition()
-    .duration(750)
-    .delay(function(d, i) { return i * 5; })
+    .duration(4000)
+    .delay(function(d, i) { return 5; })
     .attrTween("r", function(d) {
-      var i = d3.interpolate(0, d.radius);
+      var i = d3.interpolate(d.radius/2, d.radius);
       return function(t) { return d.radius = i(t); };
     });
 	

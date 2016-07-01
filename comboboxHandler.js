@@ -79,15 +79,21 @@ function ComboBox()
 	
 	this.updateOptions = function(optionList)
 	{
+        var newIndex = optionList.map(function(e) { return e.name; }).indexOf(this.getSelectedOption());
 		this.clearOptions();
 		for (var i = 0; i < optionList.length; i++)
 		{
 			var opt = document.createElement("option");
 			//opt.setAttribute("value", "volvocar");
-			var t = document.createTextNode(optionList[i]);
+			var t = document.createTextNode(optionList[i].name);
 			opt.appendChild(t);
 			combo.appendChild(opt);
+            this.setNumericDataType(optionList[i].isNum);
 		}
+        if(newIndex != -1)
+			this.setSelectedOption(newIndex);
+		else
+			this.setSelectedOption(0);
 		
 	}
 	
@@ -149,8 +155,11 @@ function MultipleComboboxes()
 		
 		combos[1] = new ComboBox();
 		combos[1].create("X2","mcombo2");
-		
-		comboNumber = 2;
+        
+        combos[2] = new ComboBox();
+		combos[2].create("X3","mcombo3");
+        
+		comboNumber = 3;
 		
 		addButton=document.createElement("img");
 		addButton.setAttribute('src', 'images/add.png');
@@ -169,6 +178,7 @@ function MultipleComboboxes()
 		combos[comboNumber] = new ComboBox();
 		combos[comboNumber].createBefore("X"+(comboNumber+1),"mcombo"+(comboNumber+1), addButton); 		
         combos[comboNumber].updateOptions(generateNumericMeasuresList());
+        combos[comboNumber].setSelectedOption(comboNumber);
 		comboNumber++;
 		
 		if(comboNumber == 6)
@@ -249,24 +259,22 @@ function generateMeasuresList()
 
 	for (var i = 0; i < selection.length; i++)
 	{
-		if(selection[i].rank = "7" && selection[i].children)
+		if(selection[i].characters)
 		{
-			if(selection[i].children)
-			{
-				if(selection[i].children[0].measures)
-				{
-					for(var j = 0; j < selection[i].children[0].measures.length; j++)
-					{
-							if(m_list.indexOf(selection[i].children[0].measures[j].name)==-1)
-							{
-								m_list.push(selection[i].children[0].measures[j].name);
-							}
-								
 
-					}
-				}
-				
-			}
+            for(var j = 0; j < selection[i].characters.length; j++)
+            {
+                    if(m_list.indexOf(selection[i].characters[j].name)==-1)
+                    {
+                        if(selection[i].characters[j].type == "real number" || 
+                            selection[i].characters[j].type == "integer number")
+                            m_list.push({name: selection[i].characters[j].name, isNum: true});
+                        else
+                            m_list.push({name: selection[i].characters[j].name, isNum: false});
+                    }
+                        
+
+            }
 
 		}
 
@@ -282,26 +290,21 @@ function generateNumericMeasuresList()
 
 	for (var i = 0; i < selection.length; i++)
 	{
-		if(selection[i].rank = "7" && selection[i].children)
+		if(selection[i].characters)
 		{
-			if(selection[i].children)
-			{
-				if(selection[i].children[0].measures)
-				{
-					for(var j = 0; j < selection[i].children[0].measures.length; j++)
-					{
-							if(m_list.indexOf(selection[i].children[0].measures[j].name)==-1 && 
-							   (selection[i].children[0].measures[j].type == "real number" || 
-							   selection[i].children[0].measures[j].type == "integer number"))
-							{
-								m_list.push(selection[i].children[0].measures[j].name);
-							}
-								
 
-					}
-				}
-				
-			}
+            for(var j = 0; j < selection[i].characters.length; j++)
+            {
+                    if(m_list.indexOf(selection[i].characters[j].name)==-1)
+                    {
+                        if(selection[i].characters[j].type == "real number" || 
+                            selection[i].characters[j].type == "integer number")
+                            m_list.push({name: selection[i].characters[j].name, isNum: true});
+
+                    }
+                        
+
+            }
 
 		}
 

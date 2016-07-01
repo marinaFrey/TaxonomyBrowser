@@ -47,7 +47,7 @@ function Sunburst()
     
     this.create = function()
     {
-        d3.json("real_s.json", function(error, root) 
+        d3.json("full_data.json", function(error, root) 
         {
           g = svg.selectAll("g")
               .data(partition.nodes(root))

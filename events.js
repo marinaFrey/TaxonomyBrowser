@@ -51,7 +51,8 @@ function showBars()
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	
+	document.images["nosel"].style = "display:none;";
+    
 	//active_visualization = SELECTED_VIZ;
     
     comboX.updateOptions([]);
@@ -73,6 +74,7 @@ function showParallelCoord()
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
+    document.images["nosel"].style = "display:none;";
     
 	active_visualization = COORD_PARAL_VIZ;
 	
@@ -103,7 +105,7 @@ function showDots()
 	document.images["dots"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	
+	document.images["nosel"].style = "display:none;";
 	active_visualization = DOTS_VIZ;
 	
     multipleCombos.hide();
@@ -117,7 +119,7 @@ function showDots()
     comboX.updateOptions(list);
     comboY.updateOptions(list);
     comboSize.updateOptions(list);
-    comboColor.updateOptions(["specimen"]);
+    comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
 	dotsViz = new dotsVisualization;
     dotsViz.create();
@@ -133,7 +135,8 @@ function showMap()
 	document.images["dots"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid yellow;border-radius: 38px;" 
-	
+	document.images["nosel"].style = "display:none;";
+    
 	active_visualization = MAPS_VIZ;
 	
     multipleCombos.hide();
@@ -145,7 +148,7 @@ function showMap()
 	comboX.updateOptions([]);
     comboY.updateOptions([]);
     comboSize.updateOptions([]);
-    comboColor.updateOptions(["specimen"]);
+    comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
 	mapsViz = new mapVisualization;
     mapsViz.create();
@@ -188,57 +191,90 @@ function updateFromFiltering()
 {
 	selectedSpecimens();
 	
-	switch(active_visualization)
-	{
-		case SELECTED_VIZ:
-			//selViz.update(selection);
-		break;
-		
-		case SCATTERPLOT_VIZ:
-		
-		break;
-		
-		case COORD_PARAL_VIZ:
-			showParallelCoord();
-		break;
-		
-		case DOTS_VIZ:    
-			showDots();
-		break;
-		
-		case MAPS_VIZ:
-			showMap();
-		break;
-	}
+    if(filteredSelection.length == 0)
+    {
+        document.images["nofiltersel"].style = "display:block;";
+        document.getElementById("sel_viz").style = "display:none;";
+        document.getElementById("maps").style = "display:none;";
+    }
+    else
+    {
+        switch(active_visualization)
+        {
+            case SELECTED_VIZ:
+                //selViz.update(selection);
+            break;
+            
+            case SCATTERPLOT_VIZ:
+            
+            break;
+            
+            case COORD_PARAL_VIZ:
+                showParallelCoord();
+            break;
+            
+            case DOTS_VIZ:    
+                showDots();
+            break;
+            
+            case MAPS_VIZ:
+                showMap();
+            break;
+        }
+    }
+    
+	
 }
 
 function updateShownVisualizationAndOptions()
 {
-	var newOptionsList = ["Collection ID", "Collected by", "Data", "Latitude", "Longitude"].concat(generateMeasuresList())
-	updateFilterOptions(newOptionsList);
-	filteredSelection = ["all"];
+    selectedSpecimens();
+    if(selection.length == 0)
+    {
+        document.images["nosel"].style = "display:block;";
+        document.getElementById("sel_viz").style = "display:none;";
+        document.getElementById("maps").style = "display:none;";
+    }
+    else
+    {
+        document.images["nofiltersel"].style = "display:none;";
+        document.images["nosel"].style = "display:none;";
+        
+        var newOptionsList = [{name:"Collection ID", isNum:false},
+                                {name:"Collected by", isNum:false},
+                                {name:"Data", isNum:false},
+                                {name:"Latitude", isNum:true},
+                                {name:"Longitude", isNum:false}
+                             ].concat(generateMeasuresList());
+        updateFilterOptions(newOptionsList);
+        filteredSelection = ["all"];
 
-	selectedSpecimens();
-	switch(active_visualization)
-	{
-		case SELECTED_VIZ:
-            showBars();
-		break;
-		
-		case SCATTERPLOT_VIZ:		
-		break;
-		
-		case COORD_PARAL_VIZ:
-            showParallelCoord();          
-		break;
-		
-		case DOTS_VIZ:
-            showDots();
-		break;
-		
-		case MAPS_VIZ:
-            showMap();
-		break;
-	}
+        
+        switch(active_visualization)
+        {
+            case SELECTED_VIZ:
+                showBars();
+            break;
+            
+            case SCATTERPLOT_VIZ:		
+            break;
+            
+            case COORD_PARAL_VIZ:
+                console.log("hUI");
+                showParallelCoord();          
+            break;
+            
+            case DOTS_VIZ:
+                showDots();
+            break;
+            
+            case MAPS_VIZ:
+                showMap();
+            break;
+        }
+    }
+    
+
+	
 	
 }

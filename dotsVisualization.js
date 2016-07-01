@@ -17,26 +17,14 @@ function dotsVisualization()
         document.getElementById("maps").style = "display:none;";
         document.getElementById("sel_viz").style = "display:block;";
         
-		xScale = d3.scale.linear();		
-		
-		
-		yScale = d3.scale.linear();		
-		
-		
-		rScale = d3.scale.linear();
+		//xScale = d3.scale.linear();		
+		//yScale = d3.scale.linear();		
+		//rScale = d3.scale.linear();
 		
 		div = d3.select("body").append("div")   
 			.attr("class", "tooltip")               
 			.style("opacity", 0);
-		
-		xAxis = d3.svg.axis();	
-		xAxis.orient("bottom")
-		.ticks(10);
-		
-		yAxis = d3.svg.axis();
-		yAxis.orient("left")
-		.ticks(10);
-	
+
     }
     
     this.update = function(dataset)
@@ -45,86 +33,105 @@ function dotsVisualization()
         document.getElementById("sel_viz").style = "display:block;";
 		svg_selected.selectAll("*").remove();
 		
-		var xName = comboX.getSelectedOption();
-		var yName = comboY.getSelectedOption();
-		var sizeName = comboSize.getSelectedOption();
-		
+		//var xName = comboX.getSelectedOption();
+		//var yName = comboY.getSelectedOption();
+		//var sizeName = comboSize.getSelectedOption();
+        var y = {};
+        var dimensions = [comboX.getSelectedOption(),comboY.getSelectedOption(),comboSize.getSelectedOption()];
 		
 		if(filteredSelection[0] != "all")
-		{
-			dataset = [];
-			for (var i = 0; i < filteredSelection.length; i++)
-			{
-				dataset.push(selection[filteredSelection[i]]);
-			}
-		}
-
-		xScale.domain(d3.extent(dataset, function(d)
-		{   
-            if(!d.children)
+        {
+            dataset = [];
+            for (var i = 0; i < filteredSelection.length; i++)
             {
-                if(d.measures)
+                if(selection[filteredSelection[i]].measures)
                 {
-                    for(var j = 0; j < d.measures.length; j++)
+                    values = [];
+                    for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
                     {
-                            if(d.measures[j].name == xName)
+                        var measureName = selection[filteredSelection[i]].measures[j].name
+                        for (var k = 0; k < dimensions.length; k++)
+                        {
+                            if(measureName == dimensions[k])
                             {
-                                //console.log( "X " + parseFloat(d.measures[j].value));
-                                return parseFloat(d.measures[j].value);
+                                values[k] = selection[filteredSelection[i]].measures[j].value;
                             }
+                        }                     
+                    }
+                    var accepted = true;
+                    for (var k = 0; k < dimensions.length; k++)
+                    {
+                        if(!values[k])
+                        {
+                            accepted = false;
+                        }
+                    }
+                    if(accepted)
+                    {
+                        dataset.push({values: values, specimen: selection[filteredSelection[i]]});
                     }
                 }
-                
             }
-	
-		}));
-		xScale.range([circlePadding,w - circlePadding]);
-        
-		yScale.domain(d3.extent(dataset, function(d)
-		{
-				if(!d.children)
-				{
-					if(d.measures)
-					{
-						for(var j = 0; j < d.measures.length; j++)
-						{
-								if(d.measures[j].name == yName)
-								{
-									//console.log( "Y " + parseFloat(d.measures[j].value));
-									return parseFloat(d.measures[j].value);
-								}
-						}
-					}
-					
-				}
-			
-		}));
-        yScale.range([h - circlePadding,circlePadding]);
+        }
+        else
+        {
+            dataset= [];
+            for (var i = 0; i < selection.length; i++)
+            {
+                if(selection[i].measures)
+                {
+                    values = [];
+                    for(var j = 0; j < selection[i].measures.length; j++)
+                    {
+                        var measureName = selection[i].measures[j].name
+                        for (var k = 0; k < dimensions.length; k++)
+                        {
+                            if(measureName == dimensions[k])
+                            {
+                                values[k] = selection[i].measures[j].value;
+                            }
+                        }              
+                        
+                    }
+                    
+                    var accepted = true;
+                    for (var k= 0; k < dimensions.length; k++)
+                    {
+                        if(!values[k])
+                        {
+                            accepted = false;
+                        }
+                    }
+                    if(accepted)
+                    {
+                        dataset.push({values: values, specimen: selection[i]});
+                    }
+                }
+            }
+        }
 
-		rScale.domain(d3.extent(dataset, function(d)
-		{
-				if(!d.children)
-				{
-					if(d.measures)
-					{
-						for(var j = 0; j < d.measures.length; j++)
-						{
-								if(d.measures[j].name == sizeName)
-								{
-									return parseFloat(d.measures[j].value);
-								}
-						}
-					}
-					
-				}
+        xScale = d3.scale.linear()
+            .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); }))
+            .range([circlePadding,w - circlePadding]);
+    
+        yScale = d3.scale.linear()
+            .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); }))
+            .range([h - circlePadding,circlePadding]);
 
-		}));
-		rScale.range([2,10]);
-        
+        rScale = d3.scale.linear()
+            .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); }));
+        rScale.range([2,10]);
+
+        xAxis = d3.svg.axis();	
+		xAxis.orient("bottom")
+		.ticks(10);
 		xAxis.scale(xScale);
+
+        yAxis = d3.svg.axis();
+		yAxis.orient("left")
+		.ticks(10);
 		yAxis.scale(yScale);
-	
-		
+        
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
 			.append("rect")
@@ -143,72 +150,25 @@ function dotsVisualization()
 			.filter(function (d){return !d.children})
 			.attr("cx", function(d)
 			{
-                if(d.measures)
-                {
-                    for(var j = 0; j < d.measures.length; j++)
-                    {
-                            if(d.measures[j].name == xName)
-                            {
-                                d.xValue = parseFloat(d.measures[j].value);
-                                return xScale(parseFloat(d.measures[j].value));
-                            }
-							else
-								d.xValue = null;
-                    }
-                }
-				
+                return  xScale(d.values[0]);
 			})
 			.attr("cy", function(d)
 			{
-                if(d.measures)
-                {
-                    for(var j = 0; j < d.measures.length; j++)
-                    {
-                            if(d.measures[j].name == yName)
-                            {
-                                d.yValue = parseFloat(d.measures[j].value);
-								return yScale(parseFloat(d.measures[j].value));
-                            }
-							else
-								d.yValue = null;
-                    }
-                }
-				
+                return  yScale(d.values[1]);
 			})
 			.attr("r", function(d)
 			{
-				if(d.measures)
-                {
-                    for(var j = 0; j < d.measures.length; j++)
-                    {
-                            if(d.measures[j].name == sizeName)
-                            {
-								d.rValue = parseFloat(d.measures[j].value);
-                                return rScale(parseFloat(d.measures[j].value));
-                            }
-							else
-								d.rValue = null;
-                    }
-                }
+                return  rScale(d.values[2]);
 			})
-			.attr("fill", function(d){return d.color;})
-			.style("opacity", function(d) 
-			{
-				if((d.rValue && (d.yValue && d.xValue)))
-				{
-					return 1;
-				}
-				
-				return 0;
-			})
+			.attr("fill", function(d){return d.specimen.color;})
 			.on("mouseover", function(d) 
 			{      
 				div.transition()        
 				.duration(200)      
 				.style("opacity", .9);      
-				div .html("<b>"+xName+": </b>"+d.xValue+" <br/>"+
-								"<b>"+yName+": </b>"+d.yValue+" <br/>"+
-								"<b>"+sizeName+": </b>"+d.rValue+" <br/>")  
+				div .html("<b>"+dimensions[0]+": </b>"+d.values[0]+" <br/>"+
+								"<b>"+dimensions[1]+": </b>"+d.values[1]+" <br/>"+
+								"<b>"+dimensions[2]+": </b>"+d.values[2]+" <br/>")  
 				.style("left", (d3.event.pageX + 10) + "px")     
 				.style("top", (d3.event.pageY - 60) + "px");    
 			})                  
@@ -220,7 +180,7 @@ function dotsVisualization()
 			})
 			.on("click", function(d)
 			{
-				makeSpecimenPopup(d);
+				makeSpecimenPopup(d.specimen);
 			})
 			
 			;
@@ -237,12 +197,14 @@ function dotsVisualization()
 			.attr("font-size", "11px")
 			.attr("fill", "red");*/
 		
-		
+
+       
+        
 		svg_selected.append("g")
 			.attr("class","x axis")
 			.attr("transform", "translate(0," + ( h - circlePadding ) + ")")
 			.call(xAxis);
-			
+            
 		svg_selected.append("g")
 			.attr("class","y axis")
 			.attr("transform", "translate(" + (circlePadding - 10) +",0)")
@@ -254,7 +216,7 @@ function dotsVisualization()
 			.style("font-size",function(d){return "15px";})
 			.attr("x", w - 20)
 			.attr("y", h - circlePadding - 10)
-			.text(xName);
+			.text(dimensions[0]);
 			
 		svg_selected.append("text")
 			.attr("class", "y label")
@@ -263,7 +225,8 @@ function dotsVisualization()
 			.attr("y", (circlePadding ) )
 			.attr("dy", ".75em")
 			.attr("transform", "rotate(-90)")
-			.text(yName);
+			.text(dimensions[1]);
+            
 	}
 
 }

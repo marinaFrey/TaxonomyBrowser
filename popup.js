@@ -32,7 +32,14 @@ function FilterPopup()
 	var infoLabel;
 	var addButton;
 	var measuresList;
-	var operationsListNumeric = ["exists","doesn't exist","is","is not","is smaller than","is bigger than","is smaller or equal to","is bigger or equal to"];
+	var operationsListNumeric = [{name:"exists",isNum:false},
+                                    {name:"doesn't exist",isNum:false},
+                                    {name:"is",isNum:true},
+                                    {name:"is not",isNum:true},
+                                    {name:"is smaller than",isNum:true},
+                                    {name:"is bigger than",isNum:true},
+                                    {name:"is smaller or equal to",isNum:true},
+                                    {name:"is bigger or equal to",isNum:true}];
 	var operationsListString = ["exists","doesn't exist","is", "is not"];
 	var ptr = this;
 	
@@ -68,7 +75,12 @@ function FilterPopup()
         var br = document.createElement("br");
         
 		comboMeasure.createFilterCombo("comboMeasure", function(){});
-		comboMeasure.updateOptions(["Collection ID", "Collected by", "Data", "Latitude", "Longitude"].concat(generateMeasuresList()));
+		comboMeasure.updateOptions([{name:"Collection ID", isNum:false},
+                                    {name:"Collected by", isNum:false},
+                                    {name:"Data", isNum:false},
+                                    {name:"Latitude", isNum:true},
+                                    {name:"Longitude", isNum:false}
+                                    ].concat(generateMeasuresList()));
 	
 		comboOption.createFilterCombo("comboOption", function()
 		{
@@ -77,7 +89,9 @@ function FilterPopup()
 			else
 				input.disabled = false;
 			
-            if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
+            //if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
+            var indexInList = operationsListNumeric.map(function(e) { return e.name; }).indexOf(comboOption.getSelectedOption())
+            if(operationsListNumeric[indexInList].isNum)
                 comboOption.setNumericDataType(true);
             else
                 comboOption.setNumericDataType(false);
@@ -90,13 +104,13 @@ function FilterPopup()
 		{
 			if(comboOption.isNumeric())
 			{
-				if(!parseFloat(input.value))
+				if(isNaN(parseFloat(input.value)))
 				{
-					input.style.borderColor="red";
+                    input.style.borderColor="red";
 				}
 				else
 				{
-					input.style.borderColor="#ddd";
+                    input.style.borderColor="#ddd";
 				}
 			}
 		});
@@ -332,7 +346,7 @@ function applyFilters()
 								var exists = false;
 								for(var j = 0; j < selection[i].measures.length; j++)
 								{
-									if(comboOption.isNum)
+									if(filters[k].comboOption.isNumeric())
 									{
 										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
 										{
@@ -407,10 +421,12 @@ function applyFilters()
 								var exists = false;
 								for(var j = 0; j < selection[i].measures.length; j++)
 								{
-									if(comboOption.isNum)
+									if(filters[k].comboOption.isNumeric())
 									{
+                                    console.log("numeric");
 										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
 										{
+                                        
 											exists = true;
 										}  
 									}
@@ -510,13 +526,7 @@ function updateFilterOptions(newOptions)
 {
 	for (var i = 0; i < filters.length; i++)
 	{
-		var measure = filters[i].comboMeasure.getSelectedOption();
-		var newIndex = newOptions.indexOf(measure);
 		filters[i].comboMeasure.updateOptions(newOptions);
-		if(newIndex != -1)
-			filters[i].comboMeasure.setSelectedOption(newIndex);
-		else
-			filters[i].comboMeasure.setSelectedOption(0);
 	}
 }
 

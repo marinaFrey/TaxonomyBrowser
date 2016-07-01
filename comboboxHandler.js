@@ -31,6 +31,29 @@ function ComboBox()
 		
 	}
 	
+	this.createBefore = function(name, combo_id, beforeThis)
+	{
+		id = combo_id;
+		
+		txtLabel = document.createElement("H0");
+		var t = document.createTextNode("   " + name + "  ");
+		txtLabel.appendChild(t);
+		//document.getElementById("comboboxes").appendChild(txtLabel);
+		document.getElementById("comboboxes").insertBefore(txtLabel, beforeThis);
+
+		combo = document.createElement("SELECT");
+		combo.setAttribute("id", id);
+		//document.getElementById("comboboxes").appendChild(combo);
+		document.getElementById("comboboxes").insertBefore(combo, beforeThis);
+		
+		type = VIZ_COMBO;
+		
+		combo.addEventListener("click", function()
+		{
+			updateShownVisualization();
+		});
+	}
+	
 	this.createFilterCombo = function(combo_id, clickFunction)
 	{
 		id = combo_id;
@@ -109,6 +132,101 @@ function ComboBox()
     }
 }
 
+
+
+function MultipleComboboxes()
+{
+	var combos = [];
+	var comboNumber = 0;
+	var ptr = this;
+	var addButton;
+	
+	this.initialize = function()
+	{
+		
+		combos[0] = new ComboBox();
+		combos[0].create("X1","mcombo1");
+		
+		combos[1] = new ComboBox();
+		combos[1].create("X2","mcombo2");
+		
+		comboNumber = 2;
+		
+		addButton=document.createElement("img");
+		addButton.setAttribute('src', 'images/add.png');
+		addButton.style.width= '32px';
+		addButton.style.width= '32px';
+		document.getElementById("comboboxes").appendChild(addButton);
+		addButton.onclick = function()
+		{
+			ptr.addCombo();
+		};
+		
+	}
+	
+	this.addCombo = function()
+	{
+		combos[comboNumber] = new ComboBox();
+		combos[comboNumber].createBefore("X"+(comboNumber+1),"mcombo"+(comboNumber+1), addButton); 		
+		comboNumber++;
+		
+		if(comboNumber == 6)
+		{
+			addButton.style.display = 'none';
+		}
+		
+	}
+	
+	this.removeCombo = function(comboToRemove)
+	{
+		for(var i = 0; i < combos.length; i++)
+		{
+			if(combos[i] == comboToRemove)
+			{
+				combos[i].splice(i,1);
+				comboNumber--;
+			}
+		}
+	}
+	
+	this.updateOptions = function(list)
+	{
+		for(var i = 0; i < combos.length; i++)
+		{
+			combos[i].updateOptions(list);
+		}
+	}
+	
+	this.getSelectedOptions = function()
+	{
+		var list = [];
+		for(var i= 0; i < combos.length; i++)
+		{
+			list.push(combos[i].getSelectedOption());
+		}
+		return list;
+	}
+	
+	this.hide = function()
+	{
+		for(var i= 0; i < combos.length; i++)
+		{
+			combos[i].hide();
+		}
+		addButton.style.display = 'none';
+	}
+	
+	this.show = function()
+	{
+		for(var i= 0; i < combos.length; i++)
+		{
+			combos[i].show();
+		}
+		addButton.style.display = 'block';
+	}
+	
+}
+
 function initializeComboboxes()
 {
     comboX = new ComboBox();
@@ -122,29 +240,6 @@ function initializeComboboxes()
     
     comboColor = new ComboBox();
 	comboColor.create("Color","comboColor");
-}
-
-function initializeParallelComboboxes()
-{
-    combo1 = new ComboBox();
-	combo1.create("X1","combo1");
-	
-	combo2 = new ComboBox();
-	combo2.create("X2","combo2");
-	
-	combo3 = new ComboBox();
-	combo3.create("X3","combo3");
-	
-	combo4 = new ComboBox();
-	combo4.create("X4","combo4");
-	
-	combo5 = new ComboBox();
-	combo5.create("X5","combo5");
-	
-	combo6 = new ComboBox();
-	combo6.create("X6","combo6");
-	
-
 }
 
 function generateMeasuresList()

@@ -94,7 +94,7 @@
 			<!--<img name="removeButton" src="images/remove.png" width="64" height="64" border="0" alt="javascript button" >-->
 			
 		</div>
-		<div class="col-sm-6"  id="comboboxes" style="text-align: center">
+		<div class="col-sm-6"  id="comboboxes" style="text-align: right">
 
 		</div>
 	</div>
@@ -176,16 +176,10 @@
     var comboSize;
     var comboColor;
 	
-	var combo1;
-	var combo2;
-	var combo3;
-	var combo4;
-	var combo5;
-	var combo6;
-	
     var selection = [];
 	var filters = [];
     var filteredSelection = ["all"];
+	
 	
 	var svg_selected = d3.select("#sel_viz").append("svg")
             .attr("width", $("#sel_viz").width())
@@ -201,6 +195,10 @@
     sunburst.create();
 
     initializeComboboxes();
+	
+	var multipleCombos = new MultipleComboboxes();
+	multipleCombos.initialize();
+	//multipleCombos.hide();
 	
 	var filterPopup = new FilterPopup();
 	filterPopup.create();

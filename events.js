@@ -73,29 +73,19 @@ function showParallelCoord()
 	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	
-    if(active_visualization != COORD_PARAL_VIZ)
-        initializeParallelComboboxes();
     
 	active_visualization = COORD_PARAL_VIZ;
-	
+	/*
 	comboX.hide();
     comboY.hide();
     comboSize.hide();
-    comboColor.hide();
-	
-    
-	
+    comboColor.hide();*/
 	
 	var list = generateNumericMeasuresList();
 	
-	combo1.updateOptions(list);
-	combo2.updateOptions(list);
-	combo3.updateOptions(list);
-	combo4.updateOptions(list);
-	combo5.updateOptions(list);
-	combo6.updateOptions(list);
-	
+	multipleCombos.updateOptions(list);
+	//multipleCombos.show();
+
 	ParallelCoordinates();
 	
 	/*
@@ -172,14 +162,16 @@ function updateShownVisualization()
 		break;
 		
 		case COORD_PARAL_VIZ:
-		
+			ParallelCoordinates();
 		break;
 		
-		case DOTS_VIZ:    
+		case DOTS_VIZ:
+			multipleCombos.hide();
 			dotsViz.update(selection);
 		break;
 		
 		case MAPS_VIZ:
+			multipleCombos.hide();
 			mapsViz.update(selection);
 		break;
 	}
@@ -202,7 +194,7 @@ function updateFromFiltering()
 		break;
 		
 		case COORD_PARAL_VIZ:
-		
+			showParallelCoord();
 		break;
 		
 		case DOTS_VIZ:    

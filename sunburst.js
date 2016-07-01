@@ -26,7 +26,8 @@ function Sunburst()
     var partition = d3.layout.partition()
         .value(function(d) 
 		{ 
-				return size(1); 
+			//return size(1/(d.parent.children.length)); 
+			return size(1); 
 		});
 	
 

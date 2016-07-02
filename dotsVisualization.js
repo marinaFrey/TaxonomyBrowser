@@ -161,7 +161,7 @@ function dotsVisualization()
                 return  rScale(d.values[2]);
 			})
 			.attr("fill", function(d){return d.specimen.color;})
-            .style("opacity",0.4)
+            .style("opacity",0.3)
 			.on("mouseover", function(d) 
 			{
                 d3.select(this).style("opacity", 1);
@@ -176,7 +176,7 @@ function dotsVisualization()
 			})                  
 			.on("mouseout", function(d) 
 			{       
-                d3.select(this).style("opacity", 0.4);
+                d3.select(this).style("opacity", 0.3);
 				div.transition()        
 				.duration(500)      
 				.style("opacity", 0);   

@@ -252,15 +252,19 @@ function initializeComboboxes()
 {
     comboX = new ComboBox();
 	comboX.create("X","comboX");
+    comboX.hide();
 	
 	comboY = new ComboBox();
 	comboY.create("Y","comboY");
+    comboY.hide();
 	
 	comboSize = new ComboBox();
 	comboSize.create("Size","comboSize");
+    comboSize.hide();
     
     comboColor = new ComboBox();
 	comboColor.create("Color","comboColor");
+    comboColor.hide();
 }
 
 function generateMeasuresList()
@@ -274,7 +278,7 @@ function generateMeasuresList()
 
             for(var j = 0; j < selection[i].characters.length; j++)
             {
-                    if(m_list.indexOf(selection[i].characters[j].name)==-1)
+                    if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
                     {
                         if(selection[i].characters[j].type == "real number" || 
                             selection[i].characters[j].type == "integer number")
@@ -297,7 +301,6 @@ function generateMeasuresList()
 function generateNumericMeasuresList()
 {
 	var m_list = [];
-
 	for (var i = 0; i < selection.length; i++)
 	{
 		if(selection[i].characters)
@@ -305,8 +308,9 @@ function generateNumericMeasuresList()
 
             for(var j = 0; j < selection[i].characters.length; j++)
             {
-                    if(m_list.indexOf(selection[i].characters[j].name)==-1)
+                    if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
                     {
+                        
                         if(selection[i].characters[j].type == "real number" || 
                             selection[i].characters[j].type == "integer number")
                             m_list.push({name: selection[i].characters[j].name, isNum: true});

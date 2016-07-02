@@ -29,13 +29,14 @@ function mapVisualization()
         document.getElementById("sel_viz").style = "display:none;";
         
         this.create();
-        
+        var hasMarker = false;
 		if(filteredSelection[0] == "all")
 		{
 			for (var i = 0; i < dataset.length; i++)
 			{
-				if(dataset[i].longitude != "" && dataset[i].latitude != "")
-				{   
+				if(dataset[i].longitude && dataset[i].latitude )
+				{
+                    hasMarker = true;
 					var sp = dataset[i];
 					var marker = new google.maps.Marker(
 					{
@@ -89,8 +90,9 @@ function mapVisualization()
 		{
 			for (var i = 0; i < filteredSelection.length; i++)
 			{	
-				if(dataset[filteredSelection[i]].longitude != "" && dataset[filteredSelection[i]].latitude != "")
+				if(dataset[filteredSelection[i]].longitude&& dataset[filteredSelection[i]].latitude)
 				{   
+                    hasMarker = true;
 					var sp = dataset[filteredSelection[i]];
 					var marker = new google.maps.Marker(
 					{
@@ -141,6 +143,11 @@ function mapVisualization()
 			}
 		}
         
+        if(!hasMarker)
+        {
+            document.getElementById("maps").style = "display:none;";
+            document.images["nofiltersel"].style = "display:block;";
+        }
         
     }
     

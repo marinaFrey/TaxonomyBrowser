@@ -136,6 +136,7 @@ function ComboBox()
     {
         return isNum;
     }
+
 }
 
 
@@ -181,6 +182,7 @@ function MultipleComboboxes()
         combos[comboNumber].setSelectedOption(comboNumber);
 		comboNumber++;
 		
+        updateShownVisualization();
 		if(comboNumber == 6)
 		{
 			addButton.style.display = 'none';
@@ -235,6 +237,14 @@ function MultipleComboboxes()
 		}
 		addButton.style.display = 'inline';
 	}
+        
+    this.setDifferentIndexes = function()
+    {
+        for(var i= 0; i < combos.length; i++)
+		{
+			combos[i].setSelectedOption(i);
+		}
+    }
 	
 }
 

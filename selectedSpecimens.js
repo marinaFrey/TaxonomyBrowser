@@ -52,6 +52,7 @@ if(filteredSelection[0] == "all")
 }
 else
 {
+
 	for (var i = 0; i < filteredSelection.length; i++)
 	{
 		var pos = groups.indexOf(selection[filteredSelection[i]].name);
@@ -107,6 +108,16 @@ var circle = svg_selected_specimens.selectAll("circle")
 	{
 		makeSpecimenPopup(d.specimen);
 	})
+    .on("mouseover", function(d) 
+    {
+      //d3.select(this).attr("r", 10);
+      d3.select(this).style("stroke", "black");
+    })                  
+    .on("mouseout", function(d) 
+    {
+      //d3.select(this).attr("r", 5);
+      d3.select(this).style("stroke", "none");
+    })
 	.call(force.drag);
 	
 circle.transition()

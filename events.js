@@ -75,6 +75,7 @@ function showParallelCoord()
 	document.images["coord"].style =" border: 4px solid yellow;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
     document.images["nosel"].style = "display:none;";
+    document.images["nofiltersel"].style = "display:none;";
     
 	active_visualization = COORD_PARAL_VIZ;
 	
@@ -88,6 +89,13 @@ function showParallelCoord()
 	multipleCombos.updateOptions(list);
 	multipleCombos.show();
 
+    if(firstTimeMultipleCombos)
+    {
+        multipleCombos.setDifferentIndexes();
+        firstTimeMultipleCombos = false;
+        
+    }
+    
 	ParallelCoordinates();
 	
 	/*
@@ -106,6 +114,8 @@ function showDots()
 	document.images["coord"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["nosel"].style = "display:none;";
+    document.images["nofiltersel"].style = "display:none;";
+    
 	active_visualization = DOTS_VIZ;
 	
     multipleCombos.hide();
@@ -120,6 +130,14 @@ function showDots()
     comboY.updateOptions(list);
     comboSize.updateOptions(list);
     comboColor.updateOptions([{name:"specimen",isNum:false}]);
+    
+    if(firstTimeCombos)
+    {
+        comboX.setSelectedOption(0);
+        comboY.setSelectedOption(1);
+        comboSize.setSelectedOption(2);
+        firstTimeCombos = false;
+    }
     
 	dotsViz = new dotsVisualization;
     dotsViz.create();
@@ -136,6 +154,7 @@ function showMap()
 	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
 	document.images["map"].style = " border: 4px solid yellow;border-radius: 38px;" 
 	document.images["nosel"].style = "display:none;";
+    document.images["nofiltersel"].style = "display:none;";
     
 	active_visualization = MAPS_VIZ;
 	
@@ -154,6 +173,7 @@ function showMap()
     mapsViz.create();
 	if(selection[0])
 		mapsViz.update(selection);
+
 }
 
 /* UPDATE EVENTS */
@@ -228,6 +248,8 @@ function updateFromFiltering()
 
 function updateShownVisualizationAndOptions()
 {
+    filteredSelection = [];
+    filteredSelection.push("all");
     selectedSpecimens();
     if(selection.length == 0)
     {
@@ -247,7 +269,7 @@ function updateShownVisualizationAndOptions()
                                 {name:"Longitude", isNum:false}
                              ].concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
-        filteredSelection = ["all"];
+        
 
         
         switch(active_visualization)
@@ -260,7 +282,6 @@ function updateShownVisualizationAndOptions()
             break;
             
             case COORD_PARAL_VIZ:
-                console.log("hUI");
                 showParallelCoord();          
             break;
             

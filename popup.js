@@ -151,6 +151,12 @@ function FilterPopup()
 	}
 }
 
+function removeFilters()
+{
+    updateShownVisualizationAndOptions();
+    //filters = [];
+}
+
 function applyFilters()
 {
     filteredSelection = [];

@@ -103,7 +103,7 @@ body {
   
 }
 svg {
-  height:730px !important;
+  /*height:730px*/ !important;
   font: 10px sans-serif;
 }
 
@@ -216,3 +216,13 @@ input:disabled {
   shape-rendering: crispEdges;
 }
 
+/* NUMBER OF SELECTED */
+
+div.bar 
+{
+    display: inline-block;
+    width: 20px;
+    height: 75px;   /* We'll override this later */
+    background-color: teal;
+    margin-right: 2px;
+}

@@ -210,7 +210,7 @@ function updateShownVisualization()
 function updateFromFiltering()
 {
 	selectedSpecimens();
-	
+	selectedNumber.update();
     if(filteredSelection.length == 0)
     {
         document.images["nofiltersel"].style = "display:block;";
@@ -251,6 +251,7 @@ function updateShownVisualizationAndOptions()
     filteredSelection = [];
     filteredSelection.push("all");
     selectedSpecimens();
+    selectedNumber.update();
     if(selection.length == 0)
     {
         document.images["nosel"].style = "display:block;";

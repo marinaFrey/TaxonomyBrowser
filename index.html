@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="comboboxHandler.js"></script>
 	<script type="text/javascript" src="popup.js"></script>
 	<script type="text/javascript" src="selectedSpecimens.js"></script>
+	<script type="text/javascript" src="numberOfSelectedViz.js"></script>
 	<script type="text/javascript" src="parallelCoordinates.js"></script>
     
     <!--JQUERY-->
@@ -118,7 +119,10 @@
   
   <!-- CHOOSING VISUALIZATION -->
   <div class="row">
-    <div class="col-sm-6" style="background-color:lavenderblush;"></div>
+    <div class="col-sm-4" style="text-align:center"></div>
+    <div class="col-sm-2" style="text-align:center">
+        <div id="number_sel_viz" height="100"></div>
+    </div>
     <div class="col-sm-6" style="text-align:center">
 		<!--<img name="bars" src="images/bars.png" width="180" height="140" border="0" alt="javascript button" onClick="return showBars();"style= " border: 4px solid yellow;border-radius: 38px;" >-->
         <!--<img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >-->
@@ -198,7 +202,7 @@
             .attr("width", $("#selected_view").width())
             .attr("height", 700)
 			.append("g");
-	
+    
     var sunburst = new Sunburst;
     sunburst.create();
 
@@ -210,6 +214,8 @@
 	
 	var filterPopup = new FilterPopup();
 	filterPopup.create();
+    
+    var selectedNumber = new numberOfSelectedViz();
 	
 	document.getElementById("maps").style = "display:none;";
     document.getElementById("sel_viz").style = "display:none;";

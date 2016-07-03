@@ -171,7 +171,7 @@ function Sunburst()
                 .style("text-anchor", "middle")
                 
                 .attr("xlink:href",function(d){return "#" + d.path.id;})	
-				.text(function(d){ return d.name;})
+				.text(function(d){ return d.name/*+" ("+d.children.length+")"*/;})
 
                 ;
 

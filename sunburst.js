@@ -1,7 +1,6 @@
 function Sunburst()
 {
-    //console.log($("viz"));
-    //console.log(document.getElementById('viz'));
+    var node;
 	var databaseSize;
     var normalOpacity = 0.3;
     var width = $("#viz").width(),
@@ -26,8 +25,16 @@ function Sunburst()
     var partition = d3.layout.partition()
         .value(function(d) 
 		{ 
-			//return size(1/(d.parent.children.length)); 
-			return size(1); 
+            console.log(showByChildrenNumbers);
+			//return size(1); 
+            if(showByChildrenNumbers)
+            {
+                return 1; 
+            }
+            else
+            {
+                return 1/(d.parent.children.length);
+            }
 		});
 	
 
@@ -49,6 +56,7 @@ function Sunburst()
     {
         d3.json("full_data.json", function(error, root) 
         {
+            node = root;
           g = svg.selectAll("g")
               .data(partition.nodes(root))
               .enter().append("g");
@@ -186,6 +194,24 @@ function Sunburst()
               .on("mouseover", doHover)
               .on("mouseout", unDoHover);
             //d3.select('body').append('img').attr('src', 'KEY.png');
+            
+            d3.selectAll("input").on("change", function change() 
+            {        
+                if(this.value === "count")
+                    showByChildrenNumbers = false;
+                else
+                    showByChildrenNumbers = true;
+                
+                g = svg.selectAll("g")
+                    .data(partition.nodes(root))
+                    .enter().append("g");
+                    
+                path
+                    //.data(partition.nodes(root))
+                    .transition()
+                    .duration(1000)
+                    .attrTween("d", arcTweenData);
+            });
           
           function click(d) 
           {
@@ -503,4 +529,39 @@ function Sunburst()
     {
       return (d3.select(e).classed('isCenter')) ? '4em' : '.35em'
     }
+    
+    // Setup for switching data: stash the old values for transition.
+    function stash(d) 
+    {
+      d.x0 = d.x;
+      d.dx0 = d.dx;
+    }
+    
+    function arcTweenData(a, i) 
+    {
+        var oi = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+        function tween(t) 
+        {
+            var b = oi(t);
+            a.x0 = b.x;
+            a.dx0 = b.dx;
+            return arc(b);
+        }
+        if (i == 0) 
+        {
+            // If we are on the first arc, adjust the x domain to match the root node
+            // at the current zoom level. (We only need to do this once.)
+            var xd = d3.interpolate(x.domain(), [node.x, node.x + node.dx]);
+            return function(t) 
+            {
+                x.domain(xd(t));
+                return tween(t);
+            };
+        } 
+        else 
+        {
+            return tween;
+        }
+    }
+
 }

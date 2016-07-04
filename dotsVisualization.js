@@ -32,7 +32,6 @@ function dotsVisualization()
 		document.getElementById("maps").style = "display:none;";
         document.getElementById("sel_viz").style = "display:block;";
 		svg_selected.selectAll("*").remove();
-		
 		//var xName = comboX.getSelectedOption();
 		//var yName = comboY.getSelectedOption();
 		//var sizeName = comboSize.getSelectedOption();
@@ -109,7 +108,11 @@ function dotsVisualization()
                 }
             }
         }
-
+        /*
+        xScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); })).range([circlePadding,w - circlePadding]);
+        yScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); })).range([h - circlePadding,circlePadding]);
+        rScale = d3.scale.linear().domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); })).range([2, 10]);
+      */
         xScale = d3.scale.linear()
             .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); }))
             .range([circlePadding,w - circlePadding]);
@@ -140,7 +143,7 @@ function dotsVisualization()
 			.attr("width", w - borderBarPadding*3)
 			.attr("height", h - borderBarPadding*2);
 		
-		svg_selected.append("g")
+		var dot = svg_selected.append("g")
 			.attr("id","circles")
 			.attr("clip-path", "url(#chart-area)")
 			.selectAll("circle")
@@ -229,7 +232,27 @@ function dotsVisualization()
 			.attr("dy", ".75em")
 			.attr("transform", "rotate(-90)")
 			.text(dimensions[1]);
-            
+        /*
+        svg_selected.on("mousemove", function() 
+        {console.log("HI");
+            var mouse = d3.mouse(this);
+            xScale.distortion(2.5).focus(mouse[0]);
+            yScale.distortion(2.5).focus(mouse[1]);
+
+            dot.call(position);
+            svg_selected.select(".x.axis").call(xAxis);
+            svg_selected.select(".y.axis").call(yAxis);
+        });
+
+        // Positions the dots based on data.
+        function position(dot) 
+        {
+          dot 
+                .transition().duration(1000)
+              .attr("cx", function(d) { return xScale(d.values[0]); })
+              .attr("cy", function(d) { return yScale((d.values[1])); })
+              .attr("r", function(d) { return rScale(d.values[2]); });
+        }   */
 	}
 
 }

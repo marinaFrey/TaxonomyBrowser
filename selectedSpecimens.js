@@ -127,6 +127,7 @@ circle.transition()
       var i = d3.interpolate(d.radius/2, d.radius);
       return function(t) { return d.radius = i(t); };
     });
+    
 	
 
 function tick(e) 

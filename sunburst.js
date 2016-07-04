@@ -25,7 +25,6 @@ function Sunburst()
     var partition = d3.layout.partition()
         .value(function(d) 
 		{ 
-            console.log(showByChildrenNumbers);
 			//return size(1); 
             if(showByChildrenNumbers)
             {
@@ -36,12 +35,6 @@ function Sunburst()
                 return 1/(d.parent.children.length);
             }
 		});
-	
-
-    var size = d3.scale.linear()
-        .domain([0,1500])
-        .range([100, 200]);
-
 
     var arc = d3.svg.arc()
         .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
@@ -75,63 +68,26 @@ function Sunburst()
 				if(!d.children[0].measures)
 				{
 					d.color = color(d.name);
-					d.size = d.children.length;
+					//d.size = d.children.length;
 				}
 				else
 				{
 					d.color = childrenColor(d.name);
-					d.size = 1;
+					//d.size = 1;
 				}
                 //d.color = color((d.children ? d : d.parent).name);
                 return d.color; 
             })
             .style("opacity",normalOpacity)
-            .on("click", click);
-            
+            .on("click", click)
+            .each(stash);
+			
 			databaseSize = path[0].length;
-
-             /*
-          var text = g.append("text")
-			//.filter(function (d){return d.children})
-		    .attr("text-anchor", function(d) {return getAnchor(d, this);})
-			.attr("transform", function(d) { return computeTextTransform(d, this); })
-            //.attr("dy", function(d){ return getDY(this);})
-            .style("opacity", function(d) 
-			{
-				return opacity(d)
-			})
-            .attr('depth', function(d){return d.depth})
-            .attr('root', 0)
-            .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
-            .text(function(d){return d.name;})
-            ;*/
-            
-            /*
-            for(var i = 0; i < text[0].length; i++)
-            { 
-                var fontSize = 12;
-                text[0][i].style.fontSize = fontSize + "px";
-                
-                if(path[0][i].getTotalLength() < 155)
-                {
-                    text[0][i].style.opacity = 0;
-                }
-                else
-                { 
-                    while(text[0][i].getComputedTextLength()*2.5 > path[0][i].getTotalLength())
-                    {
-                
-                        fontSize--;
-                        text[0][i].style.fontSize = fontSize + "px";
-                        
-                    }
-                }
-            }*/
             
             var text = g.append("text")
                 //.filter(function (d){return d.path.getTotalLength() > 100})
                 .filter(function (d){return (d.children);})
-                .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
+                //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
 				.filter(function (d){return d.depth != 0})
                 .attr("dy", function(d,i) 
                 {   
@@ -141,7 +97,7 @@ function Sunburst()
                     }
                     if(d.endAngle == Math.PI*2) 
                     {
-                        return -30;
+                        return 30; // era -30
                     }
                     return (d.endAngle > 90 * Math.PI/180 ? 30 : -30); 
                 })
@@ -151,7 +107,10 @@ function Sunburst()
 				})
                 .style("opacity", function(d) 
                 {
-                    return opacity(d)
+					if(d.endAngle - d.startAngle < 10*Math.PI/180)
+						return 0.3;
+					else
+						return 1;
                 })
                 .attr('depth', function(d)
 				{
@@ -161,7 +120,7 @@ function Sunburst()
                 .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
                 .append("textPath")
                 .attr("startOffset", function(d,i) 
-                {   //console.log(d.startAngle);
+                {   
                     if(d.endAngle - d.startAngle == Math.PI*2)
                     {
                         return "25%";
@@ -193,7 +152,6 @@ function Sunburst()
               .on("contextmenu", rightClick)
               .on("mouseover", doHover)
               .on("mouseout", unDoHover);
-            //d3.select('body').append('img').attr('src', 'KEY.png');
             
             d3.selectAll("input").on("change", function change() 
             {        
@@ -211,6 +169,30 @@ function Sunburst()
                     .transition()
                     .duration(1000)
                     .attrTween("d", arcTweenData);
+
+                    text
+					.transition().duration(1000)
+                        .style("stroke", "red")
+                      .styleTween("opacity", function(d) { return d3.interpolate(0, 1); })/*  
+                      .style("opacity", function(d) 
+                      {
+                        console.log(this);
+                        d.endAngle = arc.endAngle()(d);   
+						d.startAngle = arc.startAngle()(d);
+						//console.log(d);
+						if(d.endAngle - d.startAngle < 10*Math.PI/180)
+						{
+							
+							return 0;
+						}
+						else
+						{
+							//console.log(d.name);
+							return 1;
+						}
+                      })*/
+					  .attr("pointer-events", null);
+					
             });
           
           function click(d) 
@@ -219,7 +201,7 @@ function Sunburst()
             setHover(false);
             d3.selectAll("svg g text tspan").remove();
 
-            text.transition().style("opacity", 0);
+            //text.transition().style("opacity", 0);
             var arcText = [];
             var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
 			
@@ -229,39 +211,13 @@ function Sunburst()
                   return "Format: " + d.ClaimFormat;})
                 .attr("class", "benefitFormat")
                 .attr("dy", 20)
-                .attr("x", 45);
-
-              d3.select(this.parentNode).select("text").append('tspan').text(function(d){
-                  return "Status: " + d.ClaimStatus;})
-                .attr("class", "benefitStatus")
-                .attr("dy", 20)
-                .attr("x", 45);
-              
-              d3.select(this.parentNode).select("text").append('tspan').text(function(d){
-                  return "Net Benefit: " + Number(d.size)})
-                .attr("class", "benefitNet")
-                .attr("dy", 20)
-                .attr("x", 45);
-            
-              d3.select(this.parentNode).select("text").append('tspan').text(function(d){
-                  return "Charged Amount: " + Number(d.ChargedAmount); })
-                .attr("class", "benefitComponents")
-                .attr("dy", 20)
-                .attr("x", 55);
-              
-              d3.select(this.parentNode).select("text").append('tspan').text(function(d){
-                  return "Discount Amount: " + Number(d.DiscountAmount); })
-                .attr("class", "benefitDiscount")
-                .attr("dy", 20)
-                .attr("x", 55);
-              
+                .attr("x", 45);             
             }
             d3.select(".isCenter").classed('isCenter', false);
             d3.select(this.parentNode).select("text").attr('class', 'isCenter');
             var index = 0;
             path.transition()
               .duration(1000)
-			  //.filter(function (d){return d.children})
               .attrTween("d", arcTween(d))
               .each("end", function(e, i) 
               {
@@ -273,7 +229,6 @@ function Sunburst()
                   // check if the animated element's data e lies within the visible angle span given in d
                   if (e.x >= d.x && e.x < (d.x + d.dx)) 
                   {
-					  
                     // get a selection of the associated text element
                     arcText = d3.select(this.parentNode).select("text");
                     // fade in the text element and recalculate positions
@@ -283,41 +238,19 @@ function Sunburst()
                       { 
                         return getAnchor(d, this);
                       })
-                      //.attr("transform", function() { return computeTextTransform(e, this); })
                       .attr("root", function(d) { return rootDepth; })
-                      //.attr("dy", function(d){ return getDY(this);})
-                      // .attr("x", function(d) { return y(d.y); })
                       .style("opacity", function(d) 
                       {
-                        //return opacity(d)
 						if(rootDepth > d.depth)
 							return 0;
 						return 1;
                       })
 					  .attr("pointer-events", null);
-
-                    /*
-                    var fontSize = 12;
-                    arcText[0][0].style.fontSize = fontSize + "px";
-                    if(this.getTotalLength() < 155)
-                    {
-                        arcText.transition().style("opacity", 0);
-                    }
-                    else
-                    {
-                        while(arcText[0][0].getComputedTextLength()*3.2 > this.getTotalLength())
-                        {
-                            fontSize--;
-                            arcText[0][0].style.fontSize = fontSize + "px";
-                            
-                        }
-                    }*/
                     
                   }
 				  else
 				  {
 						arcText = d3.select(this.parentNode).select("text");
-						// fade in the text element and recalculate positions
 						arcText
 						.attr("root", function(d) { return rootDepth; })
 						.attr("pointer-events", "none")
@@ -332,12 +265,6 @@ function Sunburst()
 
     d3.select('svg').style("height", height + "px");
     }
-	
-    //make the last row invisible
-    function opacity(d) 
-    {
-      return d.depth >= 4 && y(d.y) >= 280 ? 0 : 1;
-    }
 
     /* selects node right clicked and all its children 
     painting it with full opacity and adding it to the selected list */
@@ -348,13 +275,10 @@ function Sunburst()
         {      
             d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
             selection.push(d);
-            //console.log(d.children);
             if(d.children)
                 setSelectionOnChildren(d);
-			//console.log(selection);
             d.selected = true;
             
-            //selectedViz.update(selection);
 			updateShownVisualizationAndOptions();
         }
         else
@@ -362,11 +286,9 @@ function Sunburst()
             d3.select(this.parentNode.childNodes[0]).style("opacity", normalOpacity);
             selection.splice(selection.indexOf(d),1);
             if(d.children)
-                unsetSelectionOnChildren(d);
-			
+                unsetSelectionOnChildren(d);		
             d.selected = false;
             
-            //selectedViz.update(selection);
 			updateShownVisualizationAndOptions();
         }
     }
@@ -386,10 +308,6 @@ function Sunburst()
             } 
             if(d.children[i].children)
                 setSelectionOnChildren(d.children[i]);
-			else
-			{
-				//selection.push(d.children[i]);
-			}
 				
         }
     }

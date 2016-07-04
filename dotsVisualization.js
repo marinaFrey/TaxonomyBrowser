@@ -108,11 +108,11 @@ function dotsVisualization()
                 }
             }
         }
-        /*
+        
         xScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); })).range([circlePadding,w - circlePadding]);
         yScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); })).range([h - circlePadding,circlePadding]);
         rScale = d3.scale.linear().domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); })).range([2, 10]);
-      */
+      /*
         xScale = d3.scale.linear()
             .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); }))
             .range([circlePadding,w - circlePadding]);
@@ -123,8 +123,17 @@ function dotsVisualization()
 
         rScale = d3.scale.linear()
             .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); }));
-        rScale.range([2,10]);
+        rScale.range([2,10]);*/
 
+        svg_selected.append("rect")
+          .attr("class", "background")
+          .attr("x",circlePadding - 10)
+          //.attr("y",circlePadding)
+          .attr("width", w - circlePadding)
+          .attr("height", h - circlePadding)
+          .style("fill","#ddd")
+          ;
+        
         xAxis = d3.svg.axis();	
 		xAxis.orient("bottom")
 		.ticks(10);
@@ -232,7 +241,7 @@ function dotsVisualization()
 			.attr("dy", ".75em")
 			.attr("transform", "rotate(-90)")
 			.text(dimensions[1]);
-        /*
+        
         svg_selected.on("mousemove", function() 
         {console.log("HI");
             var mouse = d3.mouse(this);
@@ -252,7 +261,7 @@ function dotsVisualization()
               .attr("cx", function(d) { return xScale(d.values[0]); })
               .attr("cy", function(d) { return yScale((d.values[1])); })
               .attr("r", function(d) { return rScale(d.values[2]); });
-        }   */
+        }   
 	}
 
 }

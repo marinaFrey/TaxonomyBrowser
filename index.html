@@ -85,8 +85,8 @@
 	<div class="row">
 		<div class="col-sm-4" >
 			<form>
-			<label><input type="radio" name="mode" value="count" autocomplete="off"> By number of species </label>
-			<label><input type="radio" name="mode" value="size" autocomplete="off" checked > By number of specimens</label>
+			<label><input type="radio" name="mode" value="count" style="vertical-align: bottom;" autocomplete="off"> By number of species </label>
+			<label><input type="radio" name="mode" value="size" style="vertical-align: bottom;" autocomplete="off" checked > By number of specimens</label>
 			</form>
 		</div>
 		<div class="col-sm-2" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
@@ -188,6 +188,7 @@
     var comboColor;
 	
     var showByChildrenNumbers = true;
+    var makeDynamicAxis = false;
     var firstTimeMultipleCombos = true;
     var firstTimeCombos = true;
     var selection = [];

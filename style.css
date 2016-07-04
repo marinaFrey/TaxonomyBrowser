@@ -170,6 +170,14 @@ div.tooltip {
 	font-size: 11px;
 }
 
+.tick text{
+font-size: 12px;
+}
+
+.tick line{
+opacity: 0.2;
+}
+
 /* SELECTION for filtering and comboboxes */
 
 select {

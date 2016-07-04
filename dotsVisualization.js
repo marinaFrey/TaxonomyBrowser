@@ -1,7 +1,7 @@
 function dotsVisualization()
 {
 	var h = 700;
-	var w = $("#sel_viz").width();
+	var w = $("#sel_viz").width() - 40;
 	var circlePadding = 40;
 	var borderBarPadding = 7;
 	var div;
@@ -108,22 +108,27 @@ function dotsVisualization()
                 }
             }
         }
-        
-        xScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); })).range([circlePadding,w - circlePadding]);
-        yScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); })).range([h - circlePadding,circlePadding]);
-        rScale = d3.scale.linear().domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); })).range([2, 10]);
-      /*
-        xScale = d3.scale.linear()
+        if(makeDynamicAxis)
+        {
+            xScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); })).range([circlePadding,w - circlePadding]);
+            yScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); })).range([h - circlePadding,circlePadding]);
+            rScale = d3.scale.linear().domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); })).range([2, 10]);
+        }
+        else
+        {
+            xScale = d3.scale.linear()
             .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); }))
             .range([circlePadding,w - circlePadding]);
     
-        yScale = d3.scale.linear()
-            .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); }))
-            .range([h - circlePadding,circlePadding]);
+            yScale = d3.scale.linear()
+                .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); }))
+                .range([h - circlePadding,circlePadding]);
 
-        rScale = d3.scale.linear()
-            .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); }));
-        rScale.range([2,10]);*/
+            rScale = d3.scale.linear()
+                .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); }));
+            rScale.range([2,10]);
+        }
+
 
         svg_selected.append("rect")
           .attr("class", "background")
@@ -131,19 +136,28 @@ function dotsVisualization()
           //.attr("y",circlePadding)
           .attr("width", w - circlePadding)
           .attr("height", h - circlePadding)
-          .style("fill","#ddd")
+          .style("fill","white")
           ;
+          
+        
         
         xAxis = d3.svg.axis();	
 		xAxis.orient("bottom")
-		.ticks(10);
+        .innerTickSize(-h)
+        .outerTickSize(0)
+        .tickPadding(10);
+		//.ticks(10);
 		xAxis.scale(xScale);
 
         yAxis = d3.svg.axis();
 		yAxis.orient("left")
-		.ticks(10);
+        .innerTickSize(-w)
+        .outerTickSize(0)
+        .tickPadding(10);
+		//.ticks(10);
 		yAxis.scale(yScale);
-        
+
+
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
 			.append("rect")
@@ -242,22 +256,24 @@ function dotsVisualization()
 			.attr("transform", "rotate(-90)")
 			.text(dimensions[1]);
         
-        svg_selected.on("mousemove", function() 
-        {console.log("HI");
-            var mouse = d3.mouse(this);
-            xScale.distortion(2.5).focus(mouse[0]);
-            yScale.distortion(2.5).focus(mouse[1]);
+        if(makeDynamicAxis)
+        {
+            svg_selected.on("mousemove", function() 
+            {
+                var mouse = d3.mouse(this);
+                xScale.distortion(2.5).focus(mouse[0]);
+                yScale.distortion(2.5).focus(mouse[1]);
 
-            dot.call(position);
-            svg_selected.select(".x.axis").call(xAxis);
-            svg_selected.select(".y.axis").call(yAxis);
-        });
-
+                dot.call(position);
+                svg_selected.select(".x.axis").call(xAxis);
+                svg_selected.select(".y.axis").call(yAxis);
+            });
+        }
         // Positions the dots based on data.
         function position(dot) 
         {
           dot 
-                .transition().duration(1000)
+                .transition().duration(1)
               .attr("cx", function(d) { return xScale(d.values[0]); })
               .attr("cy", function(d) { return yScale((d.values[1])); })
               .attr("r", function(d) { return rScale(d.values[2]); });

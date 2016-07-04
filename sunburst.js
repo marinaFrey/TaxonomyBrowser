@@ -108,7 +108,7 @@ function Sunburst()
                 .style("opacity", function(d) 
                 {
 					if(d.endAngle - d.startAngle < 10*Math.PI/180)
-						return 0.3;
+						return 0;
 					else
 						return 1;
                 })
@@ -154,45 +154,45 @@ function Sunburst()
               .on("mouseout", unDoHover);
             
             d3.selectAll("input").on("change", function change() 
-            {        
-                if(this.value === "count")
-                    showByChildrenNumbers = false;
-                else
-                    showByChildrenNumbers = true;
-                
-                g = svg.selectAll("g")
-                    .data(partition.nodes(root))
-                    .enter().append("g");
+            { 
+                if(this.value == "count" || this.value == "size")
+                {
+                    if(this.value === "count")
+                        showByChildrenNumbers = false;
+                    else
+                        showByChildrenNumbers = true;
                     
-                path
-                    //.data(partition.nodes(root))
-                    .transition()
-                    .duration(1000)
-                    .attrTween("d", arcTweenData);
+                    g = svg.selectAll("g")
+                        .data(partition.nodes(root))
+                        .enter().append("g");
+                        
+                    path
+                        //.data(partition.nodes(root))
+                        .transition()
+                        .duration(1000)
+                        .attrTween("d", arcTweenData);
 
-                    text
-					.transition().duration(1000)
-                        .style("stroke", "red")
-                      .styleTween("opacity", function(d) { return d3.interpolate(0, 1); })/*  
-                      .style("opacity", function(d) 
-                      {
-                        console.log(this);
-                        d.endAngle = arc.endAngle()(d);   
-						d.startAngle = arc.startAngle()(d);
-						//console.log(d);
-						if(d.endAngle - d.startAngle < 10*Math.PI/180)
-						{
-							
-							return 0;
-						}
-						else
-						{
-							//console.log(d.name);
-							return 1;
-						}
-                      })*/
-					  .attr("pointer-events", null);
-					
+                        text
+                        .transition().delay(1000)
+                          .style("opacity", function(d) 
+                          {
+                            console.log(this);
+                            d.endAngle = arc.endAngle()(d);   
+                            d.startAngle = arc.startAngle()(d);
+                            //console.log(d);
+                            if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                            {
+                                
+                                d3.select(this.parentNode).style("opacity",0);
+                            }
+                            else
+                            {
+                                //console.log(d.name);
+                                d3.select(this.parentNode).style("opacity",1);
+                            }
+                          })
+                          .attr("pointer-events", null);
+                }
             });
           
           function click(d) 

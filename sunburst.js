@@ -173,22 +173,24 @@ function Sunburst()
                         .attrTween("d", arcTweenData);
 
                         text
-                        .transition().delay(1000)
+                        .transition()
                           .style("opacity", function(d) 
                           {
-                            console.log(this);
                             d.endAngle = arc.endAngle()(d);   
                             d.startAngle = arc.startAngle()(d);
                             //console.log(d);
                             if(d.endAngle - d.startAngle < 10*Math.PI/180)
                             {
                                 
-                                d3.select(this.parentNode).style("opacity",0);
+                                d3.select(this.parentNode)
+                                    .style("opacity",0);
+                                    
                             }
                             else
                             {
-                                //console.log(d.name);
-                                d3.select(this.parentNode).style("opacity",1);
+                                
+                                d3.select(this.parentNode)
+                                    .style("opacity",1);
                             }
                           })
                           .attr("pointer-events", null);

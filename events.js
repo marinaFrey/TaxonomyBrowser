@@ -83,6 +83,8 @@ function showParallelCoord()
     comboY.hide();
     comboSize.hide();
     comboColor.hide();
+    dynamicCheckboxText.style.display = 'none';	
+    dynamicCheckbox.style.display = 'none';
 	
 	var list = generateNumericMeasuresList();
 	
@@ -123,6 +125,8 @@ function showDots()
     comboY.show();
     comboSize.show();
     comboColor.show();
+    dynamicCheckboxText.style.display = 'inline';	
+    dynamicCheckbox.style.display = 'inline';
     
 	var list = generateNumericMeasuresList();
 	
@@ -163,6 +167,8 @@ function showMap()
     comboY.hide();
     comboSize.hide();
     comboColor.show();
+    dynamicCheckboxText.style.display = 'none';	
+    dynamicCheckbox.style.display = 'none';
     
 	comboX.updateOptions([]);
     comboY.updateOptions([]);

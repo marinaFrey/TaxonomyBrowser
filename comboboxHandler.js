@@ -250,12 +250,12 @@ function MultipleComboboxes()
 
 function initializeComboboxes()
 {
-    var input = document.createElement("input");
+    dynamicCheckbox = document.createElement("input");
     
-    input.type = "checkbox";
-    input.checked = false;
-    input.style = "vertical-align: bottom;";
-    input.addEventListener("click", function()  
+    dynamicCheckbox.type = "checkbox";
+    dynamicCheckbox.checked = false;
+    dynamicCheckbox.style = "vertical-align: bottom;";
+    dynamicCheckbox.addEventListener("click", function()  
 	{
         if(this.checked)
             makeDynamicAxis = true;       
@@ -264,14 +264,15 @@ function initializeComboboxes()
             
         updateShownVisualization();
     });
-    document.getElementById("comboboxes").appendChild(input);
+    document.getElementById("comboboxes").appendChild(dynamicCheckbox);
+    dynamicCheckbox.style.display = 'none';
     
-    var txtLabel = document.createElement("H0");
+    dynamicCheckboxText = document.createElement("H0");
     var t = document.createTextNode(" Dynamic Axis ");
-    txtLabel.style = "margin-right:100px;font-size: 20px;display:inline;";
-    txtLabel.appendChild(t);
-    document.getElementById("comboboxes").appendChild(txtLabel);
-		
+    dynamicCheckboxText.style = "margin-right:100px;font-size: 20px;display:inline;";
+    dynamicCheckboxText.appendChild(t);
+    document.getElementById("comboboxes").appendChild(dynamicCheckboxText);
+	dynamicCheckboxText.style.display = 'none';	
     
     var label = document.createElement('label')
     label.htmlFor = "id";

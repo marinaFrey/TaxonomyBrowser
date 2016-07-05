@@ -174,21 +174,47 @@ function Sunburst()
 
                         text
                         .transition().delay(1000)
-                          .style("opacity", function(d) 
+                          .each("start", function(d) 
                           {
-                            console.log(this);
                             d.endAngle = arc.endAngle()(d);   
                             d.startAngle = arc.startAngle()(d);
-                            //console.log(d);
                             if(d.endAngle - d.startAngle < 10*Math.PI/180)
                             {
                                 
-                                d3.select(this.parentNode).style("opacity",0);
+                                d3.select(this.parentNode).style("opacity",function(d)
+                                {
+                                    d.endAngle = arc.endAngle()(d);   
+                                    d.startAngle = arc.startAngle()(d);
+                                    return 0;
+                                });
                             }
                             else
                             {
                                 //console.log(d.name);
-                                d3.select(this.parentNode).style("opacity",1);
+                                d3.select(this.parentNode).style("opacity",function(d)
+                                {
+                                    d.endAngle = arc.endAngle()(d);   
+                                    d.startAngle = arc.startAngle()(d);
+                                    return 1;
+                                });
+                                d3.select(this).transition().duration(1000)
+                                .attr("startOffset", function(d,i) 
+                                {   
+                                    
+                                    if(d.endAngle - d.startAngle == Math.PI*2)
+                                    {
+                                        return "25%";
+                                    }
+                                    if(d.endAngle == Math.PI*2) 
+                                    {
+                                        return "25%";
+                                    }
+                                    if(d.endAngle >= 270*Math.PI/180)
+                                    {
+                                        return "25%";
+                                    }
+                                    return (d.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
+                                });
                             }
                           })
                           .attr("pointer-events", null);
@@ -221,6 +247,7 @@ function Sunburst()
               .attrTween("d", arcTween(d))
               .each("end", function(e, i) 
               {
+                
                 index ++;
                 if (index == databaseSize) 
                 { 
@@ -228,12 +255,15 @@ function Sunburst()
                 }
                   // check if the animated element's data e lies within the visible angle span given in d
                   if (e.x >= d.x && e.x < (d.x + d.dx)) 
-                  {
+                  {//console.log("entrou");
+                  
                     // get a selection of the associated text element
                     arcText = d3.select(this.parentNode).select("text");
                     // fade in the text element and recalculate positions
+                    //console.log(arcText);
                     arcText.transition().duration(100)
-                      .filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
+                      //.filter(function (d){return (d.children);})
+                      //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
                       .attr("text-anchor", function(d) 
                       { 
                         return getAnchor(d, this);
@@ -241,21 +271,26 @@ function Sunburst()
                       .attr("root", function(d) { return rootDepth; })
                       .style("opacity", function(d) 
                       {
-						if(rootDepth > d.depth)
-							return 0;
-						return 1;
+
+                        if(rootDepth > d.depth)
+                            return 0;
+                        //if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                        //    return 0;
+
+                        return 1;
                       })
-					  .attr("pointer-events", null);
+                      .attr("pointer-events", null);
                     
                   }
-				  else
-				  {
-						arcText = d3.select(this.parentNode).select("text");
-						arcText
-						.attr("root", function(d) { return rootDepth; })
-						.attr("pointer-events", "none")
-						.style("opacity", 0);
-				  }
+                  else
+                  { //console.log("no show");
+                   //console.log(e);
+                        arcText = d3.select(this.parentNode).select("text");
+                        arcText
+                        .attr("root", function(d) { return rootDepth; })
+                        .attr("pointer-events", "none")
+                        .style("opacity", 0);
+                  }
               });
             
 			

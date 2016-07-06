@@ -95,7 +95,7 @@ var nodes = d3.range(n).map(function()
 var force = d3.layout.force()
     .nodes(nodes)
     .size([width, height])
-    .gravity(0.3)
+    .gravity(0.2)
     .charge(-15)//(-7)
     .on("tick", tick)
     .start();
@@ -121,8 +121,8 @@ var circle = svg_selected_specimens.selectAll("circle")
     })
 	.call(force.drag);
 	
-    var orderingDuration = nodes.length*10;
-    
+    var orderingDuration = (nodes.length/20)*(nodes.length/10);
+
 circle.transition()
     .duration(orderingDuration)
     .delay(function(d, i) { return 5; })
@@ -206,7 +206,6 @@ function setCollide(domainSize)
     }
     console.log(domainSize)
     var result = max - (max-min)*(domainSize*domainSize)/(saturationValue*saturationValue)
-    console.log("Collide"+result);
     return result;
 }
 
@@ -221,7 +220,6 @@ function setGravity(domainSize)
     }
     console.log(domainSize)
     var result = max - (max-min)*(domainSize*domainSize)/(saturationValue*saturationValue)
-    console.log("Collide"+result);
     return result;
 }
 

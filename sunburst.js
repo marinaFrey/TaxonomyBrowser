@@ -25,7 +25,7 @@ function Sunburst()
     var partition = d3.layout.partition()
         .value(function(d) 
 		{ 
-			//return size(1); 
+			//return 1; 
             if(showByChildrenNumbers)
             {
                 return 1; 
@@ -155,19 +155,20 @@ function Sunburst()
             
             d3.selectAll("input").on("change", function change() 
             { 
+                console.log("change");
                 if(this.value == "count" || this.value == "size")
-                {
+                {   
                     if(this.value === "count")
                         showByChildrenNumbers = false;
                     else
                         showByChildrenNumbers = true;
+                    
                     
                     g = svg.selectAll("g")
                         .data(partition.nodes(root))
                         .enter().append("g");
                         
                     path
-                        //.data(partition.nodes(root))
                         .transition()
                         .duration(1000)
                         .attrTween("d", arcTweenData);
@@ -176,44 +177,49 @@ function Sunburst()
                         .transition().delay(1000)
                           .each("start", function(d) 
                           {
+                            
                             d.endAngle = arc.endAngle()(d);   
                             d.startAngle = arc.startAngle()(d);
                             if(d.endAngle - d.startAngle < 10*Math.PI/180)
                             {
-                                d3.select(this.parentNode).style("opacity",function(d)
+                                d3.select(this.parentNode).style("opacity",function(e)
                                 {
-                                    d.endAngle = arc.endAngle()(d);   
-                                    d.startAngle = arc.startAngle()(d);
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
                                     return 0;
                                 });
                             }
                             else
                             {
-                                //console.log(d.name);
-                                d3.select(this.parentNode).style("opacity",function(d)
-                                {
-                                    d.endAngle = arc.endAngle()(d);   
-                                    d.startAngle = arc.startAngle()(d);
+                                
+                                d3.select(this.parentNode).style("opacity",function(e)
+                                {   
+                                    if(this.getAttribute("root") > e.depth)
+                                        return 0;
+                                    
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
                                     return 1;
                                 });
                                 d3.select(this).transition().duration(1000)
-                                .attr("startOffset", function(d,i) 
+                                .attr("startOffset", function(f,i) 
                                 {   
                                     
-                                    if(d.endAngle - d.startAngle == Math.PI*2)
+                                    if(f.endAngle - f.startAngle == Math.PI*2)
                                     {
                                         return "25%";
                                     }
-                                    if(d.endAngle == Math.PI*2) 
+                                    if(f.endAngle == Math.PI*2) 
                                     {
                                         return "25%";
                                     }
-                                    if(d.endAngle >= 270*Math.PI/180)
+                                    if(f.endAngle >= 270*Math.PI/180)
                                     {
                                         return "25%";
                                     }
-                                    return (d.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
+                                    return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
                                 });
+                                //console.log(this)
                             }
                           })
                           .attr("pointer-events", null);
@@ -225,19 +231,19 @@ function Sunburst()
             // fade out all text elements
             setHover(false);
             d3.selectAll("svg g text tspan").remove();
-
+            
             //text.transition().style("opacity", 0);
             var arcText = [];
             var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
 			
-            if (false) 
+            /*if (marinaquer) 
             {
               d3.select(this.parentNode).select("text").append('tspan').text(function(d){ 
                   return "Format: " + d.ClaimFormat;})
                 .attr("class", "benefitFormat")
                 .attr("dy", 20)
                 .attr("x", 45);             
-            }
+            }*/
             d3.select(".isCenter").classed('isCenter', false);
             d3.select(this.parentNode).select("text").attr('class', 'isCenter');
             var index = 0;
@@ -254,36 +260,43 @@ function Sunburst()
                 }
                   // check if the animated element's data e lies within the visible angle span given in d
                   if (e.x >= d.x && e.x < (d.x + d.dx)) 
-                  {//console.log("entrou");
+                  {
                   
                     // get a selection of the associated text element
                     arcText = d3.select(this.parentNode).select("text");
+                    
                     // fade in the text element and recalculate positions
-                    //console.log(arcText);
                     arcText.transition().duration(100)
-                      //.filter(function (d){return (d.children);})
-                      //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
-                      .attr("text-anchor", function(d) 
+                      .filter(function (f){return (e.endAngle - e.startAngle > 10*Math.PI/180 );})
+                      .attr("text-anchor", function(f) 
                       { 
-                        return getAnchor(d, this);
+                        return getAnchor(f, this);
                       })
-                      .attr("root", function(d) { return rootDepth; })
-                      .style("opacity", function(d) 
+                      .attr("root", function(f) { return rootDepth; })
+                      .style("opacity", function(f) 
                       {
-
-                        if(rootDepth > d.depth)
+                        
+                        if(rootDepth > e.depth)
                             return 0;
-                        //if(d.endAngle - d.startAngle < 10*Math.PI/180)
-                        //    return 0;
-
-                        return 1;
+                        if(e.endAngle - e.startAngle < 10*Math.PI/180)
+                            return 0;
+                        else
+                        {
+                            /*
+                            if(e.endAngle - e.startAngle < 1 && this.getComputedTextLength() > 80)
+                            {
+                                console.log(this);
+                                d3.select(this).select("textPath").attr("font-size", "8px");
+                            }*/
+                        
+                            return 1;
+                        }
                       })
                       .attr("pointer-events", null);
                     
                   }
                   else
-                  { //console.log("no show");
-                   //console.log(e);
+                  {
                         arcText = d3.select(this.parentNode).select("text");
                         arcText
                         .attr("root", function(d) { return rootDepth; })

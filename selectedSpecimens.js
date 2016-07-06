@@ -22,15 +22,16 @@ for(var i = 0; i < selection.length; i++)
 }
 var y = d3.scale.ordinal()
     .domain(d3.range(m))
-    .rangePoints([0, height], 1);
-	
+    .rangePoints([0, height], 1);    
+    
 var k = 0;
 groups.sort(function() {
   return .5 - Math.random();
 });
 
 if(filteredSelection[0] == "all")
-{
+{   
+
 	for(var i = 0; i < selection.length; i++)
 	{
 		
@@ -40,7 +41,7 @@ if(filteredSelection[0] == "all")
 			//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
 			nodes.push(
 			{
-				radius: 5,
+				radius: 5,//setRadius(selection.length),
 				color: selection[i].color, 
 				cx: width / 2,
 				cy:  y(pos), 
@@ -59,7 +60,7 @@ else
 			//var pos =groups.map(function(e) {console.log(e.name);return e.name; }).indexOf(selection[i].name);
 			nodes.push(
 			{
-				radius: 5,
+				radius: 5,//setRadius(filteredSelection.length),
 				color: selection[filteredSelection[i]].color, 
 				cx: width / 2,
 				cy:  y(pos), 
@@ -120,11 +121,13 @@ var circle = svg_selected_specimens.selectAll("circle")
     })
 	.call(force.drag);
 	
+    var orderingDuration = nodes.length*10;
+    
 circle.transition()
-    .duration(4000)
+    .duration(orderingDuration)
     .delay(function(d, i) { return 5; })
     .attrTween("r", function(d) {
-      var i = d3.interpolate(d.radius/2, d.radius);
+      var i = d3.interpolate(d.radius/10, d.radius);
       return function(t) { return d.radius = i(t); };
     });
     
@@ -134,7 +137,7 @@ function tick(e)
 {
   circle
       .each(gravity(.2 * e.alpha))
-      .each(collide(.5))
+      .each(collide(0.5))
       .attr("cx", function(d) { return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x)); })//; })
       .attr("cy", function(d) { return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y)); });//; });
 }
@@ -177,6 +180,51 @@ function collide(alpha)
     });
   };
 }
+
+function setRadius(domainSize)
+{
+    var max = 5;
+    var min = 1;
+    var saturationValue = 1500;
+    if (domainSize > saturationValue)
+    {
+        domainSize = saturationValue;
+    }
+    var result = max - (max-min)*(domainSize*domainSize)/(saturationValue*saturationValue)
+    //console.log(result);
+    return result;
+}
+
+function setCollide(domainSize)
+{
+    var max = 1;
+    var min = 0;
+    var saturationValue = 1500;
+    if (domainSize > saturationValue)
+    {
+        domainSize = saturationValue;
+    }
+    console.log(domainSize)
+    var result = max - (max-min)*(domainSize*domainSize)/(saturationValue*saturationValue)
+    console.log("Collide"+result);
+    return result;
+}
+
+function setGravity(domainSize)
+{
+    var max = 1;
+    var min = 0;
+    var saturationValue = 1500;
+    if (domainSize > saturationValue)
+    {
+        domainSize = saturationValue;
+    }
+    console.log(domainSize)
+    var result = max - (max-min)*(domainSize*domainSize)/(saturationValue*saturationValue)
+    console.log("Collide"+result);
+    return result;
+}
+
 /*
 function update() 
 {

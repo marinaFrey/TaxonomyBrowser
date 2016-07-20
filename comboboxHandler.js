@@ -1,6 +1,10 @@
 var VIZ_COMBO = 0;
 var FILTER_COMBO = 1;
 
+/*
+ * Class for the comboboxes
+ * creates comboboxes dynamically, handling creation, events and removal
+ */
 function ComboBox()
 {
 	var combo;
@@ -8,52 +12,67 @@ function ComboBox()
 	var id;
 	var type;
     var isNum;
-	
+    
+	/*
+     * creates combobox with its name on a label by its right
+     */
 	this.create = function(name, combo_id)
 	{
 		id = combo_id;
 		
+        // creating label with name
 		txtLabel = document.createElement("H0");
 		var t = document.createTextNode("   " + name + "  ");
 		txtLabel.appendChild(t);
 		document.getElementById("comboboxes").appendChild(txtLabel);
-
+        
+        // creating combobox with provided id
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
 		document.getElementById("comboboxes").appendChild(combo);
 		
 		type = VIZ_COMBO;
 		
-		combo.addEventListener("click", function()
-		{
+        // updates visualization when changing selection
+		combo.addEventListener("change", function()
+		{  
 			updateShownVisualization();
 		});
 		
 	}
 	
+    /*
+     * creates combobox with its name on a label by its right
+     * BEFORE a certain HTML element
+     */
 	this.createBefore = function(name, combo_id, beforeThis)
 	{
 		id = combo_id;
 		
+        // creating label with name
 		txtLabel = document.createElement("H0");
 		var t = document.createTextNode("   " + name + "  ");
 		txtLabel.appendChild(t);
 		//document.getElementById("comboboxes").appendChild(txtLabel);
 		document.getElementById("comboboxes").insertBefore(txtLabel, beforeThis);
-
+    
+        // creating combobox with provided id
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
-		//document.getElementById("comboboxes").appendChild(combo);
 		document.getElementById("comboboxes").insertBefore(combo, beforeThis);
 		
 		type = VIZ_COMBO;
-		
-		combo.addEventListener("click", function()
+        
+		// updates visualization when changing selection
+		combo.addEventListener("change", function()
 		{
 			updateShownVisualization();
 		});
 	}
-	
+    
+	/*
+     * creates combobox for filtering, no label added
+     */
 	this.createFilterCombo = function(combo_id, clickFunction)
 	{
 		id = combo_id;
@@ -61,13 +80,15 @@ function ComboBox()
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
 		var parent = document.getElementById("filters_info")
-		//parent.insertBefore(combo, addBtn);
         parent.appendChild(combo);
-		combo.addEventListener("click", clickFunction);
+		combo.addEventListener("change", clickFunction);
 		
 		type = FILTER_COMBO;
 	}
-	
+    
+	/*
+     * removes all combobox options
+     */
 	this.clearOptions = function()
 	{
 		var i;
@@ -77,48 +98,68 @@ function ComboBox()
 		}
 	}
 	
+    /*
+     * updates combobox options from list
+     */
 	this.updateOptions = function(optionList)
 	{
+        // saves current index name so it can remain unaltered if possible
         var newIndex = optionList.map(function(e) { return e.name; }).indexOf(this.getSelectedOption());
 		this.clearOptions();
+        // adds options from list
 		for (var i = 0; i < optionList.length; i++)
 		{
 			var opt = document.createElement("option");
-			//opt.setAttribute("value", "volvocar");
 			var t = document.createTextNode(optionList[i].name);
 			opt.appendChild(t);
 			combo.appendChild(opt);
             this.setNumericDataType(optionList[i].isNum);
 		}
+        // if previous selection still exists keep it unaltered
         if(newIndex != -1)
 			this.setSelectedOption(newIndex);
 		else
 			this.setSelectedOption(0);
 		
 	}
-	
+    
+	/*
+     * get selected combobox option string
+     */
 	this.getSelectedOption = function()
 	{
 		return combo.value;
 	}
 	
+    /*
+     * set selected combobox option id
+     */
 	this.setSelectedOption = function(itemId)
 	{
 		combo.selectedIndex = itemId;
 	}
 	
+    /*
+     * hide combobox
+     */
 	this.hide = function()
 	{
 		combo.style.display = 'none';
 		txtLabel.style.display = 'none';
 	}
 	
+    /*
+     * show combobox
+     */
 	this.show = function()
 	{
 		combo.style.display = 'inline';
 		txtLabel.style.display = 'inline';
 	}
 	
+    /*
+     * remove combobox
+     */
 	this.remove = function(parent)
 	{
 		var parent = document.getElementById(parent);
@@ -127,11 +168,19 @@ function ComboBox()
 		parent.removeChild(combo);
 	}
     
+    /*
+     * set if combobox is to be used with numeric data
+     * used with filtering comboboxes
+     */
     this.setNumericDataType = function(dataType)
     {
         isNum = dataType;
     }
     
+    /*
+     * get if combobox is to be used with numeric data
+     * used with filtering comboboxes
+     */
     this.isNumeric = function()
     {
         return isNum;
@@ -140,7 +189,10 @@ function ComboBox()
 }
 
 
-
+/*
+ * Class for multiple dynamic comboboxes used in parallel coordinates visualization
+ * creates comboboxes dynamically, handling creation, events and removal
+ */
 function MultipleComboboxes()
 {
 	var combos = [];
@@ -148,6 +200,9 @@ function MultipleComboboxes()
 	var ptr = this;
 	var addButton;
 	
+    /*
+     * creates 3 initial comboboxes and a button so more can be added
+     */
 	this.initialize = function()
 	{
 		
@@ -162,6 +217,7 @@ function MultipleComboboxes()
         
 		comboNumber = 3;
 		
+        // creatin add button
 		addButton=document.createElement("img");
 		addButton.setAttribute('src', 'images/add.png');
 		addButton.style.width= '32px';
@@ -174,6 +230,9 @@ function MultipleComboboxes()
 		
 	}
 	
+    /*
+     * adds new combobox and updates shown visualization
+     */
 	this.addCombo = function()
 	{
 		combos[comboNumber] = new ComboBox();
@@ -190,6 +249,9 @@ function MultipleComboboxes()
 		
 	}
 	
+    /*
+     * removes a specific combobox from the cluster
+     */
 	this.removeCombo = function(comboToRemove)
 	{
 		for(var i = 0; i < combos.length; i++)
@@ -202,6 +264,9 @@ function MultipleComboboxes()
 		}
 	}
 	
+    /*
+     * updates all comboboxes options
+     */
 	this.updateOptions = function(list)
 	{
 		for(var i = 0; i < combos.length; i++)
@@ -210,6 +275,9 @@ function MultipleComboboxes()
 		}
 	}
 	
+    /*
+     * get selected options from all comboboxes and returns a list with all in order
+     */
 	this.getSelectedOptions = function()
 	{
 		var list = [];
@@ -220,6 +288,9 @@ function MultipleComboboxes()
 		return list;
 	}
 	
+    /*
+     * hides all comboboxes
+     */
 	this.hide = function()
 	{
 		for(var i= 0; i < combos.length; i++)
@@ -229,6 +300,9 @@ function MultipleComboboxes()
 		addButton.style.display = 'none';
 	}
 	
+    /*
+     * shows all comboboxes
+     */
 	this.show = function()
 	{
 		for(var i= 0; i < combos.length; i++)
@@ -237,7 +311,11 @@ function MultipleComboboxes()
 		}
 		addButton.style.display = 'inline';
 	}
-        
+    
+    /*
+     * set comboboxes indexes when initializing 
+     * so that they won't show the same option
+     */
     this.setDifferentIndexes = function()
     {
         for(var i= 0; i < combos.length; i++)
@@ -247,15 +325,18 @@ function MultipleComboboxes()
     }
 	
 }
-
+/*
+ * creates scatterplot comboboxes and checkbox for dynamic axis
+ * hides them to only show when needed
+ */
 function initializeComboboxes()
 {
+    // creating dynamic axis checkbox
     dynamicCheckbox = document.createElement("input");
-    
     dynamicCheckbox.type = "checkbox";
     dynamicCheckbox.checked = false;
     dynamicCheckbox.style = "vertical-align: bottom;";
-    dynamicCheckbox.addEventListener("click", function()  
+    dynamicCheckbox.addEventListener("change", function()  
 	{
         if(this.checked)
             makeDynamicAxis = true;       
@@ -267,6 +348,7 @@ function initializeComboboxes()
     document.getElementById("comboboxes").appendChild(dynamicCheckbox);
     dynamicCheckbox.style.display = 'none';
     
+    // creating dynamic axis label
     dynamicCheckboxText = document.createElement("H0");
     var t = document.createTextNode(" Dynamic Axis ");
     dynamicCheckboxText.style = "margin-right:100px;font-size: 20px;display:inline;";
@@ -278,6 +360,7 @@ function initializeComboboxes()
     label.htmlFor = "id";
     label.appendChild(document.createTextNode('moving axis'));
     
+    // creating comboboxes
     comboX = new ComboBox();
 	comboX.create("X","comboX");
     comboX.hide();
@@ -295,10 +378,13 @@ function initializeComboboxes()
     comboColor.hide();
 }
 
+/*
+ * gets all species list of measures names and checks if value should be a number
+ * returns an object list with all measure names, avoiding duplicates
+ */
 function generateMeasuresList()
 {
 	var m_list = [];
-
 	for (var i = 0; i < selection.length; i++)
 	{
 		if(selection[i].characters)
@@ -306,26 +392,25 @@ function generateMeasuresList()
 
             for(var j = 0; j < selection[i].characters.length; j++)
             {
-                    if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
-                    {
-                        if(selection[i].characters[j].type == "real number" || 
-                            selection[i].characters[j].type == "integer number")
-                            m_list.push({name: selection[i].characters[j].name, isNum: true});
-                        else
-                            m_list.push({name: selection[i].characters[j].name, isNum: false});
-                    }
-                        
-
+                // checks if measure not in list already
+                if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
+                {
+                    if(selection[i].characters[j].type == "real number" || 
+                        selection[i].characters[j].type == "integer number")
+                        m_list.push({name: selection[i].characters[j].name, isNum: true});
+                    else
+                        m_list.push({name: selection[i].characters[j].name, isNum: false});
+                }
             }
-
 		}
-
 	}
-
 	return m_list;
-	
 }
 
+/*
+ * gets all species list of numeric measures names only
+ * returns an object list with all measure names, avoiding duplicates
+ */
 function generateNumericMeasuresList()
 {
 	var m_list = [];
@@ -336,22 +421,17 @@ function generateNumericMeasuresList()
 
             for(var j = 0; j < selection[i].characters.length; j++)
             {
-                    if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
-                    {
-                        
-                        if(selection[i].characters[j].type == "real number" || 
-                            selection[i].characters[j].type == "integer number")
-                            m_list.push({name: selection[i].characters[j].name, isNum: true});
+                // checks if measure not in list already
+                if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
+                {
+                    
+                    if(selection[i].characters[j].type == "real number" || 
+                        selection[i].characters[j].type == "integer number")
+                        m_list.push({name: selection[i].characters[j].name, isNum: true});
 
-                    }
-                        
-
+                }
             }
-
 		}
-
 	}
-
 	return m_list;
-	
 }

@@ -1,10 +1,15 @@
 
+/*
+ * Gets info from selected specimen and shows it in bootstrap's popup
+ */
 function makeSpecimenPopup(specimen)
 {
+    // creating title from specimen's name (currently its species)
 	var txtLabel = document.getElementById("myModalLabel");
 	txtLabel.className = "modal-title";
 	txtLabel.innerHTML = "<h1>"+specimen.name+"</h1>";
 	
+    // creating info label to show all information on the specimen
 	var info_text =
 		"<h3><b>Collection ID: </b>" + specimen.collection_id +"<br />" +
 		"<b>Collected by: </b>" + specimen.collected_by + "<br />" +
@@ -14,6 +19,7 @@ function makeSpecimenPopup(specimen)
 		"<b>Information: </b>" + specimen.information + 
 		"<br /><br /></h3> <h2><b>Measures: </b></h2><br /><br />";
 	
+    // getting information from all its measures
 	for(var i = 0; i < specimen.measures.length; i++)
 	{
 		info_text += 
@@ -27,11 +33,16 @@ function makeSpecimenPopup(specimen)
 	$('#basicModal').modal('show');
 }
 
+/*
+ * Class for the filtering popup
+ * creates filters dynamically, handling creation, edition and removal
+ */
 function FilterPopup()
 {
 	var infoLabel;
 	var addButton;
 	var measuresList;
+    // options for filtering numeric variables
 	var operationsListNumeric = [{name:"exists",isNum:false},
                                     {name:"doesn't exist",isNum:false},
                                     {name:"is",isNum:true},
@@ -40,11 +51,16 @@ function FilterPopup()
                                     {name:"is bigger than",isNum:true},
                                     {name:"is smaller or equal to",isNum:true},
                                     {name:"is bigger or equal to",isNum:true}];
+    // options for filtering string variables
 	var operationsListString = ["exists","doesn't exist","is", "is not"];
 	var ptr = this;
 	
+    /*
+     * Creates popup with only a button to add a filter and title
+     */
 	this.create = function()
 	{
+        // creating title
 		var txtLabel = document.getElementById("filterModalLabel");
 		txtLabel.className = "modal-title";
 		txtLabel.innerHTML = "<h1> Filters </h1>";
@@ -52,6 +68,7 @@ function FilterPopup()
 		infoLabel = document.getElementById("filters_info");
 		infoLabel.innerHTML = "";
 
+        // creating add filter button
 		addButton=document.createElement("img");
 		addButton.setAttribute('src', 'images/add.png');
 		addButton.style.width= '64px';
@@ -64,16 +81,20 @@ function FilterPopup()
 		
 		
 	}
-	
+    
+	/*
+     * Adding filter to popup and filter list
+     */
 	this.addFilter = function()
 	{
-
+        // creating input for the filter and delete icon
 		var comboMeasure = new ComboBox();
         var comboOption = new ComboBox();
         var input = document.createElement("input");
         var oImg=document.createElement("img");
         var br = document.createElement("br");
         
+        // populating combobox with all measures and additional information
 		comboMeasure.createFilterCombo("comboMeasure", function(){});
 		comboMeasure.updateOptions([{name:"Collection ID", isNum:false},
                                     {name:"Collected by", isNum:false},
@@ -81,15 +102,17 @@ function FilterPopup()
                                     {name:"Latitude", isNum:true},
                                     {name:"Longitude", isNum:false}
                                     ].concat(generateMeasuresList()));
-	
+        
+        // handling combobox to select the filtering used
 		comboOption.createFilterCombo("comboOption", function()
 		{
+            // if option does not need further input, hide text input
 			if(comboOption.getSelectedOption() == "exists" || comboOption.getSelectedOption() == "doesn't exist")
 				input.disabled = true;
 			else
 				input.disabled = false;
 			
-            //if(operationsListString.indexOf(comboOption.getSelectedOption()) == -1)
+            // checks if option selected is only for numeric values and stores the answer for further use
             var indexInList = operationsListNumeric.map(function(e) { return e.name; }).indexOf(comboOption.getSelectedOption())
             if(operationsListNumeric[indexInList].isNum)
                 comboOption.setNumericDataType(true);
@@ -102,6 +125,7 @@ function FilterPopup()
 		input.disabled = true;
 		input.addEventListener("input", function()  // ou "change" se soh chama quando troca de contexto
 		{
+            // checks if input is not a number and warns user when filtering option is only for numeric values
 			if(comboOption.isNumeric())
 			{
 				if(isNaN(parseFloat(input.value)))
@@ -114,9 +138,9 @@ function FilterPopup()
 				}
 			}
 		});
-		//infoLabel.insertBefore(input, addButton);
         infoLabel.appendChild(input);
         
+        // adding remove icon
 		oImg.setAttribute('src', 'images/remove.png');
 		oImg.style.width= '32px';
 		oImg.style.width= '32px';
@@ -124,16 +148,15 @@ function FilterPopup()
 		{
 			ptr.removeFilter(comboMeasure, comboOption, input, br, this);
 		};
-		//infoLabel.insertBefore(oImg, addButton);
 		infoLabel.appendChild(oImg);
-		
-		
-		//infoLabel.insertBefore(br, addButton);
 		infoLabel.appendChild(br);
 		
+        // adding filter to filter list
 		filters.push({comboMeasure: comboMeasure, comboOption: comboOption, input: input});
 	}
-	
+	/*
+     * Removes filter from list and interface
+     */
 	this.removeFilter = function(comboM, comboO, inputLine, br, rmvButton)
 	{
 		infoLabel.removeChild(rmvButton);
@@ -144,35 +167,47 @@ function FilterPopup()
 		filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(comboM),1);
 		
 	}
-	
+	/*
+     * Shows popup
+     */
 	this.show = function()
 	{
 		$('#filterModal').modal('show');
 	}
 }
 
+/*
+ * Function used when using remove filters button from the interface
+ * Removes all filters from the visualizations but keeps the filtering list to be applied again
+ */
 function removeFilters()
 {
     updateShownVisualizationAndOptions();
-    //filters = [];
 }
 
+/*
+ * Applies all created filters on the selected specimens
+ * Remaining specimens should be consistent to ALL filters applied
+ */
 function applyFilters()
 {
+    // cleans current filtered selection
     filteredSelection = [];
     
     for (var i = 0; i < selection.length; i++)
     {
         if(selection[i].measures)
         {
+            // if this variable is false the specimen will be rejected and not added to the filtered list
             var accept = true;
             for (var k = 0; k < filters.length && accept; k++)
             {
+                // gets filter from filters list
                 var measure = filters[k].comboMeasure.getSelectedOption();
                 var option = filters[k].comboOption.getSelectedOption();
                 var value = filters[k].input.value;
 
-				
+                // tests if filter is true depending on selected filter and measure
                 switch(option)
                 {
                     case "exists":
@@ -222,8 +257,10 @@ function applyFilters()
 							
 							break;
 							
+                            // default are all measures
 							default:
 								var exists = false;
+                                // gets measure that needs filtering
 								for(var j = 0; j < selection[i].measures.length; j++)
 								{
 									if(selection[i].measures[j].name == measure) 
@@ -282,7 +319,7 @@ function applyFilters()
 								}  
 							
 							break;
-							
+							// default are all measures
 							default:
 								
 								var exists = false;
@@ -346,7 +383,7 @@ function applyFilters()
 								}  
 							
 							break;
-							
+							// default are all measures
 							default:
 								
 								var exists = false;
@@ -421,7 +458,7 @@ function applyFilters()
 								}  
 							
 							break;
-							
+							// default are all measures
 							default:
 								
 								var exists = false;
@@ -453,6 +490,7 @@ function applyFilters()
                         
                     
                     break;
+                    // has to be numeric
                     case "is smaller than":
                     
                         var exists = false;
@@ -467,6 +505,7 @@ function applyFilters()
                             accept = false;
                     
                     break;
+                    // has to be numeric
                     case "is bigger than":
                     
                         var exists = false;
@@ -481,6 +520,7 @@ function applyFilters()
                             accept = false;
                         
                     break;
+                    // has to be numeric
                     case "is smaller or equal to":
                     
                         var exists = false;
@@ -495,6 +535,7 @@ function applyFilters()
                             accept = false;
                     
                     break;
+                    // has to be numeric
                     case "is bigger or equal to":
                     
                     var exists = false;
@@ -514,20 +555,22 @@ function applyFilters()
             }
             if(accept == true)
             {
+                // adds index of specimen in the "selected" list as entry to "filteredSelection" list
+                // this new list will be used as index to the original, saving memory and keeping both lists
                 filteredSelection.push(i);
             }
         }
     }
-    /*     
-    for (var i = 0; i < filteredSelection.length; i++)
-    {
-        console.log(selection[filteredSelection[i]]);
-    }*/
-        
+    
+    // update currently showing visualizations with new filter
 	updateFromFiltering();
     $('#filterModal').modal('hide');
 }
 
+/*
+ * When changed selection on sunburst updates measure options on all filtering comboboxes
+ * mantaining previous selection
+ */
 function updateFilterOptions(newOptions)
 {
 	for (var i = 0; i < filters.length; i++)

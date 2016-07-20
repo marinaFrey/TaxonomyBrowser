@@ -83,21 +83,20 @@
 	
 	<!-- SETTINGS -->
 	<div class="row">
+        <!-- radio buttons to select type of partitioning made in sunburst -->
 		<div class="col-sm-4" >
 			<form>
 			<label><input type="radio" name="mode" value="count" style="vertical-align: bottom;" autocomplete="off"> By number of species </label>
 			<label><input type="radio" name="mode" value="size" style="vertical-align: bottom;" autocomplete="off" checked > By number of specimens</label>
 			</form>
 		</div>
+        <!-- icons for filtering -->
 		<div class="col-sm-2" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
-		
-			<!--<img name="addButton" data-toggle="modal" data-target="#basicModal" src="images/add.png" width="64" height="64" border="0" alt="javascript button" onClick="return addNode();">-->
 			<img name="filterRemoveButton" src="images/filter_remove.png" width="64" height="64" border="0" alt="javascript button" onClick="return removeFilters();">
 			<img name="filterEditButton" src="images/filter_edit.png" width="64" height="64" border="0" alt="javascript button" onClick="return openFilters();">
-			<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">
-			<!--<img name="removeButton" src="images/remove.png" width="64" height="64" border="0" alt="javascript button" >-->
-			
+			<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">		
 		</div>
+        <!-- comboboxes for selecting variables to visualize -->
 		<div class="col-sm-6"  id="comboboxes" style="text-align: right">
 
 		</div>
@@ -105,14 +104,19 @@
 	
 	<!-- VISUALIZATIONS -->
 	<div class="row">
+        <!-- sunburst -->
 		<div class="col-sm-4"  id="viz" style="text-align:center"></div>
+        <!-- specimens selected -->
 		<div class="col-sm-2"  id="selected_view" ></div>
+        <!-- other visualizations -->
 		<div class="col-sm-6" id="right_viz" style="text-align:center">
+            <!-- image that shows when there is nothing selected -->
             <img name="nosel"  src="images/no_selection.png" border="0" style="display:flex;justify-content:center;align-items:center;">
+            <!-- image that shows when the filter removes all specimens -->
             <img name="nofiltersel"  src="images/no_filter_selection.png" border="0" style="display:none;justify-content:center;align-items:center;">
-            <div id="sel_viz"> 
-                
-            </div>
+            <!-- visualizations -->
+            <div id="sel_viz"></div>
+            <!-- google maps API -->
             <div id="maps"> </div>
 		</div>
 			
@@ -121,9 +125,11 @@
   <!-- CHOOSING VISUALIZATION -->
   <div class="row">
     <div class="col-sm-4" style="text-align:center"></div>
+    <!-- text with number of specimens selected by filtering -->
     <div class="col-sm-2" style="text-align:center">
         <div id="number_sel_viz" height="100"></div>
     </div>
+    <!-- icons for selecting wich visualization to show -->
     <div class="col-sm-6" style="text-align:center">
 		<!--<img name="bars" src="images/bars.png" width="180" height="140" border="0" alt="javascript button" onClick="return showBars();"style= " border: 4px solid yellow;border-radius: 38px;" >-->
         <!--<img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >-->
@@ -147,15 +153,17 @@
 <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <!-- title -->
             <div class="modal-header" id="hder">
 				<h4 class="modal-title" id="myModalLabel"></h4>
             </div>
+            <!-- info -->
             <div class="modal-body" id="info-body">
 				<div id="info_text"></div>
             </div>
+            <!-- buttons -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
         </div>
     </div>
   </div>
@@ -165,13 +173,16 @@
 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <!-- title -->
             <div class="modal-header" id="hder">
 				<h4 class="modal-title" id="filterModalLabel"></h4>
             </div>
+            <!-- info -->
             <div class="modal-body" id="info-body">
 				<div id="filters_info" style="text-align: center"></div>
 				<div id="filters_add_button" style="text-align: left"></div>
             </div>
+            <!-- buttons -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onClick="applyFilters();">Apply Filters</button>
@@ -187,41 +198,54 @@
     var comboSize;
     var comboColor;
 	
-    var showByChildrenNumbers = true;
-    var makeDynamicAxis = false;
     var dynamicCheckbox;
     var dynamicCheckboxText;
+    var makeDynamicAxis = false;
     var firstTimeMultipleCombos = true;
     var firstTimeCombos = true;
+    
+    // all selected taxonomy and specimen from sunburst
     var selection = [];
+    // all created filters
 	var filters = [];
+    // all selected specimen that fit the filters created
     var filteredSelection = ["all"];
-	
-	
-	var svg_selected = d3.select("#sel_viz").append("svg")
-            .attr("width", $("#sel_viz").width())
-            .attr("height", 700)
-			.append("g");
-	
+    
+	// svg for selected specimen visualization
 	var svg_selected_specimens = d3.select("#selected_view").append("svg")
             .attr("width", $("#selected_view").width())
             .attr("height", 700)
 			.append("g");
     
+	// svg for showing visualization of the selection
+	var svg_selected = d3.select("#sel_viz").append("svg")
+            .attr("width", $("#sel_viz").width())
+            .attr("height", 700)
+			.append("g");
+            
+    // creating sunburst
     var sunburst = new Sunburst;
     sunburst.create();
-
+    
+    var selectedSpecimenViz = new SelectedSpecimens();
+    selectedSpecimenViz.create();
+    
+    // creating scatterplot comboboxes and checkbox for dynamic axis
     initializeComboboxes();
 	
+    // creating multiple combobxes for parallel coordinates
 	var multipleCombos = new MultipleComboboxes();
 	multipleCombos.initialize();
 	multipleCombos.hide();
 	
+    // creating filter popup
 	var filterPopup = new FilterPopup();
 	filterPopup.create();
     
+    // creating text with number of selected for each selected species
     var selectedNumber = new numberOfSelectedViz();
 	
+    // hiding maps div and showing normal visualization div
 	document.getElementById("maps").style = "display:none;";
     document.getElementById("sel_viz").style = "display:none;";
 

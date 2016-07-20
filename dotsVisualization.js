@@ -1,46 +1,52 @@
+/*
+ * Class for the scatterplot visualization
+ * creates scatterplot with x and y axis
+ */
 function dotsVisualization()
 {
 	var h = 700;
 	var w = $("#sel_viz").width() - 40;
+    var dataset;
 	var circlePadding = 40;
 	var borderBarPadding = 7;
+    
+    // div for creating tooltip
 	var div;
+    
+    // scales and axis
 	var xScale;
 	var yScale;
 	var rScale;
 	var xAxis;
 	var yAxis;
 	
+    /*
+     * initializes what is needed for the scatterplot
+     */
 	this.create = function()
-    {
-		svg_selected.selectAll("*").remove();
-        document.getElementById("maps").style = "display:none;";
-        document.getElementById("sel_viz").style = "display:block;";
-        
-		//xScale = d3.scale.linear();		
-		//yScale = d3.scale.linear();		
-		//rScale = d3.scale.linear();
-		
+    {   
 		div = d3.select("body").append("div")   
 			.attr("class", "tooltip")               
 			.style("opacity", 0);
-
     }
     
-    this.update = function(dataset)
+    /*
+     * creates and updates the visualization
+     */
+    this.update = function()
     {
-		document.getElementById("maps").style = "display:none;";
-        document.getElementById("sel_viz").style = "display:block;";
-		svg_selected.selectAll("*").remove();
-		//var xName = comboX.getSelectedOption();
-		//var yName = comboY.getSelectedOption();
-		//var sizeName = comboSize.getSelectedOption();
+        svg_selected.selectAll("*").remove();
+        
         var y = {};
+        // gets variables that define the x and y axis and the size of each circle
         var dimensions = [comboX.getSelectedOption(),comboY.getSelectedOption(),comboSize.getSelectedOption()];
 		
+        // if there is filter applied, filteredSelection vector is used as index to access selected specimens in dataset
 		if(filteredSelection[0] != "all")
         {
             dataset = [];
+            // for showing a circle all 3 variables selected must exist
+            // so it's made a check to confirm if the specimen has a value to all 3 before showing
             for (var i = 0; i < filteredSelection.length; i++)
             {
                 if(selection[filteredSelection[i]].measures)
@@ -49,6 +55,7 @@ function dotsVisualization()
                     for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
                     {
                         var measureName = selection[filteredSelection[i]].measures[j].name
+                        // getting measure value if they exist for the specimen
                         for (var k = 0; k < dimensions.length; k++)
                         {
                             if(measureName == dimensions[k])
@@ -62,9 +69,11 @@ function dotsVisualization()
                     {
                         if(!values[k])
                         {
+                            // not accepted if any of the 3 values don't exist on this specimen
                             accepted = false;
                         }
                     }
+
                     if(accepted)
                     {
                         dataset.push({values: values, specimen: selection[filteredSelection[i]]});
@@ -74,15 +83,20 @@ function dotsVisualization()
         }
         else
         {
+            // if there is no filter applied, all selection is used 
             dataset= [];
+            // for showing a circle all 3 variables selected must exist
+            // so it's made a check to confirm if the specimen has a value to all 3 before showing
             for (var i = 0; i < selection.length; i++)
             {
                 if(selection[i].measures)
                 {
                     values = [];
+                    
                     for(var j = 0; j < selection[i].measures.length; j++)
                     {
                         var measureName = selection[i].measures[j].name
+                        // getting measure value if they exist for the specimen
                         for (var k = 0; k < dimensions.length; k++)
                         {
                             if(measureName == dimensions[k])
@@ -98,6 +112,7 @@ function dotsVisualization()
                     {
                         if(!values[k])
                         {
+                            // not accepted if any of the 3 values don't exist on this specimen
                             accepted = false;
                         }
                     }
@@ -108,28 +123,30 @@ function dotsVisualization()
                 }
             }
         }
+        // if the user has chosen to make a dynamic axis, a fisheye scale is created for x and y
         if(makeDynamicAxis)
         {
             xScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); })).range([circlePadding,w - circlePadding]);
             yScale = d3.fisheye.scale(d3.scale.linear).domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); })).range([h - circlePadding,circlePadding]);
-            rScale = d3.scale.linear().domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); })).range([2, 10]);
         }
         else
         {
+            // creating regular scales for x, y
             xScale = d3.scale.linear()
             .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[0]); }))
             .range([circlePadding,w - circlePadding]);
     
             yScale = d3.scale.linear()
                 .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[1]); }))
-                .range([h - circlePadding,circlePadding]);
-
-            rScale = d3.scale.linear()
+                .range([h - circlePadding,circlePadding]);    
+        }
+        // creating the scale for the circles
+        rScale = d3.scale.linear()
                 .domain(d3.extent(dataset, function(p) {return parseFloat(p.values[2]); }));
             rScale.range([2,10]);
-        }
 
-
+         
+        // creating a white background behind visualization to capture mouse movement
         svg_selected.append("rect")
           .attr("class", "background")
           .attr("x",circlePadding - 10)
@@ -139,25 +156,25 @@ function dotsVisualization()
           .style("fill","white")
           ;
           
-        
-        
+        // creating axis for x 
         xAxis = d3.svg.axis();	
 		xAxis.orient("bottom")
-        .innerTickSize(-h)
-        .outerTickSize(0)
-        .tickPadding(10);
-		//.ticks(10);
+            .innerTickSize(-h)
+            .outerTickSize(0)
+            .tickPadding(10);
+            //.ticks(10);
 		xAxis.scale(xScale);
-
+        
+        // creating axis for y
         yAxis = d3.svg.axis();
 		yAxis.orient("left")
-        .innerTickSize(-w)
-        .outerTickSize(0)
-        .tickPadding(10);
-		//.ticks(10);
+            .innerTickSize(-w)
+            .outerTickSize(0)
+            .tickPadding(10);
+            //.ticks(10);
 		yAxis.scale(yScale);
 
-
+        // clipping path not do show beyound visualization ( not sure if working )
 		svg_selected.append("clipPath")
 			.attr("id","chart-area")
 			.append("rect")
@@ -166,31 +183,23 @@ function dotsVisualization()
 			.attr("width", w - borderBarPadding*3)
 			.attr("height", h - borderBarPadding*2);
 		
+        // creating dots
 		var dot = svg_selected.append("g")
 			.attr("id","circles")
-			.attr("clip-path", "url(#chart-area)")
+			//.attr("clip-path", "url(#chart-area)")
 			.selectAll("circle")
 			.data(dataset)
 			.enter()
 			.append("circle")
-			.filter(function (d){return !d.children})
-			.attr("cx", function(d)
-			{
-                return  xScale(d.values[0]);
-			})
-			.attr("cy", function(d)
-			{
-                return  yScale(d.values[1]);
-			})
-			.attr("r", function(d)
-			{
-                return  rScale(d.values[2]);
-			})
+            .call(position)  // sets x, y and circle size of the dot
 			.attr("fill", function(d){return d.specimen.color;})
             .style("opacity",0.3)
 			.on("mouseover", function(d) 
 			{
+                // make hovering circle completely visible
                 d3.select(this).style("opacity", 1);
+                
+                // showing tooltip with x, y and circle size values
 				div.transition()        
 				.duration(200)      
 				.style("opacity", .9);      
@@ -201,7 +210,8 @@ function dotsVisualization()
 				.style("top", (d3.event.pageY - 60) + "px");    
 			})                  
 			.on("mouseout", function(d) 
-			{       
+			{     
+                // hiding tooltip when out of hover
                 d3.select(this).style("opacity", 0.3);
 				div.transition()        
 				.duration(500)      
@@ -209,36 +219,24 @@ function dotsVisualization()
 			})
 			.on("click", function(d)
 			{
+                // showing specimen info when clicked
 				makeSpecimenPopup(d.specimen);
-			})
-			
+			})		
 			;
-			
-			/*
-		svg2.selectAll("text")
-			.data(dataset2)
-			.enter()
-			.append("text")
-			.text(function(d){return d[0] + "," + d[1];})
-			.attr("x",function(d){return xScale(d[0]);})
-			.attr("y",function(d){return yScale(d[1]);})
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "11px")
-			.attr("fill", "red");*/
-		
-
-       
         
+        // drawing axis x line
 		svg_selected.append("g")
 			.attr("class","x axis")
 			.attr("transform", "translate(0," + ( h - circlePadding ) + ")")
 			.call(xAxis);
-            
+         
+        // drawing axis y line
 		svg_selected.append("g")
 			.attr("class","y axis")
 			.attr("transform", "translate(" + (circlePadding - 10) +",0)")
 			.call(yAxis);
 			
+        // drawing axis x name
 		svg_selected.append("text")
 			.attr("class", "x label")
 			.attr("text-anchor", "end")
@@ -247,6 +245,7 @@ function dotsVisualization()
 			.attr("y", h - circlePadding - 10)
 			.text(dimensions[0]);
 			
+        // drawing axis y name
 		svg_selected.append("text")
 			.attr("class", "y label")
 			.attr("text-anchor", "end")
@@ -258,6 +257,7 @@ function dotsVisualization()
         
         if(makeDynamicAxis)
         {
+            // if on dynamic axis make mouse move distort axis
             svg_selected.on("mousemove", function() 
             {
                 var mouse = d3.mouse(this);
@@ -269,11 +269,14 @@ function dotsVisualization()
                 svg_selected.select(".y.axis").call(yAxis);
             });
         }
-        // Positions the dots based on data.
+        
+        /*
+         * Positions the dots based on data.
+         */
         function position(dot) 
         {
           dot 
-                .transition().duration(1)
+              .transition().duration(1)
               .attr("cx", function(d) { return xScale(d.values[0]); })
               .attr("cy", function(d) { return yScale((d.values[1])); })
               .attr("r", function(d) { return rScale(d.values[2]); });

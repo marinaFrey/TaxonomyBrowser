@@ -5,8 +5,6 @@ var DOTS_VIZ = 3;
 var MAPS_VIZ = 4;
 var active_visualization = 3;
 
-
-
 var mapsViz;
 var selViz;
 var dotsViz;
@@ -37,6 +35,9 @@ function removeNode()
 
 /* SELECTED SPECIMEN EVENTS */
 
+/*
+ * Shows Filtering popup
+ */
 function openFilters()
 {
     filterPopup.show();
@@ -44,29 +45,17 @@ function openFilters()
 
 /* VISUALIZATION EVENTS */
 
+
 function showBars()
 {
-	//document.images["bars"].style = " border: 4px solid yellow;border-radius: 38px;" 
-	//document.images["matrix"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["dots"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["coord"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["map"].style = " border: 4px solid #6D6D6D;border-radius: 38px;" 
-	document.images["nosel"].style = "display:none;";
-    
-	//active_visualization = SELECTED_VIZ;
-    
-    comboX.updateOptions([]);
-    comboY.updateOptions([]);
-    comboSize.updateOptions(generateNumericMeasuresList());
-    comboColor.updateOptions(["specimen"]);
-
-	selViz = new selectedVisualization;
-    selViz.create();
-	if(selection[0])
-		selViz.update(selection);
 
 }
 
+/*
+ * Changes yellow border (to show wich visualization is selected) on the icons
+ * Hides comboboxes not used and updates options
+ * Shows Parallel Coordinates Visualization with selected specimens info
+ */
 function showParallelCoord()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -98,16 +87,25 @@ function showParallelCoord()
         
     }
     
-	ParallelCoordinates();
+    svg_selected.selectAll("*").remove();
+    document.getElementById("maps").style = "display:none;";
+    document.getElementById("sel_viz").style = "display:block;";
+    
+	//ParallelCoordinates();
 	
-	/*
+	
 	paralCoordViz = new ParallelCoordinates();
 	paralCoordViz.create();
 	if(selection[0])
-		paralCoordViz.update(selection);*/
+		paralCoordViz.update();
 	
 }
 
+/*
+ * Changes yellow border (to show wich visualization is selected) on the icons
+ * Hides comboboxes not used and updates options
+ * Shows Scatterplot visualization with selected specimens info
+ */
 function showDots()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -143,13 +141,22 @@ function showDots()
         firstTimeCombos = false;
     }
     
+    document.getElementById("maps").style = "display:none;";
+    document.getElementById("sel_viz").style = "display:block;";
+    svg_selected.selectAll("*").remove();
+    
 	dotsViz = new dotsVisualization;
     dotsViz.create();
 	
 	if(selection[0])
-		dotsViz.update(selection);
+		dotsViz.update();
 }
 
+/*
+ * Changes yellow border (to show wich visualization is selected) on the icons
+ * Hides comboboxes not used and updates options
+ * Shows Google Maps API with selected specimens position if available
+ */
 function showMap()
 {
 	//document.images["bars"].style =" border: 4px solid #6D6D6D;border-radius: 38px;" 
@@ -175,6 +182,10 @@ function showMap()
     comboSize.updateOptions([]);
     comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
+    svg_selected.selectAll("*").remove();
+    document.getElementById("maps").style = "display:block;";
+    document.getElementById("sel_viz").style = "display:none;";
+    
 	mapsViz = new mapVisualization;
     mapsViz.create();
 	if(selection[0])
@@ -197,12 +208,13 @@ function updateShownVisualization()
 		break;
 		
 		case COORD_PARAL_VIZ:
-			ParallelCoordinates();
+            multipleCombos.show();
+			paralCoordViz.update();
 		break;
 		
 		case DOTS_VIZ:
 			multipleCombos.hide();
-			dotsViz.update(selection);
+			dotsViz.update();
 		break;
 		
 		case MAPS_VIZ:
@@ -215,7 +227,7 @@ function updateShownVisualization()
 
 function updateFromFiltering()
 {
-	selectedSpecimens();
+	selectedSpecimenViz.update();
 	selectedNumber.update();
     if(filteredSelection.length == 0)
     {
@@ -256,7 +268,7 @@ function updateShownVisualizationAndOptions()
 {
     filteredSelection = [];
     filteredSelection.push("all");
-    selectedSpecimens();
+    selectedSpecimenViz.update();
     selectedNumber.update();
     if(selection.length == 0)
     {
@@ -301,8 +313,5 @@ function updateShownVisualizationAndOptions()
             break;
         }
     }
-    
 
-	
-	
 }

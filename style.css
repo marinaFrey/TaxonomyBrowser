@@ -1,7 +1,5 @@
-path {
-  stroke: #fff;
-  fill-rule: evenodd;
-}
+/* ALL */
+
 html .x-navbar .x-nav li > a:after {
     content: "";
 }
@@ -14,26 +12,16 @@ html header.entry-header {
   float:left;
   width:310px;
 }
-#viz {
-  float:left;
-  /*width:685px;
-  left:-35px;
-  position:relative;*/
-}
-#messageText {
-  clear:both;
-  margin-left:30px;
-  margin-rigth:30px;
-}
+
 html header .entry-header img{
   
 }
 html .x-container-fluid.width {
     width: 100%;
 }
-#vizContainer {
-  /*height:600px;*/
-  width:100%;
+
+.x-navbar-fixed-top {
+  display:none !important;
 }
 
 #sel_viz
@@ -43,21 +31,11 @@ html .x-container-fluid.width {
     position:relative;
 }
 
-#maps
-{
-    height:700px;
-    width:100%;
-    position:relative;
-}
+/* SUNBURST */
 
-.x-navbar-fixed-top {
-  display:none !important;
-}
-#vizKey {
- position:relative;/*
- float:right;
- left:35px; 
-  height:20px;*/
+path {
+  stroke: #fff;
+  fill-rule: evenodd;
 }
 
 /* TEXT */
@@ -67,17 +45,20 @@ text {
   font-size: 15px;
   font-weight:400;
 }
+
 g:hover, g text:hover{
   cursor:pointer;
 }
+
 text[depth="0"] {
   font-size: 20px !important;
 }
+
 text.isCenter,text[depth="0"][root="0"] {
 /*  transform:rotate(0) !important;*/
   font-family:  "Lucida Console", Monaco, monospace; /*"Oswald",Helvetica, sans-serif !important;*/
   font-size: 18px;
-  /*font-weight:700;*/
+
 }
 
 body {
@@ -91,20 +72,6 @@ body {
 @-webkit-keyframes fontfix {
     from { opacity: 1; }
     to   { opacity: 1; }
-}
-
-.benefitDetails {
-  x:10;
-}
-.benefitComponents {
-  
-}
-.benefitNet {
-  
-}
-svg {
-  /*height:730px*/ !important;
-  font: 10px sans-serif;
 }
 
 /* TOOLTIP */
@@ -154,6 +121,15 @@ div.tooltip {
   pointer-events: none;         
 }
 
+/* MAPS VISUALIZATION*/
+
+#maps
+{
+    height:700px;
+    width:100%;
+    position:relative;
+}
+
 /* DOTS VISUALIZATION */
 
 .axis path,
@@ -178,7 +154,7 @@ font-size: 12px;
 opacity: 0.2;
 }
 
-/* SELECTION for filtering and comboboxes */
+/* INPUT for filtering and comboboxes */
 
 select {
 	
@@ -234,3 +210,5 @@ div.bar
     background-color: teal;
     margin-right: 2px;
 }
+
+

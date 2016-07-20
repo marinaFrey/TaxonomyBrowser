@@ -2,6 +2,7 @@ function Sunburst()
 {
     var node;
 	var databaseSize;
+    var showByChildrenNumbers = true;
     var normalOpacity = 0.3;
     var width = $("#viz").width(),
         height = 700,

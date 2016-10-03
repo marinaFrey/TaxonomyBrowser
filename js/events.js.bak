@@ -66,7 +66,8 @@ function showSunburstbySpecies()
 function showSunburstbySpecimen()
 {
     document.images["byspecies"].src="images/species.png";
-    document.images["byspecimen"].src ="images/specimen2.png"; 
+    document.images["byspecimen"].src ="images/specimen2.png";
+    
     sunburst.changePartitionType(true);
 }
 

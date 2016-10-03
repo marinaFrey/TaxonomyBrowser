@@ -171,7 +171,7 @@
         </div>-->
         <!-- text with number of specimens selected by filtering -->
         <div class="col-sm-2" style="text-align:center">
-            <div id="number_sel_viz" ></div>
+            <!--<div id="number_sel_viz" ></div>-->
             <img name="analysis" src="images/analysis_button.png" width="150" height="120" border="0" alt="javascript button" onClick="return showAnalysisPopup();">
         </div>
         <!-- comboboxes for selecting variables to visualize -->

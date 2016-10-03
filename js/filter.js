@@ -147,7 +147,54 @@ function FilterPopup()
  */
 function removeFilters()
 {
-    updateShownVisualizationAndOptions();
+    //updateShownVisualizationAndOptions();
+    filteredSelection = [];
+    filteredSelection.push("all");
+    selectedSpecimenViz.update();
+    selectedNumber.update();
+    
+    if(selection.length == 0)
+    {
+        document.images["nosel"].style = "display:block;";
+        document.getElementById("sel_viz").style = "display:none;";
+        document.getElementById("maps").style = "display:none;";
+    }
+    else
+    {
+        document.images["nofiltersel"].style = "display:none;";
+        document.images["nosel"].style = "display:none;";
+        
+        var newOptionsList = [{name:"Collection ID", isNum:false},
+                                {name:"Collected by", isNum:false},
+                                {name:"Data", isNum:false},
+                                {name:"Latitude", isNum:true},
+                                {name:"Longitude", isNum:false}
+                             ].concat(generateMeasuresList());
+        updateFilterOptions(newOptionsList);
+
+        
+        switch(active_visualization)
+        {
+            case SELECTED_VIZ:
+                showBars();
+            break;
+            
+            case SCATTERPLOT_VIZ:		
+            break;
+            
+            case COORD_PARAL_VIZ:
+                showParallelCoord();          
+            break;
+            
+            case DOTS_VIZ:
+                showDots();
+            break;
+            
+            case MAPS_VIZ:
+                showMap();
+            break;
+        }
+    }
 }
 
 /*

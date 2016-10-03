@@ -4,7 +4,8 @@
  */
 function dotsVisualization()
 {
-	var h = 700;
+    var margin = {top: 30, right: 10, bottom: 10, left: 10};
+    var h =  $("#sel_viz").height() + margin.top + margin.bottom ;
 	var w = $("#sel_viz").width() - 40;
     var dataset;
 	var circlePadding = 40;
@@ -36,6 +37,9 @@ function dotsVisualization()
     this.update = function()
     {
         svg_selected.selectAll("*").remove();
+
+        //svg_selected
+        //    .attr("transform", "translate( 0 ," + (margin.top*-1) + ")");
         
         var y = {};
         // gets variables that define the x and y axis and the size of each circle

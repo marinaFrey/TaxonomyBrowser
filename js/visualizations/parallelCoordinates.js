@@ -3,10 +3,12 @@
  * dynamically creates axis 
  */
 function ParallelCoordinates()
-{
+{   
 	var margin = {top: 30, right: 10, bottom: 10, left: 10},
 		width = $("#sel_viz").width()  - margin.left - margin.right,
-		height = $("#sel_viz").height() - margin.top - margin.bottom;
+		height = $("#sel_viz").height() /*- margin.top - margin.bottom*/;
+    //var height =  $("#sel_viz").height() ;
+	//var width = $("#sel_viz").width() - 40;
 
 	var x,
 		y,
@@ -139,6 +141,7 @@ function ParallelCoordinates()
             .data(dataset)
             .enter().append("path")
             .attr("d", ptr.path)
+            .style("opacity", function(d) {return .4;})
             .style("stroke", function(d) {return d.specimen.color;})
             .on("click", function(d)
             {

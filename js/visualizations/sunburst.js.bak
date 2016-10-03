@@ -155,7 +155,79 @@ function Sunburst()
               .on("contextmenu", rightClick)
               .on("mouseover", doHover)
               .on("mouseout", unDoHover);
+            
+            d3.selectAll("input").on("change", function change() 
+            { 
+                console.log("change");
+                if(this.value == "count" || this.value == "size")
+                {   
+                    if(this.value === "count")
+                        showByChildrenNumbers = false;
+                    else
+                        showByChildrenNumbers = true;
+                    
+                    
+                    g = svg.selectAll("g")
+                        .data(partition.nodes(root))
+                        .enter().append("g");
+                        
+                    path
+                        .transition()
+                        .duration(1000)
+                        .attrTween("d", arcTweenData);
 
+                        text
+                        .transition().delay(1000)
+                          .each("start", function(d) 
+                          {
+                            
+                            d.endAngle = arc.endAngle()(d);   
+                            d.startAngle = arc.startAngle()(d);
+                            if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                            {
+                                d3.select(this.parentNode).style("opacity",function(e)
+                                {
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
+                                    return 0;
+                                });
+                            }
+                            else
+                            {
+                                
+                                d3.select(this.parentNode).style("opacity",function(e)
+                                {   
+                                    if(this.getAttribute("root") > e.depth)
+                                        return 0;
+                                    
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
+                                    return 1;
+                                });
+                                d3.select(this).transition().duration(1000)
+                                .attr("startOffset", function(f,i) 
+                                {   
+                                    
+                                    if(f.endAngle - f.startAngle == Math.PI*2)
+                                    {
+                                        return "25%";
+                                    }
+                                    if(f.endAngle == Math.PI*2) 
+                                    {
+                                        return "25%";
+                                    }
+                                    if(f.endAngle >= 270*Math.PI/180)
+                                    {
+                                        return "25%";
+                                    }
+                                    return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
+                                });
+                                //console.log(this)
+                            }
+                          })
+                          .attr("pointer-events", null);
+                }
+            });
           
           function click(d) 
           {

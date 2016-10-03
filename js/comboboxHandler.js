@@ -1,5 +1,6 @@
 var VIZ_COMBO = 0;
 var FILTER_COMBO = 1;
+var ANALYSIS_COMBO = 2;
 
 /*
  * Class for the comboboxes
@@ -86,6 +87,21 @@ function ComboBox()
 		type = FILTER_COMBO;
 	}
     
+    this.createAnalysisCombo = function(combo_id, clickFunction)
+    {
+        id = combo_id;
+
+		combo = document.createElement("SELECT");
+		combo.setAttribute("id", id);
+		var parent = document.getElementById("analysis_combos")
+        parent.appendChild(combo);
+		combo.addEventListener("change", clickFunction);
+        var br = document.createElement("br");
+        parent.appendChild(br);
+		
+		type = ANALYSIS_COMBO;
+    }
+    
 	/*
      * removes all combobox options
      */
@@ -103,6 +119,12 @@ function ComboBox()
      */
 	this.updateOptions = function(optionList)
 	{
+        var isNewCombo;
+        if(combo.options.length > 0)
+            isNewCombo = false;
+        else
+            isNewCombo = true;
+            
         // saves current index name so it can remain unaltered if possible
         var newIndex = optionList.map(function(e) { return e.name; }).indexOf(this.getSelectedOption());
 		this.clearOptions();
@@ -119,7 +141,17 @@ function ComboBox()
         if(newIndex != -1)
 			this.setSelectedOption(newIndex);
 		else
+        {
 			this.setSelectedOption(0);
+            if(type == FILTER_COMBO && isNewCombo == false)
+            {
+                alert("WARNING! Your filters are now invalid to your new selection");
+            }
+            if(type == VIZ_COMBO && isNewCombo == false)
+            {
+                alert("WARNING! Your visualization parameters are now invalid to your new selection");
+            }
+        }
 		
 	}
     

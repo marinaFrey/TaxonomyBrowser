@@ -242,7 +242,7 @@ function updateShownVisualization()
 function updateFromFiltering()
 {
 	selectedSpecimenViz.update();
-	selectedNumber.update();
+	//selectedNumber.update();
     analysis.update();
     if(filteredSelection.length == 0)
     {
@@ -284,7 +284,7 @@ function updateShownVisualizationAndOptions()
     filteredSelection = [];
     filteredSelection.push("all");
     selectedSpecimenViz.update();
-    selectedNumber.update();
+    //selectedNumber.update();
     
     if(selection.length == 0)
     {
@@ -304,7 +304,10 @@ function updateShownVisualizationAndOptions()
                                 {name:"Longitude", isNum:false}
                              ].concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
-        applyFilters();
+
+        if(filters.length > 0)
+            applyFilters();
+
         analysis.update();
 
         switch(active_visualization)

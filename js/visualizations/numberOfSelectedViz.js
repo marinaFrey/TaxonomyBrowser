@@ -6,7 +6,9 @@ function numberOfSelectedViz()
     var borderBarPadding = 7;*/
     
     var labels = [];
+    var labels_analysis = [];
     var parent_div = document.getElementById("number_sel_viz");
+    var analysis_div = document.getElementById("counting_text");
     
     this.update = function()
     {
@@ -65,6 +67,97 @@ function numberOfSelectedViz()
          labels = [];
     }
     
+    this.updateInAnalysis = function()
+    {
+        
+        this.removeAllInAnalysis();
+
+        var total = 0;
+        console.log(filteredSelection);
+        if(filteredSelection[0] != "all")
+        {
+            var counter = [];
+            for (var i = 0; i < filteredSelection.length; i++)
+            {
+                var index = counter.map(function(e) { return e.name; }).indexOf(selection[filteredSelection[i]].name);
+                if(index !=-1)
+                {
+                    counter[index].size += 1;
+                }
+                else
+                {
+                    counter.push({color:selection[filteredSelection[i]].color, name:selection[filteredSelection[i]].name, size:1});
+                }
+                
+            }
+            
+            for (var i = 0; i < counter.length; i++)
+            {
+                var txtLabel = document.createElement("H0");
+                txtLabel.innerHTML = "<b><font color="+counter[i].color+">   " + counter[i].name + ":  </b>"+ counter[i].size+ " selected specimen(s)</font><br>";
+                total += counter[i].size;
+                analysis_div.appendChild(txtLabel);
+                labels_analysis.push(txtLabel);
+                //dataset.push({name: selection[filteredSelection[i]].name, size: selection[filteredSelection[i]].children.length, color:selection[filteredSelection[i]].color});
+            }
+            
+                
+        }
+        else
+        {
+            var counter = [];
+            for (var i = 0; i < selection.length; i++)
+            {
+                var index = counter.map(function(e) { return e.name; }).indexOf(selection[i].name);
+                if(index !=-1)
+                {
+                    counter[index].size += 1;
+                }
+                else
+                {
+                    counter.push({color:selection[i].color, name:selection[i].name, size:1});
+                }
+            }   
+            
+            for (var i = 0; i < counter.length; i++)
+            {
+                var txtLabel = document.createElement("H0");
+                txtLabel.innerHTML = "<b><font color="+counter[i].color+">   " + counter[i].name + ":  </b>"+ counter[i].size+ " selected specimen(s)</font><br>";
+                total += counter[i].size;
+                analysis_div.appendChild(txtLabel);
+                labels_analysis.push(txtLabel);
+                //dataset.push({name: selection[filteredSelection[i]].name, size: selection[filteredSelection[i]].children.length, color:selection[filteredSelection[i]].color});
+            }
+            /*
+                if(selection[i].characters)
+                {
+                    var txtLabel = document.createElement("H0");
+                    txtLabel.innerHTML = "<b><font color="+selection[i].color+">   " + selection[i].name + ":  </b>"+ selection[i].children.length+ " selected specimen(s)</font><br>";
+                    total += counter[i].size;
+                    analysis_div.appendChild(txtLabel);
+                    labels_analysis.push(txtLabel);
+                    //dataset.push({name: selection[i].name, size: selection[i].children.length, color:selection[i].color});
+                }*/
+            
+        }
+        
+        var totalLabel = document.createElement("H0");
+        totalLabel.innerHTML = "<b> Total:  </b>"+ total + " <br>";
+        analysis_div.appendChild(totalLabel);
+        labels_analysis.push(totalLabel);
+        
+        return total;
+        
+    }
+    
+    this.removeAllInAnalysis = function()
+    {
+         for (var i = 0; i < labels_analysis.length; i++)
+         {
+            analysis_div.removeChild(labels_analysis[i]);
+         }
+         labels_analysis = [];
+    }
     
     /*
     console.log(dataset);

@@ -38,6 +38,13 @@ path {
   fill-rule: evenodd;
 }
 
+polyline{
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
+
 /* TEXT */
 
 text {

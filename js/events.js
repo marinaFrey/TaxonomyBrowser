@@ -60,14 +60,14 @@ function showSunburstbySpecies()
 {
     document.images["byspecies"].src="images/species2.png";
     document.images["byspecimen"].src ="images/specimen.png";
-    sunburst.changePartitionType(false);
+    sunburst.togglePartition(false);
 }
 
 function showSunburstbySpecimen()
 {
     document.images["byspecies"].src="images/species.png";
     document.images["byspecimen"].src ="images/specimen2.png"; 
-    sunburst.changePartitionType(true);
+    sunburst.togglePartition(true);
 }
 
 /*

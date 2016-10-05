@@ -151,7 +151,7 @@ function removeFilters()
     filteredSelection = [];
     filteredSelection.push("all");
     selectedSpecimenViz.update();
-    //selectedNumber.update();
+    selectedNumber.update();
     
     if(selection.length == 0)
     {

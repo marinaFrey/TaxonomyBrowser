@@ -90,14 +90,14 @@
 
     <div class="row">
         <div class="col-sm-4" style="text-align: center" >
-            <img name="taxtreetitle" src="images/taxonomyTree.png" width="400" height="70" border="0" title="here you can select by right-clicking any specimen you want to visualize">
+            <img name="taxtreetitle" src="images/taxonomyTree.png" width="300" height="50" border="0" title="here you can select by right-clicking any specimen you want to visualize">
             <!--<h1>Taxonomy Tree</h1>-->
         </div>
         <div class="col-sm-2" style="text-align: center">
-            <img name="filteringtitle" src="images/filtering.png" width="250" height="70" border="0" title="here you can filter the selected specimen you want to visualize">
+            <img name="filteringtitle" src="images/filtering.png" width="180" height="50" border="0" title="here you can filter the selected specimen you want to visualize">
         </div>
         <div class="col-sm-6" style="text-align: center">
-            <img name="viztitle" src="images/visualization.png" width="400" height="55" border="0" title="here you can see the visualizations!">
+            <img name="viztitle" src="images/visualization.png" width="300" height="45" border="0" title="here you can see the visualizations!">
         </div>
     </div>
     
@@ -122,7 +122,8 @@
 		<div class="col-sm-2" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
 			<img name="filterRemoveButton" src="images/filter_remove.png" width="80" height="80" border="0" alt="javascript button" onClick="return removeFilters();" title="remove all filters from selection">
 			<img name="filterEditButton" src="images/filter_edit.png" width="80" height="80" border="0" alt="javascript button" onClick="return openFilters();" title="filter manager">
-			<!--<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">	-->	
+			<img name="analysis" src="images/analysis_button.png" width="110" height="80" border="0" alt="javascript button" onClick="return showAnalysisPopup();">
+            <!--<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">	-->	
 		</div>
         <!-- icons for selecting wich visualization to show -->
         <div class="col-sm-6"  style="background-color:#b5f279;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
@@ -131,6 +132,7 @@
             <img name="coord" src="images/coord2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showParallelCoord();" title="show parallel coordinates visualization" >
             <img name="dots" src="images/bullets2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showDots();" title="show scatterplot visualization">
             <img name="map" src="images/map2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showMap();" title="show map visualization">
+            
         </div>
         
 
@@ -138,7 +140,7 @@
 	</div>
 	
     <div class="row">
-        <h2></h2>
+        <h5></h5>
     </div>
     
 	<!-- VISUALIZATIONS -->
@@ -171,8 +173,8 @@
         </div>-->
         <!-- text with number of specimens selected by filtering -->
         <div class="col-sm-2" style="text-align:center">
-            <!--<div id="number_sel_viz" ></div>-->
-            <img name="analysis" src="images/analysis_button.png" width="150" height="120" border="0" alt="javascript button" onClick="return showAnalysisPopup();">
+            <div id="number_sel_viz" ></div>
+            
         </div>
         <!-- comboboxes for selecting variables to visualize -->
         <div class="col-sm-6"  id="comboboxes" style="text-align: center"></div>
@@ -195,15 +197,21 @@
         <div class="modal-content">
             <!-- title -->
             <div class="modal-header" id="hder">
-				<h4 class="modal-title" id="myModalLabel"></h4>
+                <div class="col-sm-6" >
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+                <div class="col-sm-4" ></div>
+                <div class="col-sm-1" >
+                    <img name="editSpecimenButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" >
+                </div>
+                <div class="col-sm-1" >
+                    <img name="removeSpecimenButton" src="images/trash_button.png" width="64" height="64" border="0" alt="javascript button" >
+                </div>
+				
             </div>
             <!-- info -->
             <div class="modal-body" id="info-body">
-                <div class="row">
-                    <div class="col-md-6" id="info_text"></div>
-                    <div class="col-md-6" id="info_combos" style="text-align:right"></div>
-                </div>
-				
+				<div id="info_text"></div>
             </div>
             <!-- buttons -->
             <div class="modal-footer">
@@ -219,13 +227,24 @@
         <div class="modal-content">
             <!-- title -->
             <div class="modal-header" id="hder">
-				<h4 class="modal-title" id="analysisModalLabel"></h4>
+                <div class="col-sm-6" >
+                    <h4 class="modal-title" id="analysisModalLabel"></h4>
+                </div>
+                <div class="col-sm-2" ></div>
+                <div class="col-sm-4"  id="analysis_combos" style="text-align:right;margin-top: 10px;"></div>	
             </div>
             <!-- info -->
             <div class="modal-body" id="info-body">
                 <div class="row">
-                    <div class="col-md-6" id="analysis_text"></div>
-                    <div class="col-md-6" id="analysis_combos" style="text-align:right"></div>
+                    <div class="col-sm-2" ></div>
+                    <div class="col-sm-8">
+                        <div id="counting_title" style="text-align:center;"></div>
+                        <div class="well" id="counting_text" style="text-align:center;"></div>
+                        
+                        <div id="analysis_title" style="text-align:center;"></div>
+                        <div class="well" id="analysis_text" style="text-align:center;"></div>
+                    </div>
+                    <div class="col-sm-2" ></div>
                 </div>
 				
             </div>
@@ -311,7 +330,7 @@
 	filterPopup.create();
     
     // creating text with number of selected for each selected species
-    var selectedNumber = new numberOfSelectedViz();
+    //var selectedNumber = new numberOfSelectedViz();
     
     // creating analysis
     var analysis = new Analysis();

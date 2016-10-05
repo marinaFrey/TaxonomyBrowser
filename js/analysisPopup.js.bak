@@ -144,10 +144,9 @@ function Analysis()
             }
         }
         
-        
+        populationSize = meaningfulPopulation;
         if(meaningfulPopulation > 0)
         {
-            populationSize = meaningfulPopulation;
             average = sum / meaningfulPopulation;
             analysisList[listIndex].output.innerHTML = average;
         }

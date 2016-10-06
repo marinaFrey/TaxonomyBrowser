@@ -8,6 +8,8 @@ function Analysis()
     var measureCombo;
     var populationSize = null;
     var average = null;
+    var sum = null;
+    var zeroValues = null;
     
     this.createPopup = function()
     {
@@ -35,6 +37,9 @@ function Analysis()
         measureCombo.createAnalysisCombo(1,this.recalculateAnalysis);
         measureCombo.updateOptions(generateNumericMeasuresList());
         
+        
+        this.createAnalysis("Number of specimens with this measure populated: ", this.calculatePopulation); 
+        this.createAnalysis("Number of specimens with this measure value equal to zero: ", this.calculateZeroValuesNumber); 
         this.createAnalysis("Average: ", this.calculateAverage);
         this.createAnalysis("Standard Deviation: ", this.calculateStandardDeviation);
 
@@ -42,13 +47,13 @@ function Analysis()
     
     this.show = function()
     {
-        this.recalculateAnalysis();
+        this.update();
         $('#analysisModal').modal('show');
     }
     
     this.update = function()
     {
-        populationSize = counting.updateInAnalysis();
+        counting.updateInAnalysis();
         measureCombo.updateOptions(generateNumericMeasuresList());
         this.recalculateAnalysis();
     }
@@ -69,7 +74,7 @@ function Analysis()
         infoLabel.appendChild(br);
         
         analysisList.push({name: name, analysisFunction: analysisFunction, output: resultLabel});
-        console.log(analysisList);
+        //console.log(analysisList);
     }
 
     this.recalculateAnalysis = function()
@@ -82,15 +87,16 @@ function Analysis()
         }
     }
 
-    this.calculateAverage = function(listIndex)
+    this.calculatePopulation = function(listIndex)
     {
-        var sum = 0;
+        sum = 0;
+        zeroValues = 0;
         var meaningfulPopulation = 0;
         var accepted;
         
         if(filteredSelection[0] != "all")
         {
-            console.log(filteredSelection);
+            //console.log(filteredSelection);
             for (var i = 0; i < filteredSelection.length; i++)
             {
                 if(selection[filteredSelection[i]].measures)
@@ -105,6 +111,9 @@ function Analysis()
                         {
                             sum += parseInt(selection[filteredSelection[i]].measures[j].value);
                             accepted = true;
+                            
+                            if(selection[filteredSelection[i]].measures[j].value == '0')
+                                zeroValues++;
                         }
                                           
                     }
@@ -132,6 +141,9 @@ function Analysis()
                         {
                             sum += parseInt(selection[i].measures[j].value);
                             accepted = true;
+                            
+                            if(selection[i].measures[j].value == '0')
+                                zeroValues++;
                         }
                                           
                     }
@@ -144,11 +156,35 @@ function Analysis()
             }
         }
         
+        populationSize = meaningfulPopulation;
         
-        if(meaningfulPopulation > 0)
+        if(populationSize > 0)
         {
-            populationSize = meaningfulPopulation;
-            average = sum / meaningfulPopulation;
+            analysisList[listIndex].output.innerHTML = populationSize;
+        }
+        else
+        {
+            analysisList[listIndex].output.innerHTML = "none";
+        }
+    }
+    
+    this.calculateZeroValuesNumber = function(listIndex)
+    {
+        if(zeroValues > 0)
+        {
+            analysisList[listIndex].output.innerHTML = zeroValues;
+        }
+        else
+        {
+            analysisList[listIndex].output.innerHTML = "none";
+        }
+    }
+    
+    this.calculateAverage = function(listIndex)
+    {   
+        if(populationSize > 0)
+        {
+            average = sum / populationSize;
             analysisList[listIndex].output.innerHTML = average;
         }
         else

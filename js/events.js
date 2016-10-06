@@ -243,7 +243,7 @@ function updateFromFiltering()
 {
 	selectedSpecimenViz.update();
 	//selectedNumber.update();
-    analysis.update();
+    //analysis.update();
     if(filteredSelection.length == 0)
     {
         document.images["nofiltersel"].style = "display:block;";
@@ -308,7 +308,7 @@ function updateShownVisualizationAndOptions()
         if(filters.length > 0)
             applyFilters();
 
-        analysis.update();
+        //analysis.update();
 
         switch(active_visualization)
         {

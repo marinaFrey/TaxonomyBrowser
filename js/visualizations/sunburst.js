@@ -232,7 +232,7 @@ function Sunburst()
                 })
                 .each("end",function(d)
                 {
-                    console.log(this.endA);
+                    //console.log(this.endA);
                 })
                 ;
 
@@ -427,8 +427,8 @@ function Sunburst()
                 //this._current = this._current;
                 //if(showByChildrenNumbers == false)
                 {
-                    console.log(this._old);
-                    console.log(this._current);
+                    //console.log(this._old);
+                    //console.log(this._current);
                 }
                 
                 //var interpolate = d3.interpolate(this._old,this._current);

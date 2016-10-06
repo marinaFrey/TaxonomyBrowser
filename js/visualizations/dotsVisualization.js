@@ -127,6 +127,21 @@ function dotsVisualization()
                 }
             }
         }
+        
+        if(dataset.length == 0)
+        {
+            document.images["nofiltersel"].style = "display:block;";
+            document.getElementById("sel_viz").style = "display:none;";
+            document.getElementById("maps").style = "display:none;";
+            return;
+        }
+        else
+        {
+            document.images["nofiltersel"].style = "display:none;";
+            document.images["nosel"].style = "display:none;";
+            document.getElementById("sel_viz").style = "display:block;";
+        }
+        
         // if the user has chosen to make a dynamic axis, a fisheye scale is created for x and y
         if(makeDynamicAxis)
         {

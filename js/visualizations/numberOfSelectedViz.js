@@ -73,7 +73,7 @@ function numberOfSelectedViz()
         this.removeAllInAnalysis();
 
         var total = 0;
-        console.log(filteredSelection);
+        //console.log(filteredSelection);
         if(filteredSelection[0] != "all")
         {
             var counter = [];

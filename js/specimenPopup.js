@@ -7,7 +7,7 @@ function makeSpecimenPopup(specimen)
     // creating title from specimen's name (currently its species)
 	var txtLabel = document.getElementById("myModalLabel");
 	txtLabel.className = "modal-title";
-	txtLabel.innerHTML = "<h1>"+specimen.name+"</h1>";
+	txtLabel.innerHTML = "<h1>"+specimen.name+" ( "+ specimen.collection_id +" )</h1>";
 	
     // creating info label to show all information on the specimen
 	var info_text =

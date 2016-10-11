@@ -143,7 +143,7 @@ function ComboBox()
 		else
         {
 			this.setSelectedOption(0);
-            
+            /*
             if(type == FILTER_COMBO && isNewCombo == false)
             {
                 alert("WARNING! Your filters are now invalid to your new selection");
@@ -152,7 +152,7 @@ function ComboBox()
             {
                 alert("WARNING! Your visualization parameters are now invalid to your new selection");
             }
-            
+            */
         }
 		
 	}

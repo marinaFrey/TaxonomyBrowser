@@ -60,15 +60,14 @@ function showSunburstbySpecies()
 {
     document.images["byspecies"].src="images/species2.png";
     document.images["byspecimen"].src ="images/specimen.png";
-    sunburst.changePartitionType(false);
+    sunburst.togglePartition(false);
 }
 
 function showSunburstbySpecimen()
 {
     document.images["byspecies"].src="images/species.png";
-    document.images["byspecimen"].src ="images/specimen2.png";
-    
-    sunburst.changePartitionType(true);
+    document.images["byspecimen"].src ="images/specimen2.png"; 
+    sunburst.togglePartition(true);
 }
 
 /*
@@ -243,8 +242,8 @@ function updateShownVisualization()
 function updateFromFiltering()
 {
 	selectedSpecimenViz.update();
-	selectedNumber.update();
-    analysis.update();
+	//selectedNumber.update();
+    //analysis.update();
     if(filteredSelection.length == 0)
     {
         document.images["nofiltersel"].style = "display:block;";
@@ -285,7 +284,7 @@ function updateShownVisualizationAndOptions()
     filteredSelection = [];
     filteredSelection.push("all");
     selectedSpecimenViz.update();
-    selectedNumber.update();
+    //selectedNumber.update();
     
     if(selection.length == 0)
     {
@@ -305,8 +304,11 @@ function updateShownVisualizationAndOptions()
                                 {name:"Longitude", isNum:false}
                              ].concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
-        applyFilters();
-        analysis.update();
+
+        if(filters.length > 0)
+            applyFilters();
+
+        //analysis.update();
 
         switch(active_visualization)
         {

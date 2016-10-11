@@ -39,7 +39,7 @@ function Analysis()
         
         
         this.createAnalysis("Number of specimens with this measure populated: ", this.calculatePopulation); 
-        this.createAnalysis("Number of specimens with this measure value equal to zero: ", this.calculateZeroValuesNumber); 
+        this.createAnalysis("Number of specimens with this measure's value equal to zero: ", this.calculateZeroValuesNumber); 
         this.createAnalysis("Average: ", this.calculateAverage);
         this.createAnalysis("Standard Deviation: ", this.calculateStandardDeviation);
 

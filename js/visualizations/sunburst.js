@@ -158,7 +158,7 @@ function Sunburst()
 
                 ;
                 
-            /* OUTSIDE TEXT */
+            /* OUTSIDE TEXT 
 
             var duration = 2000;  
             outside_text = g.append("text")//svg.select(".labels").selectAll("text")
@@ -193,9 +193,9 @@ function Sunburst()
                         var d2 = interpolate(t);
                         return midAngle(d2) < Math.PI ? "start":"end";
                     };
-                });
+                }); */
         
-            /* ------- SLICE TO TEXT POLYLINES ------- */
+            /* ------- SLICE TO TEXT POLYLINES ------- 
 
             outside_polyline = g.append("polyline")//select(".lines").selectAll("polyline")
                 .filter(function (d){return d.children})
@@ -234,7 +234,7 @@ function Sunburst()
                 {
                     //console.log(this.endA);
                 })
-                ;
+                ; */
 
             // events for texts
             d3.selectAll('text')
@@ -412,7 +412,7 @@ function Sunburst()
             .filter(function (d){return d.rank == "7";})
             .style("opacity", 0)
             .each(function(d){this._current = {name: d.name, y: d.y, dy: d.dy, endAngle: d.endAngle, startAngle: d.startAngle, padAngle: 0};});
-        */
+        
         outside_polyline //= svg.select("g").selectAll("polyline")
             .transition().duration(2000)
             .style("opacity", function(d){ return 1;})
@@ -445,7 +445,7 @@ function Sunburst()
                     pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
                     return [arc2.centroid(d2), outerArc.centroid(d2), pos];
                 };			
-            });
+            });*/
     }
 
     function midAngle(d)

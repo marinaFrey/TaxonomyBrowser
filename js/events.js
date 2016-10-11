@@ -191,9 +191,9 @@ function showMap()
     dynamicCheckboxText.style.display = 'none';	
     dynamicCheckbox.style.display = 'none';
     
-	comboX.updateOptions([]);
-    comboY.updateOptions([]);
-    comboSize.updateOptions([]);
+	//comboX.updateOptions([]);
+    //comboY.updateOptions([]);
+    //comboSize.updateOptions([]);
     comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
     svg_selected.selectAll("*").remove();

@@ -69,7 +69,7 @@ function Sunburst()
     this.create = function()
     {
         this_pointer = this;
-        d3.json("data/full_data.json", function(error, root) 
+        d3.json("data/data.json", function(error, root) 
         {
             // saving node root
             node = root;
@@ -249,7 +249,7 @@ function Sunburst()
               .on("mouseover", doHover)
               .on("mouseout", unDoHover);
 
-            this_pointer.togglePartition(showByChildrenNumbers);
+            this_pointer.togglePartition(showByChildrenNumbers);console.log(node);
         });
         
         d3.select('svg').style("height", height + "px");
@@ -467,7 +467,7 @@ function Sunburst()
             if(d.children)
                 setSelectionOnChildren(d);
             d.selected = true;
-            
+            console.log(selection);
 			updateShownVisualizationAndOptions();
         }
         else

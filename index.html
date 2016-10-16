@@ -29,6 +29,8 @@
 	<script type="text/javascript" src="js/specimenPopup.js"></script>
 	<script type="text/javascript" src="js/analysisPopup.js"></script>
 	<script type="text/javascript" src="js/filter.js"></script>
+    
+	<script type="text/javascript" src="js/databaseInterface/databaseInterface.js"></script>
 	
     
     <!--JQUERY-->
@@ -200,18 +202,24 @@
                 <div class="col-sm-6" >
                     <h4 class="modal-title" id="myModalLabel"></h4>
                 </div>
-                <div class="col-sm-4" ></div>
+                <div class="col-sm-3" ></div>
+                <!-- TEMPORARIO -->
                 <div class="col-sm-1" >
-                    <img name="editSpecimenButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" >
+                    <img name="addSpecimenButton" id="addSpecimenButton" src="images/add.png" width="64" height="64" border="0" alt="javascript button" title="add specimen">
                 </div>
                 <div class="col-sm-1" >
-                    <img name="removeSpecimenButton" src="images/trash_button.png" width="64" height="64" border="0" alt="javascript button" >
+                    <img name="editSpecimenButton" id="editSpecimenButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" title="edit specimen information">
+                </div>
+                <div class="col-sm-1" >
+                    <img name="removeSpecimenButton" id="removeSpecimenButton" src="images/trash_button.png" width="64" height="64" border="0" alt="javascript button" title="delete specimen from the database">
                 </div>
 				
             </div>
             <!-- info -->
             <div class="modal-body" id="info-body">
 				<div id="info_text"></div>
+                <ul class="nav nav-tabs" id="measures_tab_list"></ul>
+                <div class="tab-content" id="measures_tab_content"></div>
             </div>
             <!-- buttons -->
             <div class="modal-footer">
@@ -339,8 +347,9 @@
     // hiding maps div and showing normal visualization div
 	document.getElementById("maps").style = "display:none;";
     document.getElementById("sel_viz").style = "display:none;";
-
-
+    
+    createHierarchyFile();
+    
 </script>
 </body>
 </html>

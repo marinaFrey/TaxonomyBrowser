@@ -208,7 +208,7 @@ function applyFilters()
     
     for (var i = 0; i < selection.length; i++)
     {
-        if(selection[i].measures)
+        //if(selection[i].measures)
         {
             // if this variable is false the specimen will be rejected and not added to the filtered list
             var accept = true;
@@ -271,17 +271,20 @@ function applyFilters()
 							
                             // default are all measures
 							default:
-								var exists = false;
-                                // gets measure that needs filtering
-								for(var j = 0; j < selection[i].measures.length; j++)
-								{
-									if(selection[i].measures[j].name == measure) 
-									{
-										exists = true;
-									}  
-								}
-								if(exists == false)
-									accept = false;
+                                if(selection[i].measures)
+                                {
+                                    var exists = false;
+                                    // gets measure that needs filtering
+                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    {
+                                        if(selection[i].measures[j].name == measure) 
+                                        {
+                                            exists = true;
+                                        }  
+                                    }
+                                    if(exists == false)
+                                        accept = false;
+                                }
 							break;
 						}
                         
@@ -333,18 +336,19 @@ function applyFilters()
 							break;
 							// default are all measures
 							default:
-								
-								var exists = false;
-								for(var j = 0; j < selection[i].measures.length; j++)
-								{
-									if(selection[i].measures[j].name == measure) 
-									{
-										exists = true;
-									}  
+								if(selection[i].measures)
+                                {
+                                    var exists = false;
+                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    {
+                                        if(selection[i].measures[j].name == measure) 
+                                        {
+                                            exists = true;
+                                        }  
+                                    }
+                                    if(exists == true)
+                                        accept = false;
 								}
-								if(exists == true)
-									accept = false;
-								
 							break;
 						}
  
@@ -397,29 +401,30 @@ function applyFilters()
 							break;
 							// default are all measures
 							default:
-								
-								var exists = false;
-								for(var j = 0; j < selection[i].measures.length; j++)
-								{
-									if(filters[k].comboOption.isNumeric())
-									{
-										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
-										{
-											exists = true;
-										}  
-									}
-									else
-									{
-										if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
-										{
-											exists = true;
-										}  
-									}
-									
-								}
-								if(exists == false)
-									accept = false;
-
+								if(selection[i].measures)
+                                {
+                                    var exists = false;
+                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    {
+                                        if(filters[k].comboOption.isNumeric())
+                                        {
+                                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                            {
+                                                exists = true;
+                                            }  
+                                        }
+                                        else
+                                        {
+                                            if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                            {
+                                                exists = true;
+                                            }  
+                                        }
+                                        
+                                    }
+                                    if(exists == false)
+                                        accept = false;
+                                }
 							break;
 						}
                         
@@ -473,30 +478,32 @@ function applyFilters()
 							// default are all measures
 							default:
 								
-								var exists = false;
-								for(var j = 0; j < selection[i].measures.length; j++)
-								{
-									if(filters[k].comboOption.isNumeric())
-									{
-                                    console.log("numeric");
-										if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
-										{
+                                if(selection[i].measures)
+                                {
+                                    var exists = false;
+                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    {
+                                        if(filters[k].comboOption.isNumeric())
+                                        {
+                                        console.log("numeric");
+                                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                            {
+                                            
+                                                exists = true;
+                                            }  
+                                        }
+                                        else
+                                        {
+                                            if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                            {
+                                                exists = true;
+                                            }  
+                                        }
                                         
-											exists = true;
-										}  
-									}
-									else
-									{
-										if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
-										{
-											exists = true;
-										}  
-									}
-									
-								}
-								if(exists == true)
-									accept = false;
-
+                                    }
+                                    if(exists == true)
+                                        accept = false;
+                                }
 							break;
 						}
                         
@@ -504,63 +511,68 @@ function applyFilters()
                     break;
                     // has to be numeric
                     case "is smaller than":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
+                        if(selection[i].measures)
                         {
-                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) < parseFloat(value))) 
+                            var exists = false;
+                            for(var j = 0; j < selection[i].measures.length; j++)
                             {
-                                exists = true;
-                            }         
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) < parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }         
+                            }
+                            if(exists == false)
+                                accept = false;
                         }
-                        if(exists == false)
-                            accept = false;
-                    
                     break;
                     // has to be numeric
                     case "is bigger than":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
+                        if(selection[i].measures)
                         {
-                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) > parseFloat(value))) 
+                            var exists = false;
+                            for(var j = 0; j < selection[i].measures.length; j++)
                             {
-                                exists = true;
-                            }         
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) > parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }         
+                            }
+                            if(exists == false)
+                                accept = false;
                         }
-                        if(exists == false)
-                            accept = false;
                         
                     break;
                     // has to be numeric
                     case "is smaller or equal to":
-                    
-                        var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
+                        if(selection[i].measures)
                         {
-                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) <= parseFloat(value))) 
+                            var exists = false;
+                            for(var j = 0; j < selection[i].measures.length; j++)
                             {
-                                exists = true;
-                            }         
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) <= parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }         
+                            }
+                            if(exists == false)
+                                accept = false;
                         }
-                        if(exists == false)
-                            accept = false;
-                    
                     break;
                     // has to be numeric
                     case "is bigger or equal to":
-                    
-                    var exists = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
+                        if(selection[i].measures)
                         {
-                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) >= parseFloat(value))) 
+                            var exists = false;
+                            for(var j = 0; j < selection[i].measures.length; j++)
                             {
-                                exists = true;
-                            }         
+                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) >= parseFloat(value))) 
+                                {
+                                    exists = true;
+                                }         
+                            }
+                            if(exists == false)
+                                accept = false;
                         }
-                        if(exists == false)
-                            accept = false;
-                    
                     break;
                 }
                 

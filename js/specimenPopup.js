@@ -16,20 +16,95 @@ function makeSpecimenPopup(specimen)
 		"<b>Data: </b>" + specimen.collected_data +"<br />" +
 		"<b>Latitude: </b>" + specimen.latitude + "<br />" +
 		"<b>Longitude: </b>" + specimen.longitude + "<br />" +
-		"<b>Information: </b>" + specimen.information + 
-		"<br /><br /></h3> <h2><b>Measures: </b></h2><br /><br />";
+		"<b>Information: </b>" + specimen.information;
 	
+    var infoLabel = document.getElementById("info_text");
+	infoLabel.innerHTML = info_text;
+    
+    
+    var measuresGroupList = {};
     // getting information from all its measures
 	for(var i = 0; i < specimen.measures.length; i++)
 	{
-		info_text += 
-			"<h4><b>"+specimen.measures[i].name+": </b>" + specimen.measures[i].value +"<br /></h4>";
+        if(measuresGroupList[specimen.measures[i].group])
+            measuresGroupList[specimen.measures[i].group] += "<h4><b>"+specimen.measures[i].name+": </b>" + specimen.measures[i].value +"<br /></h4>";
+        else
+            measuresGroupList[specimen.measures[i].group] = "<h4><b>"+specimen.measures[i].name+": </b>" + specimen.measures[i].value +"<br /></h4>";
+            
+		//info_text += 
+		//	"<h4><b>"+specimen.measures[i].name+": </b>" + specimen.measures[i].value +"<br /></h4>";
 
 	}
 	
-	var infoLabel = document.getElementById("info_text");
-	infoLabel.innerHTML = info_text;
-	
+    var measures_tab_list = document.getElementById("measures_tab_list");
+    var measures_tab_content = document.getElementById("measures_tab_content");
+    while (measures_tab_list.firstChild) 
+    {
+        measures_tab_list.removeChild(measures_tab_list.firstChild);
+    }
+    while (measures_tab_content.firstChild) 
+    {
+        measures_tab_content.removeChild(measures_tab_content.firstChild);
+    }
+    
+
+    var i = 0;
+    for (var key in measuresGroupList) 
+    {
+        var tab_id = key.replace(/\s+/g, '');
+        addTab(tab_id,key,measuresGroupList[key]);
+    }
+
+    
+    var addSpecimenButton = document.getElementById("addSpecimenButton");
+    addSpecimenButton.onclick = function(){addSpecimen(specimen);};
+    
+    var editSpecimenButton = document.getElementById("editSpecimenButton");
+    editSpecimenButton.onclick = function(){editSpecimen(specimen);};
+    
+    var removeSpecimenButton = document.getElementById("removeSpecimenButton");
+    removeSpecimenButton.onclick = function()
+    {
+        if (confirm("Do you really want to delete this specimen? This action can't be undone") == true) 
+        {
+            removeSpecimen(specimen);
+            $('#basicModal').modal('hide');
+        }
+    };
+    
 	$('#basicModal').modal('show');
 }
+
+function addTab(id, label, content )
+{
+    // creating tab list entry
+    var measures_tab_list = document.getElementById("measures_tab_list");   
+    var list = document.createElement('li');
+    if(!measures_tab_list.firstChild)
+        list.setAttribute('class',"active");
+    var entry = document.createElement('a');
+    entry.setAttribute('data-toggle', 'tab');
+    entry.setAttribute('href', "#" + id);
+    
+    entry.innerHTML = label;
+
+    list.appendChild(entry);
+    measures_tab_list.appendChild(list);
+    
+    // creating content entry
+    var measures_tab_content = document.getElementById("measures_tab_content");
+    var div = document.createElement('div');
+    if(!measures_tab_content.firstChild)
+        div.setAttribute('class',"tab-pane fade in active");
+    else
+        div.setAttribute('class', "tab-pane fade");
+    div.setAttribute('id', id);
+    div.innerHTML = content;
+    
+        
+    measures_tab_content.appendChild(div);
+
+};
+
+
 

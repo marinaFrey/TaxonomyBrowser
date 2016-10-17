@@ -467,7 +467,6 @@ function Sunburst()
             if(d.children)
                 setSelectionOnChildren(d);
             d.selected = true;
-            console.log(selection);
 			updateShownVisualizationAndOptions();
         }
         else

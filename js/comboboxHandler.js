@@ -98,6 +98,7 @@ function ComboBox()
 		combo.addEventListener("change", clickFunction);
         var br = document.createElement("br");
         parent.appendChild(br);
+        
 		
 		type = ANALYSIS_COMBO;
     }

@@ -54,7 +54,18 @@ function editSpecimen(specimen)
     console.log(specimen);
     //var sp = specimen;
     //sp.collection_ID = 'MR.02';
-    var sp = {id:specimen.id, taxonomy_id: specimen.taxonomy_id, collection_ID: 'MR.02', collected_by:"Marina", data:"2016-10-15", latitude:50, longitude:30, altitude: 40, information: "teste!!!!", measures:specimen.measures}
+    var sp = {
+        id:specimen.id, 
+        taxonomy_id: specimen.taxonomy_id, 
+        collection_ID: specimen.collection_id, 
+        collected_by:specimen.collected_by, 
+        data:specimen.collected_data, 
+        latitude:specimen.latitude, 
+        longitude:specimen.longitude, 
+        altitude: specimen.altitude, 
+        information: specimen.information, 
+        measures:specimen.measures
+        }
     
     $.ajax({
         url: 'js/databaseInterface/php/editSpecimen.php',

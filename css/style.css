@@ -194,6 +194,8 @@ input:disabled {
 
 input[type=number] { 
     -moz-appearance: textfield;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 

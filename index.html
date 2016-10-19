@@ -42,9 +42,11 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpZxJKdEeziVgiM26XP7sh51GwmtBpPBg"type="text/javascript"></script>
     <!--<script language="javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&v=3"></script>-->
     
-	<!-- TOOLTIP 
-	<link href="tooltip/jquery.toolbar.css" rel="stylesheet" />
-	<script src="tooltip/jquery.toolbar.js"></script>-->
+	<!-- TOOLTIP -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<link href="libs/tooltip/jquery.toolbar.css" rel="stylesheet" />
+	<script src="libs/tooltip/jquery.toolbar.js"></script>
+     <link rel="stylesheet" href="libs/fontAwesome/css/font-awesome.min.css">
 	
 </head>
 <body>
@@ -196,6 +198,12 @@
     <img name="addButton" data-toggle="modal" data-target="#basicModal" src="images/add.png" width="32" height="32" border="0" alt="javascript button" onClick="return addNode();">
     <img name="editButton" src="images/edit3.png" width="32" height="32" border="0" alt="javascript button" onClick="return editNode();">
 	<img name="removeButton" src="images/remove.png" width="32" height="32" border="0" alt="javascript button" ><!--onClick="return removeNode();">-->
+</div>
+
+<div id="toolbar-options" class="hidden">
+   <a href="#"><i class="fa fa-info"></i></a>
+   <a href="#"><i class="fa fa-plus"></i></a>
+   <a href="#"><i class="fa fa-trash"></i></a>
 </div>
 
 <!-- POPUP MODAL SPECIMENS-->
@@ -359,6 +367,16 @@
     document.getElementById("sel_viz").style = "display:none;";
     
     createHierarchyFile();
+    
+    $('#addSpecimenButton').toolbar({
+        content: '#toolbar-options',
+        position: 'top',
+        hideOnClick: true,
+        style: 'default',
+        adjustment: 10
+
+    });
+    
     
 </script>
 </body>

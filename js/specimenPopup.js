@@ -134,6 +134,7 @@ function makeSpecimenPopup(specimen)
         }
     };
     
+    
 	$('#basicModal').modal('show');
 }
 

@@ -107,7 +107,8 @@ function Sunburst()
                 })
                 .style("opacity",normalOpacity)
                 .on("click", click)
-                .each(stash);
+                .each(stash)
+                ;
 			
 			databaseSize = path[0].length;
             
@@ -156,9 +157,9 @@ function Sunburst()
                 .style("text-anchor", "middle")
                 .attr("xlink:href",function(d){return "#" + d.path.id;})	
 				.text(function(d){ return d.name;})
-
-                ;
                 
+                ;
+            
             /* OUTSIDE TEXT 
 
             var duration = 2000;  
@@ -551,22 +552,35 @@ function Sunburst()
     function doHover(d) 
     {
       //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "0.6");
+      console.log(d.path);
+        var xPosition = d3.event.pageX;
+        var yPosition = d3.event.pageY; 
+        
+        $('#'+d.path.id).toolbar({
+            content: '#toolbar-options',
+            position: 'top',
+            hideOnClick: true,
+            style: 'default',
+            adjustment: 0
+
+        }); 
       
-	if((d.endAngle - d.startAngle < 10*Math.PI/180 ) || d.depth == 0)
-	{
-		// tooltip 
-		var xPosition = d3.event.pageX;
-		var yPosition = d3.event.pageY; 
+        /*
+        if((d.endAngle - d.startAngle < 10*Math.PI/180 ) || d.depth == 0)
+        {
+            // tooltip 
+            var xPosition = d3.event.pageX;
+            var yPosition = d3.event.pageY; 
 
-		//Update the tooltip position and value
-		d3.select("#tooltip")
-		  .style("left", xPosition + "px")
-		  .style("top", yPosition - 50 + "px")
-		  .select("#name")
-		  .text(d.name);
+            //Update the tooltip position and value
+            d3.select("#tooltip")
+              .style("left", xPosition + "px")
+              .style("top", yPosition - 50 + "px")
+              .select("#name")
+              .text(d.name);
 
-		d3.select("#tooltip").classed("hidden", false);
-	}
+            d3.select("#tooltip").classed("hidden", false);
+        }*/
     
       
     };

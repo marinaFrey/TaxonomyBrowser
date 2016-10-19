@@ -113,6 +113,7 @@ function ComboBox()
         combo.list = list;
         parent.appendChild(combo);
 		combo.addEventListener("change", clickFunction);
+        combo.clickFunction = clickFunction;
         //var br = document.createElement("br");
         //parent.appendChild(br);
 
@@ -190,6 +191,11 @@ function ComboBox()
 		combo.selectedIndex = itemId;
 	}
 	
+    this.makeClick = function()
+    {
+        combo.clickFunction();
+    }
+    
     /*
      * hide combobox
      */

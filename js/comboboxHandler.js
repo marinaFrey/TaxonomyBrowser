@@ -1,6 +1,7 @@
 var VIZ_COMBO = 0;
 var FILTER_COMBO = 1;
 var ANALYSIS_COMBO = 2;
+var TAXONOMY_COMBO = 3;
 
 /*
  * Class for the comboboxes
@@ -101,6 +102,21 @@ function ComboBox()
         
 		
 		type = ANALYSIS_COMBO;
+    }
+    
+    this.createTaxonomyCombo = function(combo_id, parent, clickFunction, list)
+    {
+        id = combo_id;
+
+		combo = document.createElement("SELECT");
+		combo.setAttribute("id", "taxonomy_combo"+id);
+        combo.list = list;
+        parent.appendChild(combo);
+		combo.addEventListener("change", clickFunction);
+        //var br = document.createElement("br");
+        //parent.appendChild(br);
+
+		type = TAXONOMY_COMBO;
     }
     
 	/*

@@ -27,6 +27,7 @@
 	<script type="text/javascript" src="js/events.js"></script>
 	<script type="text/javascript" src="js/comboboxHandler.js"></script>
 	<script type="text/javascript" src="js/specimenPopup.js"></script>
+	<script type="text/javascript" src="js/addSpecimenPopup.js"></script>
 	<script type="text/javascript" src="js/input.js"></script>
 	<script type="text/javascript" src="js/analysisPopup.js"></script>
 	<script type="text/javascript" src="js/filter.js"></script>
@@ -119,6 +120,9 @@
                 <label><input type="radio" name="mode" value="size" style="vertical-align: bottom;" autocomplete="off" checked > By number of specimens</label>
                 
             </div>-->
+            
+                <img name="addSpecimenButton" id="addSpecimenButton" src="images/add.png"  onClick="return makeAddSpecimenPopup();" width="64" height="64" border="0" alt="javascript button" title="add specimen">
+            
         </div>
         
         <!-- icons for filtering -->
@@ -203,11 +207,9 @@
                 <div class="col-sm-6" >
                     <h4 class="modal-title" id="myModalLabel"></h4>
                 </div>
-                <div class="col-sm-3" ></div>
+                <div class="col-sm-4" ></div>
                 <!-- TEMPORARIO -->
-                <div class="col-sm-1" >
-                    <img name="addSpecimenButton" id="addSpecimenButton" src="images/add.png" width="64" height="64" border="0" alt="javascript button" title="add specimen">
-                </div>
+                
                 <div class="col-sm-1" >
                     <img name="editSpecimenButton" id="editSpecimenButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" title="edit specimen information">
                 </div>

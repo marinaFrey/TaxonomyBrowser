@@ -7,13 +7,18 @@ function Input()
     var labelName;
     var input;
     var information;
+    var chararacterID;
+    var characterGroupID;
     var br, br2;
     
-    this.create = function(input_type, parent, name, value, info)
+    this.create = function(input_type, parent, name, charID, charGroupID, value, info)
     {
         information = info;
         type = input_type;
 		labelName = name;
+        chararacterID = charID;
+        characterGroupID = charGroupID;
+        
         // creating label with name
 		label = document.createElement("H0");
         label.innerHTML = "<b>"+ name + ":</b>  ";
@@ -64,6 +69,16 @@ function Input()
     this.getInformation = function()
     {
         return information;
+    }
+    
+    this.getchararacterID = function()
+    {
+        return chararacterID;
+    }
+    
+    this.getcharacterGroupID = function()
+    {
+        return characterGroupID;
     }
     
     this.hide = function()

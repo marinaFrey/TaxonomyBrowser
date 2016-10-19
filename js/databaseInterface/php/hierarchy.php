@@ -75,6 +75,8 @@
         {
             $this->name = $char['character_name'];
             $this->group = $p->getCharacterGroupName($char['character_group_id']);
+            $this->charTypeId = $char['character_type_id'];
+            $this->charId = $char['character_id'];
             $this->type = $p->getCharactersTypeName($char['character_type_id']);
             $this->information = $char['information'];
         }

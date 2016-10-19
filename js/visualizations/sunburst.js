@@ -1,10 +1,11 @@
+var node;
 /*
  * Class for the sunburst visualization
  * 
  */
 function Sunburst()
 {
-    var node;
+    //var node;
     var path;
     var text;
     var outside_polyline;

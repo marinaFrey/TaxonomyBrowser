@@ -52,8 +52,7 @@ function addSpecimen(specimen)
 function editSpecimen(specimen)
 {
     console.log(specimen);
-    //var sp = specimen;
-    //sp.collection_ID = 'MR.02';
+
     var sp = {
         id:specimen.id, 
         taxonomy_id: specimen.taxonomy_id, 

@@ -552,18 +552,32 @@ function Sunburst()
     function doHover(d) 
     {
       //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "0.6");
-      console.log(d.path);
-        var xPosition = d3.event.pageX;
-        var yPosition = d3.event.pageY; 
-        
-        $('#'+d.path.id).toolbar({
+        d3.select("#toolbar-options").classed("hidden", false);
+        $('#'+d.path.parentNode.lastChild.id).toolbar({
             content: '#toolbar-options',
             position: 'top',
-            hideOnClick: true,
             style: 'default',
-            adjustment: 0
+            adjustment: 50
 
         }); 
+        
+        $('#'+d.path.parentNode.lastChild.id).on('toolbarItemClick',
+            function( event, buttonClicked ) 
+            {
+
+                if(buttonClicked.id == "tooltip_info")
+                {
+                    makeTaxonomyPopup(d);
+                }
+                if(buttonClicked.id == "tooltip_add")
+                {
+                }
+                if(buttonClicked.id == "tooltip_trash")
+                {
+                }
+              
+            }
+        );
       
         /*
         if((d.endAngle - d.startAngle < 10*Math.PI/180 ) || d.depth == 0)
@@ -590,7 +604,7 @@ function Sunburst()
       //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "1");
       
       // hiding tooltip
-      d3.select("#tooltip").classed("hidden", true);
+      d3.select("#toolbar-options").classed("hidden", true);
     };
 
     // Interpolate the scales!

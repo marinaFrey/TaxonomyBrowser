@@ -20,6 +20,27 @@ function createHierarchyFile()
 
 }
 
+function createCharactersFile()
+{
+    var name = "lol";
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/generateCharactersList.php',
+        type: 'POST',
+        data: {id:name},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+    
+
+}
+
 function addSpecimen(specimen)
 {
     var sp = {

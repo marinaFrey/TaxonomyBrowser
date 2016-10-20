@@ -27,6 +27,7 @@
 	<script type="text/javascript" src="js/events.js"></script>
 	<script type="text/javascript" src="js/comboboxHandler.js"></script>
 	<script type="text/javascript" src="js/specimenPopup.js"></script>
+	<script type="text/javascript" src="js/taxonomyPopup.js"></script>
 	<script type="text/javascript" src="js/addSpecimenPopup.js"></script>
 	<script type="text/javascript" src="js/input.js"></script>
 	<script type="text/javascript" src="js/analysisPopup.js"></script>
@@ -43,7 +44,6 @@
     <!--<script language="javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&v=3"></script>-->
     
 	<!-- TOOLTIP -->
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 	<link href="libs/tooltip/jquery.toolbar.css" rel="stylesheet" />
 	<script src="libs/tooltip/jquery.toolbar.js"></script>
      <link rel="stylesheet" href="libs/fontAwesome/css/font-awesome.min.css">
@@ -201,9 +201,9 @@
 </div>
 
 <div id="toolbar-options" class="hidden">
-   <a href="#"><i class="fa fa-info"></i></a>
-   <a href="#"><i class="fa fa-plus"></i></a>
-   <a href="#"><i class="fa fa-trash"></i></a>
+   <a id="tooltip_info" href="#"><i class="fa fa-info" ></i></a>
+   <a id="tooltip_add" href="#"><i class="fa fa-plus" ></i></a>
+   <a id="tooltip_trash" href="#"><i class="fa fa-trash" ></i></a>
 </div>
 
 <!-- POPUP MODAL SPECIMENS-->
@@ -367,15 +367,8 @@
     document.getElementById("sel_viz").style = "display:none;";
     
     createHierarchyFile();
-    
-    $('#addSpecimenButton').toolbar({
-        content: '#toolbar-options',
-        position: 'top',
-        hideOnClick: true,
-        style: 'default',
-        adjustment: 10
-
-    });
+    createCharactersFile();
+	
     
     
 </script>

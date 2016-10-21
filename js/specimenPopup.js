@@ -189,6 +189,7 @@ function cleanTabs()
 {
     var measures_tab_list = document.getElementById("measures_tab_list");
     var measures_tab_content = document.getElementById("measures_tab_content");
+
     while (measures_tab_list.firstChild) 
     {
         measures_tab_list.removeChild(measures_tab_list.firstChild);
@@ -233,9 +234,7 @@ function editSpecimenFields(specimen)
         }
     }
 
-
-    var submitEditSpecimenButton = document.getElementById("submitButton");
-    submitEditSpecimenButton.onclick = function()
+    submitButton.onclick = function()
     {
         submitButton.style = "display:none;";
         

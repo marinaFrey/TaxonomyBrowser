@@ -38,6 +38,7 @@
         function setTaxonomy($tax)
         {
             $this->name = $tax['scientific_name'];
+			$this->taxonomy_id = $tax['taxonomy_id'];
             $this->rank = $tax['taxonomy_rank_id'];
             $this->information = $tax['information'];
             $this->selected = false;

@@ -1,6 +1,6 @@
 
 
-function makeAddSpecimenPopup(specimen)
+function makeAddSpecimenPopup(species)
 {
     var txtLabel = document.getElementById("myModalLabel");
 	txtLabel.className = "modal-title";
@@ -94,45 +94,46 @@ function changingSelectedTaxonomy()
 {
         var index = this.list.map(function(e) { return e.name; }).indexOf(this.value);
         var taxonomy = this.list[index].taxonomy;
-        var characters = taxonomy.characters;
-       
-        if(characters)
+        var fullCharacterList = taxonomy.characters;
+		
+		console.log(taxonomy);
+		
+        if(fullCharacterList)
         {
             cleanTabs();
             
             var measuresGroupList = {};
-            for(var i = 0; i < characters.length; i++)
-            {
-                if(measuresGroupList[characters[i].group])
-                {
-
-                    measuresGroupList[characters[i].group].push(
-                    {
-                        name: characters[i].name, 
-                        value: "", 
-                        type: characters[i].type,
-                        charId: characters[i].charId,
-                        charTypeId: characters[i].charTypeId,
-                        information: characters[i].information
-                    });
-
-                }
-                else
-                {
-                    var list = [];
-                    measuresGroupList[characters[i].group] = list;
-                    measuresGroupList[characters[i].group].push(
-                    {
-                        name: characters[i].name, 
-                        value: "", 
-                        type: characters[i].type,
-                        charId: characters[i].charId,
-                        charTypeId: characters[i].charTypeId,
-                        information: characters[i].information
-                    });
-                }
-
-            }
+			var characterLst = allCharactersList.getList();
+			
+			for(var i = 0; i < fullCharacterList.length; i++)
+			{
+				if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
+				{
+					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+					{
+						name: characterLst[fullCharacterList[i]].character_name, 
+						value: "",
+						type: characterLst[fullCharacterList[i]].character_type_name,
+						charId: characterLst[fullCharacterList[i]].character_id,
+						charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+						information: characterLst[fullCharacterList[i]].information
+					});
+				}
+				else
+				{
+					var list = [];
+					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
+					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+					{
+						name: characterLst[fullCharacterList[i]].character_name, 
+						value: "",
+						type: characterLst[fullCharacterList[i]].character_type_name,
+						charId: characterLst[fullCharacterList[i]].character_id,
+						charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+						information: characterLst[fullCharacterList[i]].information
+					});
+				}        
+			}
             
             for (var key in measuresGroupList) 
             {
@@ -156,6 +157,8 @@ function changingSelectedTaxonomy()
             var specimen = {};
             specimen.rank = "7";
             
+			specimen.name = taxonomy.name;
+			specimen.taxonomy_id = taxonomy.taxonomy_id;
             specimen.collection_id = inputList['general_measures'][0].getValue();
             specimen.collected_by = inputList['general_measures'][1].getValue();
             specimen.collected_data = inputList['general_measures'][2].getValue();
@@ -163,7 +166,6 @@ function changingSelectedTaxonomy()
             specimen.longitude = inputList['general_measures'][4].getValue();
             specimen.information = inputList['general_measures'][5].getValue();
             
-            console.log(specimen);
             specimen.measures = [];
             for (var key in inputList) 
             {
@@ -173,15 +175,7 @@ function changingSelectedTaxonomy()
 
                         if(inputList[key][i].getValue() != "" && key != 'general_measures')
                         {
-                            specimen.measures.push(
-                            {
-                                name: inputList[key][i].getLabelName(), 
-                                value: inputList[key][i].getValue(), 
-                                type: inputList[key][i].getType(),
-                                charId: inputList[key][i].getchararacterID(),
-                                charTypeId: inputList[key][i].getcharacterGroupID(),
-                                information: inputList[key][i].getInformation()
-                            });
+							specimen.measures[inputList[key][i].getcharacterID()] = inputList[key][i].getValue();
                         }
 
                         
@@ -189,10 +183,8 @@ function changingSelectedTaxonomy()
                     }
                 
             }
-            taxonomy.children.push(specimen);
-            console.log(taxonomy);
-            console.log(specimen);
-            //addSpecimen(specimen);
+            //taxonomy.children.push(specimen);
+            addSpecimen(specimen);
         };
     }
     else

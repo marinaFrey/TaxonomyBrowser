@@ -93,7 +93,8 @@ function Analysis()
         zeroValues = 0;
         var meaningfulPopulation = 0;
         var accepted;
-        
+        var characterLst = allCharactersList.getList();
+		
         if(filteredSelection[0] != "all")
         {
             //console.log(filteredSelection);
@@ -102,17 +103,18 @@ function Analysis()
                 if(selection[filteredSelection[i]].measures)
                 {
                     accepted = false;
-                    for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+                    //for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+					for(var charId_key in  selection[filteredSelection[i]].measures) 
                     {
-                        var measureName = selection[filteredSelection[i]].measures[j].name
+                        var measureName = characterLst[charId_key].character_name;
                         // getting measure value if they exist for the specimen
 
                         if(measureName == selectedMeasure)
                         {
-                            sum += parseInt(selection[filteredSelection[i]].measures[j].value);
+                            sum += parseInt(selection[filteredSelection[i]].measures[charId_key]);
                             accepted = true;
                             
-                            if(selection[filteredSelection[i]].measures[j].value == '0')
+                            if(selection[filteredSelection[i]].measures[charId_key] == '0')
                                 zeroValues++;
                         }
                                           
@@ -132,17 +134,18 @@ function Analysis()
                 if(selection[i].measures)
                 {
                     accepted = false;
-                    for(var j = 0; j < selection[i].measures.length; j++)
+                    //for(var j = 0; j < selection[i].measures.length; j++)
+					for(var charId_key in  selection[i].measures) 
                     {
-                        var measureName = selection[i].measures[j].name
+                        var measureName = characterLst[charId_key].character_name;
                         // getting measure value if they exist for the specimen
 
                         if(measureName == selectedMeasure)
                         {
-                            sum += parseInt(selection[i].measures[j].value);
+                            sum += parseInt(selection[i].measures[charId_key]);
                             accepted = true;
                             
-                            if(selection[i].measures[j].value == '0')
+                            if(selection[i].measures[charId_key] == '0')
                                 zeroValues++;
                         }
                                           
@@ -198,6 +201,7 @@ function Analysis()
     
     this.calculateStandardDeviation = function(listIndex)
     {
+		var characterLst = allCharactersList.getList();
         if(average != null && populationSize != null)
         {
             var sum = 0;
@@ -210,14 +214,15 @@ function Analysis()
                     if(selection[filteredSelection[i]].measures)
                     {
                         accepted = false;
-                        for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
-                        {
-                            var measureName = selection[filteredSelection[i]].measures[j].name
+                        //for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+                        for(var charId_key in  selection[filteredSelection[i]].measures) 
+						{
+                            var measureName = characterLst[charId_key].character_name;
                             // getting measure value if they exist for the specimen
 
                             if(measureName == selectedMeasure)
                             {
-                                sum += Math.pow(parseInt(selection[filteredSelection[i]].measures[j].value) - average,2);
+                                sum += Math.pow(parseInt(selection[filteredSelection[i]].measures[charId_key]) - average,2);
                             }
                                               
                         }
@@ -232,14 +237,15 @@ function Analysis()
                     if(selection[i].measures)
                     {
                         accepted = false;
-                        for(var j = 0; j < selection[i].measures.length; j++)
-                        {
-                            var measureName = selection[i].measures[j].name
+                        //for(var j = 0; j < selection[i].measures.length; j++)
+                        for(var charId_key in  selection[i].measures) 
+						{
+                            var measureName = characterLst[charId_key].character_name;
                             // getting measure value if they exist for the specimen
 
                             if(measureName == selectedMeasure)
                             {
-                                sum += Math.pow(parseInt(selection[i].measures[j].value) - average,2);
+                                sum += Math.pow(parseInt(selection[i].measures[charId_key]) - average,2);
                             }
                                               
                         }

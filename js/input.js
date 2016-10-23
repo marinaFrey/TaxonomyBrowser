@@ -2,6 +2,9 @@ var SPECIMEN_MEASURES = 0;
 
 function Input()
 {
+	var sel_checkbox;
+	var combo;
+	var deleteBtn;
     var type;
     var label;
     var labelName;
@@ -31,12 +34,17 @@ function Input()
 		main_div.appendChild(info_div);
 		parent.appendChild(main_div);
 		
+		
+		sel_checkbox = document.createElement("input");;
+		combo = new ComboBox();
+		deleteBtn = document.createElement("img");
+		
         // creating label with name
 		label = document.createElement("H0");
         label.innerHTML = "<b>"+ name + ":</b>  ";
 		name_div.appendChild(label);
         
-        // creating combobox with provided id
+        // creating input with provided id
 		input = document.createElement("input");
         input.type = input_type;
         input.step = "any";
@@ -53,6 +61,11 @@ function Input()
 		});*/
         
 		// creating label with type
+		type = new ComboBox();
+		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        type.updateOptions([{name:input_type, isNum:false}]);
+		type.disable(true);
+		/*
 		type = document.createElement("input");
 		//var t = document.createTextNode("type: "+input_type);
 		type.type = "text";
@@ -61,7 +74,7 @@ function Input()
 		//type.value = "type:"+input_type;
 		type.value = input_type;
 		//type.appendChild(t);
-		type_div.appendChild(type);
+		type_div.appendChild(type);*/
 		
 		// creating label with info
 		information = document.createElement("TEXTAREA");
@@ -79,7 +92,7 @@ function Input()
 		
     }
 	
-	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, info)
+	this.createCombo = function(input_type, parent, name, charID, charGroupID, optionsList, info)
 	{
 		labelName = name;
         characterID = charID;
@@ -96,7 +109,83 @@ function Input()
 		info_div.setAttribute('class',"col-sm-5");
 		main_div.appendChild(info_div);
 		parent.appendChild(main_div);
+		
+		
+		sel_checkbox = document.createElement("input");;
+		input = document.createElement("input");;
+		deleteBtn = document.createElement("img");
+		
+        // creating label with name
+		label = document.createElement("H0");
+        label.innerHTML = "<b>"+ name + ":</b>  ";
+		name_div.appendChild(label);
         
+        // creating combobox with provided id
+		combo = new ComboBox();
+		combo.createTaxonomyCombo(name+"combo", name_div, function(){}, [])
+        combo.updateOptions(optionsList);
+		
+		// creating label with type
+		type = new ComboBox();
+		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        type.updateOptions([{name:input_type, isNum:false}]);
+		type.disable(true);
+		/*
+		type = document.createElement("input");
+		//var t = document.createTextNode("type: "+input_type);
+		type.type = "text";
+		type.disabled = true;
+		type.size = 10;
+		//type.value = "type:"+input_type;
+		type.value = input_type;
+		//type.appendChild(t);
+		type_div.appendChild(type);*/
+		
+		// creating label with info
+		information = document.createElement("TEXTAREA");
+        var t = document.createTextNode(info);
+		information.cols = 50;
+		information.disabled = true;
+		information.appendChild(t);
+		info_div.appendChild(information);
+	}
+	
+	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, info, selected)
+	{
+		labelName = name;
+        characterID = charID;
+        characterGroupID = charGroupID;
+        
+		var main_div = document.createElement('div');
+		var check_div = document.createElement('div');
+		check_div.setAttribute('class',"col-sm-1");
+		main_div.appendChild(check_div);
+		var name_div = document.createElement('div');
+		name_div.setAttribute('class',"col-sm-3");
+		main_div.appendChild(name_div);
+		var type_div = document.createElement('div');
+		type_div.setAttribute('class',"col-sm-2");
+		main_div.appendChild(type_div);
+		var info_div = document.createElement('div');
+		info_div.setAttribute('class',"col-sm-6");
+		main_div.appendChild(info_div);
+		parent.appendChild(main_div);
+        
+		combo =  new ComboBox();
+		deleteBtn = document.createElement("img");
+		
+		// creating checkbox to select characteristic or not
+		sel_checkbox = document.createElement("input");
+		sel_checkbox.type = "checkbox";
+		sel_checkbox.value = name+ "checkbox";
+		sel_checkbox.disabled = true;
+		if(selected)
+			sel_checkbox.checked = true;
+		else
+			sel_checkbox.checked = false;
+			
+		check_div.appendChild(sel_checkbox);
+		
         // creating combobox with provided id
 		input = document.createElement("input");
         input.type = "text";
@@ -114,6 +203,11 @@ function Input()
 		});*/
         
 		// creating label with type
+		type = new ComboBox();
+		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        type.updateOptions([{name:input_type, isNum:false}]);
+		type.disable(true);
+		/*
 		type = document.createElement("input");
 		//var t = document.createTextNode("type: "+input_type);
 		type.step = "any";
@@ -123,7 +217,7 @@ function Input()
 		//type.value = "type:"+input_type;
 		type.value = input_type;
 		//type.appendChild(t);
-		type_div.appendChild(type);
+		type_div.appendChild(type);*/
 		
 		// creating label with info
 		information = document.createElement("TEXTAREA");
@@ -133,15 +227,87 @@ function Input()
 		information.appendChild(t);
 		info_div.appendChild(information);
 	}
+	
+	this.createCharacterForManaging = function(input_type, parent, name, charID, charGroupID, value, info, deleteFunction)
+	{
+		labelName = name;
+        characterID = charID;
+        characterGroupID = charGroupID;
+        
+		var main_div = document.createElement('div');
+		var name_div = document.createElement('div');
+		name_div.setAttribute('class',"col-sm-3");
+		main_div.appendChild(name_div);
+		var type_div = document.createElement('div');
+		type_div.setAttribute('class',"col-sm-2");
+		main_div.appendChild(type_div);
+		var info_div = document.createElement('div');
+		info_div.setAttribute('class',"col-sm-6");
+		main_div.appendChild(info_div);
+		var check_div = document.createElement('div');
+		check_div.setAttribute('class',"col-sm-1");
+		main_div.appendChild(check_div);
+		parent.appendChild(main_div);
+        
+		combo =  new ComboBox();
+		sel_checkbox = document.createElement("input");
+		
+		// creating delete button
+		deleteBtn = document.createElement("img");
+		deleteBtn.setAttribute('src', 'images/remove.png');
+		deleteBtn.style.width= '32px';
+		deleteBtn.style.width= '32px';
+		deleteBtn.linePointer = this;
+		deleteBtn.onclick = deleteFunction;
+		check_div.appendChild(deleteBtn);
+		
+        // creating combobox with provided id
+		input = document.createElement("input");
+        input.type = "text";
+        input.step = "any";
+        input.value = name;
+        //input.disabled = true;
+        input.size = 25;
+		name_div.appendChild(input);
+        
+		//var pointer = this;
+        /*
+        input.addEventListener("change", function()
+		{  
+			pointer.validateInputType();
+		});*/
+        var opt = allCharactersList.getharTypesListAsOptions()
+		type = new ComboBox();
+		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        type.updateOptions(opt);
+		if(input_type != "")
+			type.setSelectedOption(opt.map(function(f){return f.name;}).indexOf(input_type));
+		
+		// creating label with info
+		information = document.createElement("TEXTAREA");
+        var t = document.createTextNode(info);
+		information.cols = 50;
+		//information.disabled = true;
+		information.appendChild(t);
+		info_div.appendChild(information);
+	}
     
     this.isValid = function()
     {
         return isValidInput;
     }
     
+	this.getIfChecked = function()
+	{
+		return sel_checkbox.checked;
+	}
     this.getValue = function()
     {
-        return input.value;
+		console.log(combo.getSelectedOption());
+		if(combo.getSelectedOption())
+			return combo.getSelectedOption();
+        else
+			return input.value;
     }
     
     this.getLabelName = function()
@@ -198,19 +364,53 @@ function Input()
 	this.toggleTaxonomyEdition = function(canBeEdited)
 	{
 		if(canBeEdited)
+			sel_checkbox.disabled = false;
+        else
+			sel_checkbox.disabled = true;
+		
+	}
+	
+	this.toggleCharactersEdition = function(canBeEdited)
+	{
+		if(canBeEdited)
 		{
             input.disabled = false;
 			if(characterID)
 			{
-				type.disabled = false;
+				type.disable(false);
 				information.disabled = false;
 			}
 		}
         else
 		{
             input.disabled = true;
-			type.disabled = true;
+			type.disable(true);
 			information.disabled = true;
+		}
+	}
+	
+	this.toggleToBeDeleted = function(willBeDeleted)
+	{
+		if(willBeDeleted)
+		{
+            input.disabled = true;
+			input.style = "background:#ff8484;";
+			if(characterID)
+			{
+				type.disable(true);
+				type.changeStyle("background:#ff8484;");
+				information.disabled = true;
+				information.style = "background:#ff8484;";
+			}
+		}
+        else
+		{
+            input.disabled = false;
+			input.style = "background:#eeeeee;";
+			type.disable(false);
+			type.changeStyle("background:#eeeeee;");
+			information.disabled = false;
+			information.style = "background:#eeeeee;";
 		}
 	}
     

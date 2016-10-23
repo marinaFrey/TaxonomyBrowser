@@ -44,7 +44,7 @@ function ParallelCoordinates()
         var values = [];
         var dataset = [];
         y = {};
-        
+        var characterLst = allCharactersList.getList();
         if(filteredSelection[0] != "all")
         {
             // if there is filter applied, filteredSelection vector is used as index to access selected specimens in dataset
@@ -53,14 +53,15 @@ function ParallelCoordinates()
                 if(selection[filteredSelection[i]].measures)
                 {
                     values = [];
-                    for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+                    //for(var j = 0; j < selection[filteredSelection[i]].measures.length; j++)
+					for(var charId_key in  selection[filteredSelection[i]].measures)
                     {
-                        var measureName = selection[filteredSelection[i]].measures[j].name
+                        var measureName = characterLst[charId_key].character_name;
                         for (var k = 0; k < dimensions.length; k++)
                         {
                             if(measureName == dimensions[k])
                             {
-                                values[k] = selection[filteredSelection[i]].measures[j].value;
+                                values[k] = selection[i].measures[charId_key];
                             }
                         }                     
                     }
@@ -87,14 +88,15 @@ function ParallelCoordinates()
                 if(selection[i].measures)
                 {
                     values = [];
-                    for(var j = 0; j < selection[i].measures.length; j++)
+                    //for(var j = 0; j < selection[i].measures.length; j++)
+					for(var charId_key in  selection[i].measures) 
                     {
-                        var measureName = selection[i].measures[j].name
+                        var measureName = characterLst[charId_key].character_name;
                         for (var k = 0; k < dimensions.length; k++)
                         {
                             if(measureName == dimensions[k])
                             {
-                                values[k] = selection[i].measures[j].value;
+                                values[k] = selection[i].measures[charId_key];
                             }
                         }              
                         

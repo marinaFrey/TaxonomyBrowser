@@ -28,8 +28,12 @@
 	<script type="text/javascript" src="js/comboboxHandler.js"></script>
 	<script type="text/javascript" src="js/specimenPopup.js"></script>
 	<script type="text/javascript" src="js/taxonomyPopup.js"></script>
+	<script type="text/javascript" src="js/addTaxonomyPopup.js"></script>
 	<script type="text/javascript" src="js/addSpecimenPopup.js"></script>
 	<script type="text/javascript" src="js/input.js"></script>
+	<script type="text/javascript" src="js/characters.js"></script>
+	<script type="text/javascript" src="js/charactersManagerPopup.js"></script>
+	<script type="text/javascript" src="js/ranks.js"></script>
 	<script type="text/javascript" src="js/analysisPopup.js"></script>
 	<script type="text/javascript" src="js/filter.js"></script>
     
@@ -67,7 +71,7 @@
 	<div class="collapse navbar-collapse">
 		
 		<ul class="nav navbar-nav">
-			<li><a href="#">Analysis</a></li>
+			<li><a href="#" onClick="return makeCharactersManagerPopup();">Characteristics</a></li>
 			<li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Options <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -335,7 +339,21 @@
             .attr("width", $("#sel_viz").width())
             .attr("height", 700)
 			.append("g");
-            
+    
+	var allCharactersList = new Characters();
+	allCharactersList.createFile();
+	allCharactersList.createList();
+	
+	
+	var allRanksList = new Ranks();
+	allRanksList.createFile();
+	allRanksList.createList();
+	
+	setTimeout(function()
+	{
+		allCharactersList.createCharTypesList();
+	}, 250);
+	
     // creating sunburst
     var sunburst = new Sunburst;
     sunburst.create();
@@ -367,9 +385,8 @@
     document.getElementById("sel_viz").style = "display:none;";
     
     createHierarchyFile();
-    createCharactersFile();
-	
     
+	
     
 </script>
 </body>

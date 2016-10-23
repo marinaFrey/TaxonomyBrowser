@@ -35,77 +35,76 @@ function makeSpecimenPopup(specimen)
     inputList['general_measures'].push(newInput7);
 
     var measuresGroupList = {};
+	var characterLst = allCharactersList.getList();
     // getting information from all its measures and separating them according to their groups
-	for(var i = 0; i < specimen.measures.length; i++)
+	//for(var i = 0; i < specimen.measures.length; i++)
+	
+	for(var charId_key in  specimen.measures) 
 	{
-        if(measuresGroupList[specimen.measures[i].group])
+        if(measuresGroupList[characterLst[charId_key].character_group_name])
         {
-            measuresGroupList[specimen.measures[i].group].push(
+            measuresGroupList[characterLst[charId_key].character_group_name].push(
             {
-                name: specimen.measures[i].name, 
-                value: specimen.measures[i].value, 
-                type: specimen.measures[i].type,
-                charId: specimen.measures[i].charId,
-                charTypeId: specimen.measures[i].charTypeId,
-                information: specimen.measures[i].information
+				name: characterLst[charId_key].character_name,
+				value: specimen.measures[charId_key],
+				type: characterLst[charId_key].character_type_name,
+				charId: characterLst[charId_key].character_id,
+				charTypeId: characterLst[charId_key].character_group_id,
+				information: characterLst[charId_key].information
             });
         }
         else
         {
             var list = [];
-            measuresGroupList[specimen.measures[i].group] = list;
-            measuresGroupList[specimen.measures[i].group].push(
+            measuresGroupList[characterLst[charId_key].character_group_name] = list;
+            measuresGroupList[characterLst[charId_key].character_group_name].push(
             {
-                name: specimen.measures[i].name, 
-                value: specimen.measures[i].value, 
-                type: specimen.measures[i].type,
-                charId: specimen.measures[i].charId,
-                charTypeId: specimen.measures[i].charTypeId,
-                information: specimen.measures[i].information
+                name: characterLst[charId_key].character_name,
+				value: specimen.measures[charId_key],
+				type: characterLst[charId_key].character_type_name,
+				charId: characterLst[charId_key].character_id,
+				charTypeId: characterLst[charId_key].character_group_id,
+				information: characterLst[charId_key].information
             });
-        }        
+        }      
 	}
     
     // getting all characteristics inherited from species yet not populated on specimen, to be able to populate when edited
-    var fullCharacterList = specimen.parent.characters;
-    for(var i = 0; i < fullCharacterList.length; i++)
-    {
-        if(measuresGroupList[fullCharacterList[i].group])
-        {
-            if( measuresGroupList[fullCharacterList[i].group].map(function(e) { return e.name; }).indexOf(fullCharacterList[i].name) == -1)
+	
+	var fullCharacterList = specimen.parent.characters;
+	for(var i = 0; i < fullCharacterList.length; i++)
+	{
+		if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
+		{
+			if(!( characterLst[fullCharacterList[i]].character_id in specimen.measures))
             {
-                measuresGroupList[fullCharacterList[i].group].push(
-                {
-                    name: fullCharacterList[i].name, 
-                    value: "", 
-                    type: fullCharacterList[i].type,
-                    charId: fullCharacterList[i].charId,
-                    charTypeId: fullCharacterList[i].charTypeId,
-                    information: fullCharacterList[i].information
-                });
-            }
-        }
-        else
-        {
-            var list = [];
-            measuresGroupList[fullCharacterList[i].group] = list;
-            measuresGroupList[fullCharacterList[i].group].push(
-            {
-                name: fullCharacterList[i].name, 
-                value: "", 
-                type: fullCharacterList[i].type,
-                charId: fullCharacterList[i].charId,
-                charTypeId: fullCharacterList[i].charTypeId,
-                information: fullCharacterList[i].information
-            });
-        }
-        /*
-        if(measuresGroupList[fullCharacterList[i].group].map(function(e) { return e.name; }).indexOf(fullCharacterList[i].name) == -1)
-        {
-            measuresGroupList[fullCharacterList[i].group].push({name: fullCharacterList[i].name, value: "", type: fullCharacterList[i].type});
-        }*/
-    }
-
+				measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+				{
+					name: characterLst[fullCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[fullCharacterList[i]].character_type_name,
+					charId: characterLst[fullCharacterList[i]].character_id,
+					charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+					information: characterLst[fullCharacterList[i]].information
+				});
+			}
+		}
+		else
+		{
+			var list = [];
+			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
+			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+			{
+				name: characterLst[fullCharacterList[i]].character_name, 
+				value: "",
+				type: characterLst[fullCharacterList[i]].character_type_name,
+				charId: characterLst[fullCharacterList[i]].character_id,
+				charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+				information: characterLst[fullCharacterList[i]].information
+			});
+		}        
+	}
+	
     cleanTabs();
 
     var i = 0;
@@ -244,43 +243,29 @@ function editSpecimenFields(specimen)
         specimen.latitude = inputList['general_measures'][3].getValue();
         specimen.longitude = inputList['general_measures'][4].getValue();
         specimen.information = inputList['general_measures'][5].getValue();
-
+		
         for (var key in inputList) 
         {
 
                 for( var i = 0; i < inputList[key].length; i++)
                 {
-                    var index = specimen.measures.map(function(e) { return e.name; }).indexOf(inputList[key][i].getLabelName());
-                    if(index >= 0)
+                    if(inputList[key][i].getcharacterID() in specimen.measures)
                     {
-                        specimen.measures[index].value = inputList[key][i].getValue();
-                        
+                        specimen.measures[inputList[key][i].getcharacterID()] = inputList[key][i].getValue();
                     }
                     else
                     {
                         if(inputList[key][i].getValue() != "" && key != 'general_measures')
                         {
-                            specimen.measures.push(
-                            {
-                                name: inputList[key][i].getLabelName(), 
-                                value: inputList[key][i].getValue(), 
-                                type: inputList[key][i].getType(),
-                                charId: inputList[key][i].getchararacterID(),
-                                charTypeId: inputList[key][i].getcharacterGroupID(),
-                                information: inputList[key][i].getInformation()
-                            });
+							specimen.measures[inputList[key][i].getcharacterID()] = inputList[key][i].getValue();
                         }
-                        else
-                        {
-                        
-                        }
+
                     }
                     inputList[key][i].toggleEdition(false);
                 }
             
         }
-        console.log(specimen);
-        //editSpecimen(specimen);
+        editSpecimen(specimen);
     };
     
 }

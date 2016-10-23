@@ -2,7 +2,7 @@
 <?php
 
     include 'taxonomybrowser.class.php';
-    include 'hierarchy.php';
+    include 'hierarchy_new.php';
     
     if (isset($_POST['id'])) 
     {
@@ -21,7 +21,7 @@
         setHierarchy($r,$c,$taxonomy_database);
         
         
-        $myfile = fopen("../../../data/data.json", "w") or die("Unable to open file!");
+        $myfile = fopen("../../../data/data2.json", "w") or die("Unable to open file!");
         $txt = json_encode($r);
         fwrite($myfile, $txt);
         fclose($myfile);

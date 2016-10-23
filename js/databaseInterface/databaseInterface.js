@@ -23,9 +23,31 @@ function createHierarchyFile()
 function createCharactersFile()
 {
     var name = "lol";
-    
+    var ready = false;
     $.ajax({
         url: 'js/databaseInterface/php/generateCharactersList.php',
+        type: 'POST',
+        data: {id:name},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+			ready = true;
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+
+
+}
+
+function createRanksFile()
+{
+    var name = "lola";
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/generateRankList.php',
         type: 'POST',
         data: {id:name},
         success: function(data) 
@@ -41,8 +63,16 @@ function createCharactersFile()
 
 }
 
+
 function addSpecimen(specimen)
 {
+	var m = [];
+	var characterLst = allCharactersList.getList();
+	for(key in specimen.measures)
+	{
+		m.push({charId: key, charTypeId: characterLst[key].character_group_id, value: specimen.measures[key]});
+	}
+
     var sp = {
         taxonomy_id: specimen.taxonomy_id, 
         collection_ID: specimen.collection_id, 
@@ -52,7 +82,7 @@ function addSpecimen(specimen)
         longitude:specimen.longitude, 
         altitude: specimen.altitude, 
         information: specimen.information, 
-        measures:specimen.measures
+        measures:m
         }
     
     $.ajax({
@@ -74,6 +104,12 @@ function addSpecimen(specimen)
 
 function editSpecimen(specimen)
 {
+	var m = [];
+	var characterLst = allCharactersList.getList();
+	for(key in specimen.measures)
+	{
+		m.push({charId: key, charTypeId: characterLst[key].character_group_id, value: specimen.measures[key]});
+	}
 
     var sp = {
         id:specimen.id, 
@@ -85,7 +121,7 @@ function editSpecimen(specimen)
         longitude:specimen.longitude, 
         altitude: specimen.altitude, 
         information: specimen.information, 
-        measures:specimen.measures
+        measures:m
         }
     
     $.ajax({
@@ -107,6 +143,8 @@ function editSpecimen(specimen)
 
 function removeSpecimen(sp)
 {
+	var species_id = {id: sp.id};
+	/*
     console.log(filteredSelection);
     var species_id = {id: sp.id};
     var index = selection.map(function(e) { return e.id; }).indexOf(species_id.id);
@@ -125,9 +163,9 @@ function removeSpecimen(sp)
     selection.splice(index,1);
     //console.log(node);
     
-    updateFromFiltering();
+    updateFromFiltering();*/
     
-    /*
+    
     $.ajax({
         url: 'js/databaseInterface/php/deleteSpecimen.php',
         type: 'POST',
@@ -141,19 +179,64 @@ function removeSpecimen(sp)
         {
             alert("error");
         }
-    });*/
+    });
     
     
 }
 
-function addTaxnomy()
+function addTaxonomy(taxonomy, taxonomy_parent)
 {
+	var tx = {
+		name: taxonomy.name,
+        parent_taxonomy_id: taxonomy_parent.taxonomy_id, 
+        rank: taxonomy.rank, 
+        information: taxonomy.information, 
+        characters:taxonomy.characters
+        }
+	console.log(tx);
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/addTaxonomy.php',
+        type: 'POST',
+        data: {id:tx},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            createHierarchyFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+}	
 
-}
-
-function editTaxonomy()
+function editTaxonomy(taxonomy)
 {
-
+	var tx = {
+		id: taxonomy.taxonomy_id,
+		name: taxonomy.name,
+        parent_taxonomy_id: taxonomy.parent.taxonomy_id, 
+        rank: taxonomy.rank, 
+        information: taxonomy.information, 
+        characters:taxonomy.characters
+        }
+	console.log(tx);
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/editTaxonomy.php',
+        type: 'POST',
+        data: {id:tx},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            createHierarchyFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
 }
 
 function removeTaxonomy()

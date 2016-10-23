@@ -70,7 +70,7 @@ function Sunburst()
     this.create = function()
     {
         this_pointer = this;
-        d3.json("data/data.json", function(error, root) 
+        d3.json("data/data2.json", function(error, root) 
         {
             // saving node root
             node = root;
@@ -251,7 +251,7 @@ function Sunburst()
               .on("mouseover", doHover)
               .on("mouseout", unDoHover);
 
-            this_pointer.togglePartition(showByChildrenNumbers);console.log(node);
+            this_pointer.togglePartition(showByChildrenNumbers);
         });
         
         d3.select('svg').style("height", height + "px");
@@ -469,7 +469,7 @@ function Sunburst()
             if(d.children)
                 setSelectionOnChildren(d);
             d.selected = true;
-            console.log(selection);
+            //console.log(selection);
 			updateShownVisualizationAndOptions();
         }
         else
@@ -571,6 +571,10 @@ function Sunburst()
                 }
                 if(buttonClicked.id == "tooltip_add")
                 {
+					if(d.rank == "7")
+						makeAddSpecimenPopup(d);
+					else
+						makeAddTaxonomyPopup(d);
                 }
                 if(buttonClicked.id == "tooltip_trash")
                 {

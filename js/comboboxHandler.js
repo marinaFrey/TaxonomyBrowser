@@ -180,7 +180,10 @@ function ComboBox()
      */
 	this.getSelectedOption = function()
 	{
-		return combo.value;
+		if(combo)
+			return combo.value;
+		else
+			return false;
 	}
 	
     /*
@@ -217,12 +220,23 @@ function ComboBox()
     /*
      * remove combobox
      */
-	this.remove = function(parent)
+	this.remove = function()//(parent)
 	{
-		var parent = document.getElementById(parent);
+		combo.remove();
+		/*var parent = document.getElementById(parent);
 		if(type == VIZ_COMBO)
 			parent.removeChild(txtLabel);
-		parent.removeChild(combo);
+		parent.removeChild(combo);*/
+	}
+	
+	this.disable = function(isDisabled)
+	{
+		combo.disabled = isDisabled;
+	}
+	
+	this.changeStyle = function(style)
+	{
+		combo.style = style;
 	}
     
     /*
@@ -442,6 +456,7 @@ function initializeComboboxes()
 function generateMeasuresList()
 {
 	var m_list = [];
+	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
 		if(selection[i].characters)
@@ -450,13 +465,13 @@ function generateMeasuresList()
             for(var j = 0; j < selection[i].characters.length; j++)
             {
                 // checks if measure not in list already
-                if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
+                if(m_list.map(function(e) { return e.id; }).indexOf(selection[i].characters[j])==-1)
                 {
-                    if(selection[i].characters[j].type == "real number" || 
-                        selection[i].characters[j].type == "integer number")
-                        m_list.push({name: selection[i].characters[j].name, isNum: true});
+                    if(characterLst[selection[i].characters[j]].character_type_name == "real number" || 
+                        characterLst[selection[i].characters[j]].character_type_name == "integer number")
+                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
                     else
-                        m_list.push({name: selection[i].characters[j].name, isNum: false});
+                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: false});
                 }
             }
 		}
@@ -471,20 +486,21 @@ function generateMeasuresList()
 function generateNumericMeasuresList()
 {
 	var m_list = [];
+	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
 		if(selection[i].characters)
 		{
 
             for(var j = 0; j < selection[i].characters.length; j++)
-            {
+            {	
                 // checks if measure not in list already
-                if(m_list.map(function(e) { return e.name; }).indexOf(selection[i].characters[j].name)==-1)
+                if(m_list.map(function(e) { return e.id; }).indexOf(selection[i].characters[j])==-1)
                 {
                     
-                    if(selection[i].characters[j].type == "real number" || 
-                        selection[i].characters[j].type == "integer number")
-                        m_list.push({name: selection[i].characters[j].name, isNum: true});
+                    if(characterLst[selection[i].characters[j]].character_type_name == "real number" || 
+                        characterLst[selection[i].characters[j]].character_type_name == "integer number")
+                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
 
                 }
             }

@@ -12,8 +12,7 @@
         $taxonomy_database = new taxonomybrowser($hostname.':'.$db_port, $db_username, $db_password, $dbname);
         
         
-        $characters = $taxonomy_database->getCharacters();
-        
+        $characters = $taxonomy_database->getCharactersWithAssociativeArray();
         
         $myfile = fopen("../../../data/characters.json", "w") or die("Unable to open file!");
         $txt = json_encode($characters);
@@ -21,6 +20,7 @@
         fclose($myfile);
         
         echo "successfully created characters file";
+        
 
     }
 

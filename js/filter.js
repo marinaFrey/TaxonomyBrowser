@@ -205,7 +205,8 @@ function applyFilters()
 {
     // cleans current filtered selection
     filteredSelection = [];
-    
+    var characterLst = allCharactersList.getList();
+	
     for (var i = 0; i < selection.length; i++)
     {
         //if(selection[i].measures)
@@ -275,9 +276,10 @@ function applyFilters()
                                 {
                                     var exists = false;
                                     // gets measure that needs filtering
-                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    //for(var j = 0; j < selection[i].measures.length; j++)
+									for(var charId_key in  selection[i].measures) 
                                     {
-                                        if(selection[i].measures[j].name == measure) 
+                                        if(characterLst[charId_key].character_name == measure) 
                                         {
                                             exists = true;
                                         }  
@@ -339,9 +341,10 @@ function applyFilters()
 								if(selection[i].measures)
                                 {
                                     var exists = false;
-                                    for(var j = 0; j < selection[i].measures.length; j++)
+                                    //for(var j = 0; j < selection[i].measures.length; j++)
+									for(var charId_key in  selection[i].measures) 
                                     {
-                                        if(selection[i].measures[j].name == measure) 
+                                        if(characterLst[charId_key].character_name == measure) 
                                         {
                                             exists = true;
                                         }  
@@ -404,18 +407,19 @@ function applyFilters()
 								if(selection[i].measures)
                                 {
                                     var exists = false;
-                                    for(var j = 0; j < selection[i].measures.length; j++)
-                                    {
+                                    //for(var j = 0; j < selection[i].measures.length; j++)
+                                    for(var charId_key in  selection[i].measures) 
+									{
                                         if(filters[k].comboOption.isNumeric())
                                         {
-                                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                            if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
                                             {
                                                 exists = true;
                                             }  
                                         }
                                         else
                                         {
-                                            if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                            if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
                                             {
                                                 exists = true;
                                             }  
@@ -481,12 +485,13 @@ function applyFilters()
                                 if(selection[i].measures)
                                 {
                                     var exists = false;
-                                    for(var j = 0; j < selection[i].measures.length; j++)
-                                    {
+                                    //for(var j = 0; j < selection[i].measures.length; j++)
+                                    for(var charId_key in  selection[i].measures)
+									{
                                         if(filters[k].comboOption.isNumeric())
                                         {
                                         console.log("numeric");
-                                            if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) == parseFloat(value))) 
+                                            if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
                                             {
                                             
                                                 exists = true;
@@ -494,7 +499,7 @@ function applyFilters()
                                         }
                                         else
                                         {
-                                            if((selection[i].measures[j].name == measure) && (selection[i].measures[j].value == value)) 
+                                            if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
                                             {
                                                 exists = true;
                                             }  
@@ -514,9 +519,10 @@ function applyFilters()
                         if(selection[i].measures)
                         {
                             var exists = false;
-                            for(var j = 0; j < selection[i].measures.length; j++)
-                            {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) < parseFloat(value))) 
+                            //for(var j = 0; j < selection[i].measures.length; j++)
+                            for(var charId_key in  selection[i].measures)
+							{
+                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) < parseFloat(value))) 
                                 {
                                     exists = true;
                                 }         
@@ -530,9 +536,10 @@ function applyFilters()
                         if(selection[i].measures)
                         {
                             var exists = false;
-                            for(var j = 0; j < selection[i].measures.length; j++)
+                            //for(var j = 0; j < selection[i].measures.length; j++)
+							for(var charId_key in  selection[i].measures)
                             {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) > parseFloat(value))) 
+                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) > parseFloat(value))) 
                                 {
                                     exists = true;
                                 }         
@@ -547,9 +554,10 @@ function applyFilters()
                         if(selection[i].measures)
                         {
                             var exists = false;
-                            for(var j = 0; j < selection[i].measures.length; j++)
-                            {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) <= parseFloat(value))) 
+                            //for(var j = 0; j < selection[i].measures.length; j++)
+                            for(var charId_key in  selection[i].measures)
+							{
+                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) <= parseFloat(value))) 
                                 {
                                     exists = true;
                                 }         
@@ -563,9 +571,10 @@ function applyFilters()
                         if(selection[i].measures)
                         {
                             var exists = false;
-                            for(var j = 0; j < selection[i].measures.length; j++)
-                            {
-                                if((selection[i].measures[j].name == measure) && (parseFloat(selection[i].measures[j].value) >= parseFloat(value))) 
+                            //for(var j = 0; j < selection[i].measures.length; j++)
+                            for(var charId_key in  selection[i].measures)
+							{
+                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) >= parseFloat(value))) 
                                 {
                                     exists = true;
                                 }         

@@ -1563,9 +1563,9 @@ class taxonomybrowser
 			return false;
 		}	
 		
-		if(!$this->updateBibliographyTaxonomy($taxonomy_id, $bibliographies_ids))
+		if(!empty($bibliographies_ids) &&!$this->updateBibliographyTaxonomy($taxonomy_id, $bibliographies_ids))
 			return false;
-		if(!$this->updateCharactersTaxonomy($taxonomy_id, $characters_ids))
+		if(!empty($characters_ids) && !$this->updateCharactersTaxonomy($taxonomy_id, $characters_ids))
 			return false;
 
 		return true;
@@ -1605,9 +1605,9 @@ class taxonomybrowser
 		
 		$taxonomy_id = mysql_insert_id();
 		
-		if(!$this->updateBibliographyTaxonomy($taxonomy_id, $bibliographies_ids))
+		if(!empty($bibliographies_ids) &&!$this->updateBibliographyTaxonomy($taxonomy_id, $bibliographies_ids))
 			return false;
-		if(!$this->updateCharactersTaxonomy($taxonomy_id, $characters_ids))
+		if(!empty($characters_ids) && !$this->updateCharactersTaxonomy($taxonomy_id, $characters_ids))
 			return false;
 		
 
@@ -1802,6 +1802,38 @@ class taxonomybrowser
 			$tmp['taxonomy_rank_id'] = mysql_result($result ,$i, "taxonomy_rank_id");
 			$tmp['taxonomy_rank_name'] = mysql_result($result, $i, "taxonomy_rank_name");
 			array_push($nodes, $tmp);
+		}
+		
+		mysql_free_result($result);
+		
+		//$nodes = stripslashesDeep($nodes);
+		
+		return $nodes;	
+		
+	}
+
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model getTaxonomyRanks Method
+//------------------------------------------------------------------------------
+	public function getTaxonomyRanksWithAssociativeArray()
+	{
+	
+		//$query = "SELECT taxonomy_rank_id, taxonomy_rank_name FROM taxonomyrank ORDER BY taxonomy_rank_name";
+		$query = "SELECT taxonomy_rank_id, taxonomy_rank_name FROM taxonomybrowser.taxonomyrank";
+		$result = mysql_query($query, $this->Connection);
+		$nodes = array();
+		if(mysql_num_rows($result) == 0)
+		{
+			return $nodes;
+		}
+		
+		for($i = 0; $i < mysql_num_rows($result); ++$i)
+		{
+			//$tmp = array();
+			//$tmp['taxonomy_rank_id'] = mysql_result($result ,$i, "taxonomy_rank_id");
+			//$tmp['taxonomy_rank_name'] = mysql_result($result, $i, "taxonomy_rank_name");
+			$nodes[mysql_result($result ,$i, "taxonomy_rank_id")] = mysql_result($result, $i, "taxonomy_rank_name");
+			//array_push($nodes, $tmp);
 		}
 		
 		mysql_free_result($result);
@@ -2961,6 +2993,45 @@ class taxonomybrowser
 		mysql_free_result($result);
 		
 		$nodes = stripslashesDeep($nodes);
+		
+		return $nodes;
+	}	
+	
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model getCharactersWithAssociativeArray Method
+//------------------------------------------------------------------------------
+	public function getCharactersWithAssociativeArray()
+	{
+		$query = "SELECT character_id, character_group_id, character_type_id, unit_id, character_name, character_enums, information FROM taxonomybrowser.characters ORDER BY character_name";
+		$result = mysql_query($query, $this->Connection);
+		$nodes = array();
+		if(mysql_num_rows($result) == 0)
+		{
+			return $nodes;
+		}
+
+		
+		for($i = 0; $i < mysql_num_rows($result); ++$i)
+		{
+			
+			$tmp = array();
+			$tmp['character_id'] = mysql_result($result ,$i, "character_id");
+			$tmp['character_group_id'] = mysql_result($result ,$i, "character_group_id");
+			$tmp['character_group_name'] = $this->getCharacterGroupName($tmp['character_group_id']);
+			$tmp['character_type_id'] = mysql_result($result ,$i, "character_type_id");
+			$tmp['character_type_name'] = $this->getCharactersTypeName($tmp['character_type_id']);
+			$tmp['unit_id'] = mysql_result($result ,$i, "unit_id");
+			$tmp['character_name'] = mysql_result($result ,$i, "character_name");
+			$tmp['character_enums'] = mysql_result($result ,$i, "character_enums");
+			$tmp['information'] = mysql_result($result ,$i, "information");
+			//$charArray = mysql_result($result ,$i, "character_id") => $tmp;
+			//array_push($nodes, $charArray);
+			$nodes[mysql_result($result ,$i, "character_id")] = $tmp;
+		}
+		
+		mysql_free_result($result);
+		
+		//$nodes = stripslashesDeep($nodes);
 		
 		return $nodes;
 	}	

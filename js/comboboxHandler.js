@@ -85,6 +85,8 @@ function ComboBox()
 		var parent = document.getElementById("filters_info")
         parent.appendChild(combo);
 		combo.addEventListener("change", clickFunction);
+        combo.clickFunction = clickFunction;
+        combo.style.width = '200px';
 		
 		type = FILTER_COMBO;
 	}
@@ -259,8 +261,8 @@ function ComboBox()
     this.isNumeric = function()
     {
 		//console.log(combo);
-		//return optionElementList[combo.selectedIndex].isNumber);
-        return isNum;
+		return optionElementList[combo.selectedIndex].isNumber;
+        //return isNum;
     }
 
 }

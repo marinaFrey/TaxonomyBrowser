@@ -17,7 +17,7 @@ function FilterPopup()
                                     {name:"is smaller or equal to",isNum:true},
                                     {name:"is bigger or equal to",isNum:true}];
     // options for filtering string variables
-	var operationsListString = ["exists","doesn't exist","is", "is not"];
+	var operationsListString = [{name:"exists",isNum:false},{name:"doesn't exist",isNum:false},{name:"is",isNum:true}, {name:"is not",isNum:true}];
 	var ptr = this;
 	
     /*
@@ -60,12 +60,18 @@ function FilterPopup()
         var br = document.createElement("br");
         
         // populating combobox with all measures and additional information
-		comboMeasure.createFilterCombo("comboMeasure", function(){});
+		comboMeasure.createFilterCombo("comboMeasure", function()
+        {
+            if(comboMeasure.isNumeric())
+                comboOption.updateOptions(operationsListNumeric);
+            else
+                 comboOption.updateOptions(operationsListString);
+        });
 		comboMeasure.updateOptions([{name:"Collection ID", isNum:false},
                                     {name:"Collected by", isNum:false},
                                     {name:"Data", isNum:false},
                                     {name:"Latitude", isNum:true},
-                                    {name:"Longitude", isNum:false}
+                                    {name:"Longitude", isNum:true}
                                     ].concat(generateMeasuresList()));
         
         // handling combobox to select the filtering used
@@ -78,11 +84,12 @@ function FilterPopup()
 				input.disabled = false;
 			
             // checks if option selected is only for numeric values and stores the answer for further use
+            /*
             var indexInList = operationsListNumeric.map(function(e) { return e.name; }).indexOf(comboOption.getSelectedOption())
             if(operationsListNumeric[indexInList].isNum)
                 comboOption.setNumericDataType(true);
             else
-                comboOption.setNumericDataType(false);
+                comboOption.setNumericDataType(false);*/
 		});
 		comboOption.updateOptions(operationsListNumeric);
 
@@ -91,7 +98,7 @@ function FilterPopup()
 		input.addEventListener("input", function()  // ou "change" se soh chama quando troca de contexto
 		{
             // checks if input is not a number and warns user when filtering option is only for numeric values
-			if(comboOption.isNumeric())
+			if(comboMeasure.isNumeric())
 			{
 				if(isNaN(parseFloat(input.value)))
 				{
@@ -102,6 +109,10 @@ function FilterPopup()
                     input.style.borderColor="#ddd";
 				}
 			}
+            else
+            {
+                input.style.borderColor="#ddd";
+            }
 		});
         infoLabel.appendChild(input);
         
@@ -116,6 +127,8 @@ function FilterPopup()
 		infoLabel.appendChild(oImg);
 		infoLabel.appendChild(br);
 		
+        comboMeasure.makeClick();
+        
         // adding filter to filter list
 		filters.push({comboMeasure: comboMeasure, comboOption: comboOption, input: input});
 	}
@@ -412,7 +425,7 @@ function applyFilters()
                                     for(var charId_key in  selection[i].measures) 
 									{	
 										//console.log(filters[k].comboOption.isNumeric());
-                                        if(filters[k].comboOption.isNumeric())
+                                        if(filters[k].comboMeasure.isNumeric())
                                         {
 											
                                             if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
@@ -422,7 +435,6 @@ function applyFilters()
                                         }
                                         else
                                         {
-											console.log("texto");
 											
                                             if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
                                             {
@@ -493,7 +505,7 @@ function applyFilters()
                                     //for(var j = 0; j < selection[i].measures.length; j++)
                                     for(var charId_key in  selection[i].measures)
 									{
-                                        if(filters[k].comboOption.isNumeric())
+                                        if(filters[k].comboMeasure.isNumeric())
                                         {
                                             if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
                                             {
@@ -595,7 +607,6 @@ function applyFilters()
                 // adds index of specimen in the "selected" list as entry to "filteredSelection" list
                 // this new list will be used as index to the original, saving memory and keeping both lists
                 filteredSelection.push(i);
-				console.log(filteredSelection);
             }
         }
     }

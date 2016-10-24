@@ -1,4 +1,6 @@
 
+/* FILES */
+
 function createHierarchyFile()
 {
     var name = "joaozinho";
@@ -31,6 +33,7 @@ function createCharactersFile()
         success: function(data) 
         {
             console.log(data); // Inspect this in your console
+			allCharactersList.createList();
 			ready = true;
         },
         error:function(data)
@@ -63,6 +66,7 @@ function createRanksFile()
 
 }
 
+/* SPECIMEN */
 
 function addSpecimen(specimen)
 {
@@ -184,6 +188,8 @@ function removeSpecimen(sp)
     
 }
 
+/* TAXONOMY */
+
 function addTaxonomy(taxonomy, taxonomy_parent)
 {
 	var tx = {
@@ -239,7 +245,89 @@ function editTaxonomy(taxonomy)
     });
 }
 
-function removeTaxonomy()
+function removeTaxonomy(taxonomy)
 {
-
+	var tx = {id: taxonomy.taxonomy_id}
+	console.log(tx);
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/deleteTaxonomy.php',
+        type: 'POST',
+        data: {id:tx},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            createHierarchyFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
 }
+
+/* CHARACTERS */
+
+function addCharacter(character)
+{
+    
+    $.ajax({
+        url: 'js/databaseInterface/php/addCharacter.php',
+        type: 'POST',
+        data: {id:character},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            allCharactersList.createFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+}
+
+function editCharacter(character)
+{
+	console.log("edit");
+	console.log(character);
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/editCharacter.php',
+        type: 'POST',
+        data: {id:character},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            allCharactersList.createFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+}
+
+function removeCharacter(character)
+{
+	var char_id = {id: character.character_id};
+	console.log("rmv");
+	console.log(char_id);
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/deleteCharacter.php',
+        type: 'POST',
+        data: {id:char_id},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+            allCharactersList.createFile();
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+}
+
+

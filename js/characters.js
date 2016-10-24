@@ -40,7 +40,7 @@ function Characters()
 		return charTypesList;
 	}
 	
-	this.getharTypesListAsOptions = function()
+	this.getCharTypesListAsOptions = function()
 	{
 		var new_list = [];
 		for( var key in charTypesList)
@@ -49,6 +49,16 @@ function Characters()
 		}
 		
 		return new_list;
+	}
+	
+	this.getCharTypeID = function(charType)
+	{
+		for( var key in charTypesList)
+		{
+			if(charTypesList[key] == charType)
+				return key;
+		}
+		
 	}
 	
 	this.getList = function()

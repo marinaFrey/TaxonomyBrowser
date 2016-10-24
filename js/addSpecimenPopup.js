@@ -10,14 +10,38 @@ function makeAddSpecimenPopup(species)
     submitButton.style = "display:block;";
     
     console.log(node);
-    var taxonomy = node;
     var list = [];
-    getTaxNames(taxonomy, list);
+    getTaxNames(species.parent, list);
     
     inputList = [];
     
     var infoLabel = document.getElementById("info_text");
     infoLabel.innerHTML = "select new specimen's taxonomy: <br>";
+	
+	var hierarchylist = [];
+	var taxonomicalHierarchy = species.parent;
+	while(taxonomicalHierarchy)
+	{
+		hierarchylist.push(taxonomicalHierarchy.name);
+		taxonomicalHierarchy = taxonomicalHierarchy.parent;
+	}
+
+	var hierarchylistString = "";
+	for(var i = hierarchylist.length-1; i >= 0; i--)
+	{
+		hierarchylistString += hierarchylist[i];
+
+		hierarchylistString += " -> ";
+
+	}
+	
+	var t = document.createTextNode(hierarchylistString);
+	var span = document.createElement('span');
+	span.style.fontSize = "20px";
+	span.appendChild(t);
+	infoLabel.appendChild(span);
+	//infoLabel.innerHTML += hierarchylistString;
+	//infoLabel.style = "float:left;";
     for( var i = 0; i < list.length; i++)
     {
         if(list[i])
@@ -25,6 +49,7 @@ function makeAddSpecimenPopup(species)
             var combo = new ComboBox();
             combo.createTaxonomyCombo(i,infoLabel,changingSelectedTaxonomy, list[i]);
             combo.updateOptions(list[i]);
+			combo.setSelectedOption(list[i].map(function(f){return f.name;}).indexOf(species.name));
             combo.makeClick();
             
         }
@@ -134,7 +159,6 @@ function changingSelectedTaxonomy()
 					});
 				}        
 			}
-            
             for (var key in measuresGroupList) 
             {
                 var tab_id = key.replace(/\s+/g, '');
@@ -185,6 +209,7 @@ function changingSelectedTaxonomy()
             }
             //taxonomy.children.push(specimen);
             addSpecimen(specimen);
+			$('#basicModal').modal('hide');
         };
     }
     else

@@ -1382,6 +1382,45 @@ class taxonomybrowser
 			return true;
 		}
 		return false;
+	}
+
+	
+	public function removeTaxonomyFromAllTables($taxonomy_id)
+	{	
+
+		if($this->isRoot($taxonomy_id))
+		{
+			return false;
+		}
+		$taxonomy_id = mysql_real_escape_string($taxonomy_id);
+		$query = "DELETE FROM taxonomybrowser.taxonomy WHERE taxonomy.taxonomy_id = '$taxonomy_id'";
+		$result = mysql_query($query, $this->Connection);
+		if($result)
+		{
+			$query2 = "DELETE FROM taxonomybrowser.characterstaxonomy WHERE taxonomy_id = '$taxonomy_id'";
+			$result2 = mysql_query($query2, $this->Connection);
+			
+			if($result2)
+			{
+				$specimens = $this->getSpecimensByTaxonomyId($taxonomy_id);
+				
+				foreach($specimens as $s)
+				{
+					$result3 = $this->removeSpecimen($s['specimen_id']);
+					
+					if($result3 != true)
+					{	
+						return false;
+					}
+				}
+				return true;
+
+			}
+			
+			return false;
+			
+		}			
+		return false;
 	}	
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model Private Function (getCharactersRecursive)
@@ -3286,6 +3325,37 @@ class taxonomybrowser
 		}		
 		return false;
 	}
+	
+	public function removeCharacterFromAllTables($character_id)
+	{	
+
+		$character_id = mysql_real_escape_string($character_id);
+		$query = "DELETE FROM taxonomybrowser.characters WHERE characters.character_id = '$character_id'";
+		$result = mysql_query($query, $this->Connection);
+		if($result)
+		{
+			$query2 = "DELETE FROM taxonomybrowser.characterstaxonomy WHERE character_id = '$character_id'";
+			$result2 = mysql_query($query2, $this->Connection);
+			
+			if($result2)
+			{
+				$query3 = "DELETE FROM taxonomybrowser.measures WHERE character_id = '$character_id'";
+				$result3 = mysql_query($query3, $this->Connection);
+				
+				if($result3)
+				{
+					return true;
+				}
+				
+				return false;
+			}
+			
+			return false;
+			
+		}			
+		return false;
+	}
+	
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model getCharactersGroup Method
 //------------------------------------------------------------------------------

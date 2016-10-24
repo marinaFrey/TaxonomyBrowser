@@ -142,7 +142,7 @@ function makeTaxonomyPopup(taxonomy)
     {
         if (confirm("Do you really want to delete this Taxonomy? All it's children will be also removed from the database") == true) 
         {
-            //removeSpecimen(specimen);
+            removeTaxonomy(taxonomy);
             $('#basicModal').modal('hide');
         }
     };

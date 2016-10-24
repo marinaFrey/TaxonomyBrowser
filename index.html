@@ -36,6 +36,8 @@
 	<script type="text/javascript" src="js/ranks.js"></script>
 	<script type="text/javascript" src="js/analysisPopup.js"></script>
 	<script type="text/javascript" src="js/filter.js"></script>
+	
+	<script type="text/javascript" src="js/export.js"></script>
     
 	<script type="text/javascript" src="js/databaseInterface/databaseInterface.js"></script>
 	
@@ -72,10 +74,11 @@
 		
 		<ul class="nav navbar-nav">
 			<li><a href="#" onClick="return makeCharactersManagerPopup();">Characteristics</a></li>
+			<li><a href="#" onClick="return exportSelection();">Export Selected Specimens</a></li>
 			<li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Options <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">See Tables</a></li>
+                <li><a href="#">Clean Database and Import New Data</a></li>
                 <li class="divider"></li>
                 <li><a href="#">About</a></li>
               </ul>
@@ -83,7 +86,7 @@
 		</ul>
 		
 		<div class="col-sm-1 col-md-1 pull-right">
-        <button type="button" class="btn btn-default navbar-btn">Login</button>
+			<button type="button" class="btn btn-default navbar-btn">Login</button>
 		</form>
 		</div>
 		

@@ -70,41 +70,7 @@ function makeSpecimenPopup(specimen)
 	}
     
     // getting all characteristics inherited from species yet not populated on specimen, to be able to populate when edited
-	
-	var fullCharacterList = specimen.parent.characters;
-	for(var i = 0; i < fullCharacterList.length; i++)
-	{
-		if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
-		{
-			if(!( characterLst[fullCharacterList[i]].character_id in specimen.measures))
-            {
-				measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
-				{
-					name: characterLst[fullCharacterList[i]].character_name, 
-					value: "",
-					type: characterLst[fullCharacterList[i]].character_type_name,
-					charId: characterLst[fullCharacterList[i]].character_id,
-					charTypeId: characterLst[fullCharacterList[i]].character_group_id,
-					information: characterLst[fullCharacterList[i]].information
-				});
-			}
-		}
-		else
-		{
-			var list = [];
-			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
-			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
-			{
-				name: characterLst[fullCharacterList[i]].character_name, 
-				value: "",
-				type: characterLst[fullCharacterList[i]].character_type_name,
-				charId: characterLst[fullCharacterList[i]].character_id,
-				charTypeId: characterLst[fullCharacterList[i]].character_group_id,
-				information: characterLst[fullCharacterList[i]].information
-			});
-		}        
-	}
-	
+
     cleanTabs();
 
     var i = 0;
@@ -120,7 +86,11 @@ function makeSpecimenPopup(specimen)
     
     var editSpecimenButton = document.getElementById("editSpecimenButton");
     editSpecimenButton.style = "display:block;";
-    editSpecimenButton.onclick = function(){editSpecimenFields(specimen);/*editSpecimen(specimen);*/};
+    editSpecimenButton.onclick = function()
+	{
+		appendNotPopulatedMeasuresToTabs(measuresGroupList,specimen);
+		editSpecimenFields(specimen);
+	};
     
     var removeSpecimenButton = document.getElementById("removeSpecimenButton");
     removeSpecimenButton.style = "display:block;";
@@ -270,6 +240,54 @@ function editSpecimenFields(specimen)
     
 }
 
+function appendNotPopulatedMeasuresToTabs(measuresGroupList, specimen)
+{
+	var characterLst = allCharactersList.getList();
+	var fullCharacterList = specimen.parent.characters;
+	
+	for(var i = 0; i < fullCharacterList.length; i++)
+	{
+		if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
+		{
+			if(!( characterLst[fullCharacterList[i]].character_id in specimen.measures))
+            {
+				measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+				{
+					name: characterLst[fullCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[fullCharacterList[i]].character_type_name,
+					charId: characterLst[fullCharacterList[i]].character_id,
+					charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+					information: characterLst[fullCharacterList[i]].information
+				});
+			}
+		}
+		else
+		{
+			var list = [];
+			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
+			measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+			{
+				name: characterLst[fullCharacterList[i]].character_name, 
+				value: "",
+				type: characterLst[fullCharacterList[i]].character_type_name,
+				charId: characterLst[fullCharacterList[i]].character_id,
+				charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+				information: characterLst[fullCharacterList[i]].information
+			});
+		}        
+	}
+	
+    cleanTabs();
+
+    var i = 0;
+    for (var key in measuresGroupList) 
+    {
+        var tab_id = key.replace(/\s+/g, '');
+        addTab(tab_id,key,measuresGroupList[key]);
+    }
+
+}
 
 
 

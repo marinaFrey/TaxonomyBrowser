@@ -14,6 +14,7 @@ function ComboBox()
 	var id;
 	var type;
     var isNum;
+	var optionElementList;
     
 	/*
      * creates combobox with its name on a label by its right
@@ -146,12 +147,15 @@ function ComboBox()
         // saves current index name so it can remain unaltered if possible
         var newIndex = optionList.map(function(e) { return e.name; }).indexOf(this.getSelectedOption());
 		this.clearOptions();
+		optionElementList = [];
         // adds options from list
 		for (var i = 0; i < optionList.length; i++)
 		{
 			var opt = document.createElement("option");
+			opt.isNumber = optionList[i].isNum;
 			var t = document.createTextNode(optionList[i].name);
 			opt.appendChild(t);
+			optionElementList.push(opt);
 			combo.appendChild(opt);
             this.setNumericDataType(optionList[i].isNum);
 		}
@@ -254,6 +258,8 @@ function ComboBox()
      */
     this.isNumeric = function()
     {
+		//console.log(combo);
+		//return optionElementList[combo.selectedIndex].isNumber);
         return isNum;
     }
 
@@ -469,9 +475,14 @@ function generateMeasuresList()
                 {
                     if(characterLst[selection[i].characters[j]].character_type_name == "real number" || 
                         characterLst[selection[i].characters[j]].character_type_name == "integer number")
-                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
+						{
+							
+							m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
+						}
                     else
+					{
                         m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: false});
+					}
                 }
             }
 		}

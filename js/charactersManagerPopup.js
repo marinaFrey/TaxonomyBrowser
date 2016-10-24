@@ -9,6 +9,7 @@ function makeCharactersManagerPopup()
 function CharactersManager()
 {
 	var temporaryCharacterList;
+	var toBeDeletedList;
 	var pointer = this;
 	
 	this.createInterface = function()
@@ -19,7 +20,7 @@ function CharactersManager()
     
 		var submitButton = document.getElementById("submitButton");
 		submitButton.style = "display:block;";
-		submitButton.onclick = this.submit();
+		submitButton.onclick = this.submit;
 		
 		cleanSpecimenMeasuresFromInputList();
 		cleanTabs();
@@ -112,29 +113,40 @@ function CharactersManager()
 		var list = [];
 		inputList[label] = list;
 		
-		for( var i = 0; i < measuresList.length; i++)
-		{
-			var newInputMeasures = new Input();
-			newInputMeasures.createCharacterForManaging(measuresList[i].type,div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,rmvFunction);
-
-			inputList[label].push(newInputMeasures);
-		}
-		
 		var btn_div = document.createElement('div');
-		btn_div.setAttribute('class',"col-sm-1");
+		btn_div.setAttribute('class',"col-sm-3");
 		var side_div = document.createElement('div');
-		side_div.setAttribute('class',"col-sm-11");
+		side_div.setAttribute('class',"col-sm-9");
 		side_div.setAttribute('height',"64px");
+		
+		var fill = document.createElement("TEXTAREA");
+		fill.cols = 50;
+		fill.disabled = true;
+		//information.disabled = true;
+		side_div.appendChild(fill);
+		
 		var addBtn = document.createElement("img");
 		addBtn.setAttribute('src', 'images/add.png');
-		addBtn.style= "text-align: left; width:64px; height:64px;";
+		addBtn.style= "position: relative;text-align: left;width:64px; height:64px;";
 		addBtn.group = label;
-		addBtn.div_ptr = div
+		addBtn.groupID = measuresList[0].charTypeId;
+		addBtn.div_ptr = div;
+		addBtn.addBtn_div = btn_div;
 		addBtn.pointer = this;
 		addBtn.onclick = this.addCharacter;
 		btn_div.appendChild(addBtn);
 		div.appendChild(btn_div);
 		div.appendChild(side_div);
+		
+		for( var i = 0; i < measuresList.length; i++)
+		{
+			var newInputMeasures = new Input();
+			newInputMeasures.createCharacterForManaging(measuresList[i].type,div, btn_div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,rmvFunction);
+			
+			inputList[label].push(newInputMeasures);
+		}
+		
+		
 		
 		
 		measures_tab_content.appendChild(div);
@@ -157,7 +169,7 @@ function CharactersManager()
 	{
 		
 		var newInputMeasures = new Input();
-		newInputMeasures.createCharacterForManaging("",this.div_ptr, "", "", "", "", "",this.pointer.removeCharacter);
+		newInputMeasures.createCharacterForManaging("",this.div_ptr, this.addBtn_div, "", "", this.groupID, "", "",this.pointer.removeCharacter);
 
 		inputList[this.group].push(newInputMeasures);
 	}
@@ -178,7 +190,55 @@ function CharactersManager()
 	
 	this.submit = function()
 	{
-	
+		console.log("submit");
+		for (var key in inputList) 
+		{
+			for( var i = 0; i < inputList[key].length; i++)
+			{
+				var character = 
+				{
+					character_id: inputList[key][i].getcharacterID(),
+					character_name: inputList[key][i].getValue(),
+					information: inputList[key][i].getInformation(),
+					character_group_id: inputList[key][i].getcharacterGroupID(),
+					character_type_id: inputList[key][i].getTypeID()
+				}
+
+				if(inputList[key][i].willBeDeleted())
+				{
+					if(character.character_id)
+						removeCharacter(character);
+				}
+				else
+				{
+					if(!character.character_id)
+					{
+						var characterLst = allCharactersList.getList();
+						var canBeAdded = true;
+						for(var charId_key in  characterLst) 
+						{
+							if(characterLst[charId_key].character_name == character.character_name)
+								canBeAdded = false;
+						}
+						if(canBeAdded)
+							addCharacter(character);
+						else
+						{
+							alert("ERROR! The characteristic you are trying to add already exists! It will not be saved.");
+						}
+					}
+					else	
+					{	
+						if(inputList[key][i].hasBeenChanged())
+							editCharacter(character);
+					}
+				}
+
+
+			}
+		}
+		
+		$('#basicModal').modal('hide');
 	}
 	
 }

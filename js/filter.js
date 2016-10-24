@@ -206,7 +206,7 @@ function applyFilters()
     // cleans current filtered selection
     filteredSelection = [];
     var characterLst = allCharactersList.getList();
-	
+	console.log(filters);
     for (var i = 0; i < selection.length; i++)
     {
         //if(selection[i].measures)
@@ -407,11 +407,14 @@ function applyFilters()
 								if(selection[i].measures)
                                 {
                                     var exists = false;
+									//console.log("is");
                                     //for(var j = 0; j < selection[i].measures.length; j++)
                                     for(var charId_key in  selection[i].measures) 
-									{
+									{	
+										//console.log(filters[k].comboOption.isNumeric());
                                         if(filters[k].comboOption.isNumeric())
                                         {
+											
                                             if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
                                             {
                                                 exists = true;
@@ -419,6 +422,8 @@ function applyFilters()
                                         }
                                         else
                                         {
+											console.log("texto");
+											
                                             if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
                                             {
                                                 exists = true;
@@ -490,7 +495,6 @@ function applyFilters()
 									{
                                         if(filters[k].comboOption.isNumeric())
                                         {
-                                        console.log("numeric");
                                             if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
                                             {
                                             
@@ -586,11 +590,12 @@ function applyFilters()
                 }
                 
             }
-            if(accept == true)
+            if(accept == true && !selection[i].rank)
             {
                 // adds index of specimen in the "selected" list as entry to "filteredSelection" list
                 // this new list will be used as index to the original, saving memory and keeping both lists
                 filteredSelection.push(i);
+				console.log(filteredSelection);
             }
         }
     }

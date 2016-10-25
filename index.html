@@ -121,8 +121,8 @@
 	<div class="row">
         <!-- radio buttons to select type of partitioning made in sunburst -->
         <div class="col-sm-4" style="background-color:#bf83ea;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
-            <img name="byspecies" src="images/species.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
-            <img name="byspecimen" src="images/specimen2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
+            <img name="byspecies" src="images/species2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
+            <img name="byspecimen" src="images/specimen.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
         <!--
             <div class="col-sm-2" style="text-align: center" >
                 
@@ -348,12 +348,12 @@
 			.append("g");
     
 	var allCharactersList = new Characters();
-	allCharactersList.createFile();
+	//allCharactersList.createFile();
 	allCharactersList.createList();
 	
 	
 	var allRanksList = new Ranks();
-	allRanksList.createFile();
+	//allRanksList.createFile();
 	allRanksList.createList();
 	
 	setTimeout(function()
@@ -391,7 +391,7 @@
 	document.getElementById("maps").style = "display:none;";
     document.getElementById("sel_viz").style = "display:none;";
     
-    createHierarchyFile();
+    //createHierarchyFile();
     
 	
     

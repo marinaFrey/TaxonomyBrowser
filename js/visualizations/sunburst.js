@@ -11,7 +11,7 @@ function Sunburst()
     var outside_polyline;
     var outside_text;
 	var databaseSize;
-    var showByChildrenNumbers = true;
+    var showByChildrenNumbers = false;
     var this_pointer;
     var normalOpacity = 0.3;
     var width = $("#viz").width(),
@@ -82,6 +82,8 @@ function Sunburst()
             // saving node root
             node = root;
             // creating g elements for each node on sunburst
+            
+            
             g = svg.selectAll("g")
                 .data(partition.nodes(root))
                 .enter().append("g");
@@ -139,9 +141,9 @@ function Sunburst()
                     }
                     if(d.endAngle == Math.PI*2) 
                     {
-                        return 30; // era -30
+                        return -30; // era 30
                     }
-                    return (d.endAngle > 90 * Math.PI/180 ? 30 : -30); 
+                    return (d.endAngle > 90 * Math.PI/180 ? 30 : 30); 
                 })
                 .style("font-size",function(d) {return "15px";})
                 .style("opacity", function(d) 
@@ -160,14 +162,21 @@ function Sunburst()
                 .attr("startOffset", function(d,i) 
                 {   
                     if(d.endAngle - d.startAngle == Math.PI*2)
+                    {
+                        
                         return "25%";
+                    }
                     
-                    if(d.endAngle == Math.PI*2) 
+                    if(d.endAngle == Math.PI*2)
+                    {                    
                         return "25%";
+                    }
                     
                     if(d.endAngle >= 270*Math.PI/180)
+                    {
                         return "25%";
-
+                    }
+                    
                     return (d.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
                 })
                 .style("text-anchor", "middle")
@@ -285,6 +294,7 @@ function Sunburst()
 
         var arcText = [];
         var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
+        var clickedNode = d;
 
         /*if (marinaquer) 
         {
@@ -311,7 +321,7 @@ function Sunburst()
                 // check if the animated element's data e lies within the visible angle span given in d
                 if (e.x >= d.x && e.x < (d.x + d.dx)) 
                 {
-                    
+                    /*
                     // get a selection of the associated text element
                     arcText = d3.select(this.parentNode).select("text");
 
@@ -320,13 +330,68 @@ function Sunburst()
                         .filter(function (f){return (e.endAngle - e.startAngle > 10*Math.PI/180 );})
                         .attr("root", function(f) { return rootDepth;})
                         .style("opacity", function(f) 
-                        {
+                        {console.log(f);
                             if(rootDepth > e.depth)
                                 return 0;
                             if(e.endAngle - e.startAngle < 10*Math.PI/180)
                                 return 0;
                             else
                                 return 1;
+                        })
+                        .attr("pointer-events", null);*/
+                    text
+                        .transition().delay(50)
+                        .each("start", function(d) 
+                        {
+                            
+                            d.endAngle = arc.endAngle()(d);   
+                            d.startAngle = arc.startAngle()(d);
+                            //if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                            if(d.endAngle - d.startAngle < 20*Math.PI/180)
+                            {
+                                d3.select(this.parentNode).style("opacity",function(e)
+                                {
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
+                                    return 0;
+                                });
+                            }
+                            else
+                            {
+                                d3.select(this.parentNode).style("opacity",function(e)
+                                {   
+                                    if(this.getAttribute("root") > e.depth)
+                                        return 0;
+                                    
+                                    if(parseInt(clickedNode.rank) > parseInt(d.rank))
+                                        return 0;
+                                        
+                                    e.endAngle = arc.endAngle()(e);   
+                                    e.startAngle = arc.startAngle()(e);
+                                    return 1;
+                                });
+                                
+                                d3.select(this).transition().duration(1000)
+                                .attr("startOffset", function(f,i) 
+                                {   
+                                    
+                                    if(f.endAngle - f.startAngle == Math.PI*2)
+                                    {
+                                        return "25%";
+                                    }
+                                    if(f.endAngle == Math.PI*2) 
+                                    {
+                                        return "25%";
+                                    }
+                                    if(f.endAngle >= 270*Math.PI/180)
+                                    {
+                                        return "25%";
+                                    }
+                                    
+                                    return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
+                                });
+                                //console.log(this)
+                            }
                         })
                         .attr("pointer-events", null);
                 }
@@ -353,7 +418,6 @@ function Sunburst()
     
     this.togglePartition = function(type)
     {
-        
         if(type)
         {
             showByChildrenNumbers = true;
@@ -379,7 +443,8 @@ function Sunburst()
                 
                 d.endAngle = arc.endAngle()(d);   
                 d.startAngle = arc.startAngle()(d);
-                if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                //if(d.endAngle - d.startAngle < 10*Math.PI/180)
+                if(d.endAngle - d.startAngle < 20*Math.PI/180)
                 {
                     d3.select(this.parentNode).style("opacity",function(e)
                     {
@@ -417,20 +482,12 @@ function Sunburst()
                         {
                             return "25%";
                         }
+                        
                         return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
                     });
                     //console.log(this)
                 }
             })
-			.style("opacity", function(d) 
-                {
-					if(d.endAngle - d.startAngle < 10*Math.PI/180)
-					{	
-						return 0;
-					}
-					else
-						return 1;
-                })
             .attr("pointer-events", null);
             
         /*
@@ -580,6 +637,7 @@ function Sunburst()
         d3.select("#toolbar-options").classed("hidden", false);
         $('#'+d.path.parentNode.lastChild.id).toolbar({
             content: '#toolbar-options',
+            name: d.name,
             position: 'top',
             style: 'default',
             adjustment: 50

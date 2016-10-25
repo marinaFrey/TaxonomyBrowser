@@ -60,6 +60,7 @@ function showSunburstbySpecies()
 {
     document.images["byspecies"].src="images/species2.png";
     document.images["byspecimen"].src ="images/specimen.png";
+    console.log("showbyspecies");
     sunburst.togglePartition(false);
 }
 

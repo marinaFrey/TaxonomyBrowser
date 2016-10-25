@@ -9,9 +9,9 @@ function makeAddSpecimenPopup(species)
     var submitButton = document.getElementById("submitButton");
     submitButton.style = "display:block;";
     
-    console.log(node);
-    var list = [];
-    getTaxNames(species.parent, list);
+    cleanSpecimenMeasuresFromInputList();
+	
+    
     
     inputList = [];
     
@@ -42,6 +42,11 @@ function makeAddSpecimenPopup(species)
 	infoLabel.appendChild(span);
 	//infoLabel.innerHTML += hierarchylistString;
 	//infoLabel.style = "float:left;";
+	
+	var list = [];
+	console.log(species);
+    getTaxNames(species.parent, list);
+	
     for( var i = 0; i < list.length; i++)
     {
         if(list[i])

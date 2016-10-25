@@ -31,13 +31,20 @@ function makeAddTaxonomyPopup(parent_taxonomy)
     infoLabel.innerHTML = hierarchylistString;
 	
 	var ranklist = allRanksList.getList();
+	var rankAsOptions = [];
 	
+	for(var key in  ranklist) 
+	{
+		if(parent_taxonomy.rank < key)
+			rankAsOptions.push({name:ranklist[key], isNum:false});
+	}
+
     var newInput2 = new Input();
     newInput2.create("text",infoLabel, "Name","","","", "");
 	newInput2.toggleEdition(true);
     inputList['general_measures'].push(newInput2);
     var newInput3 = new Input();
-    newInput3.createCombo("text",infoLabel, "Rank","","",  allRanksList.getRankListAsOptions(), "");
+    newInput3.createCombo("text",infoLabel, "Rank","","",  rankAsOptions, "");
 	newInput3.toggleEdition(true);
     inputList['general_measures'].push(newInput3);
     var newInput5 = new Input();
@@ -115,6 +122,7 @@ function addTaxonomyFields(parent_taxonomy)
 	taxonomy.rank = allRanksList.getIndexByRankname(inputList['general_measures'][1].getValue());
 	//specimen.value = inputList['general_measures'][2].getValue();
 	taxonomy.information = inputList['general_measures'][2].getValue();
+	taxonomy.parent = parent_taxonomy;
 	taxonomy.characters = [];
 
 	for (var key in inputList) 
@@ -170,9 +178,9 @@ function addTaxonomyFields(parent_taxonomy)
 
 		
 	}
-	console.log(taxonomy);
+	
 	addTaxonomy(taxonomy, parent_taxonomy);
-	//$('#basicModal').modal('hide');
-	makeAddSpecimenPopup(taxonomy);
+	$('#basicModal').modal('hide');
+	
     
 }

@@ -1,29 +1,15 @@
-var stockData = [  
-            {
-                Symbol: "AAPL",
-                Company: "Apple Inc.",
-                Price: 132.54
-            },
-            {
-                Symbol: "INTC",
-                Company: "Intel Corporation",
-                Price: 33.45
-            },
-            {
-                Symbol: "GOOG",
-                Company: "Google Inc",
-                Price: 554.52
-            },
-        ];
+
 function exportSelection()
 {
     var dataset;
+	var measuresUsed;
     var specimen;
     var characterLst = allCharactersList.getList();
 
     if(filteredSelection[0] != "all")
     {
         dataset = [];
+        measuresUsed = [];
         // for showing a circle all 3 variables selected must exist
         // so it's made a check to confirm if the specimen has a value to all 3 before showing
         for (var i = 0; i < filteredSelection.length; i++)
@@ -40,6 +26,7 @@ function exportSelection()
                 for(var charId_key in  selection[filteredSelection[i]].measures) 
                 {
                     var measureName = characterLst[charId_key].character_name;
+					measuresUsed[charId_key] = measureName;
                     specimen[measureName] = selection[filteredSelection[i]].measures[charId_key];                      
                 }
             }
@@ -51,6 +38,7 @@ function exportSelection()
     {
         // if there is no filter applied, all selection is used 
         dataset= [];
+        measuresUsed= [];
         // for showing a circle all 3 variables selected must exist
         // so it's made a check to confirm if the specimen has a value to all 3 before showing
         for (var i = 0; i < selection.length; i++)
@@ -66,34 +54,26 @@ function exportSelection()
                 for(var charId_key in  selection[i].measures) 
                 {
                     var measureName = characterLst[charId_key].character_name;
-                    specimen[measureName] = selection[i].measures[charId_key];              
+					measuresUsed[charId_key] = measureName;
+					specimen[measureName] = selection[i].measures[charId_key];              
                 }
             }
             if(specimen.collection_id)
                 dataset.push(specimen);
         }
     }
-    
-    console.log(dataset);
-        
-        downloadCSV({ filename: "export.csv" }, dataset);
-        /*
-        // Create Object
-        var items = [
-              { name: "Item 1", color: "Green", size: "X-Large" },
-              { name: "Item 2", color: "Green", size: "X-Large" },
-              { name: "Item 3", color: "Green", size: "X-Large" }];
+	
+	var measuresUsedList = ['collection_id','collected_data','latitude','longitude'];
+	for ( var item in measuresUsed )
+	{
+		measuresUsedList.push( measuresUsed[ item ] );
+	}
 
-        // Convert Object to JSON
-        var jsonObject = JSON.stringify(items);
-
-        // Convert JSON to CSV & Display CSV
-        console.log(ConvertToCSV(jsonObject));*/
-    //});
+	downloadCSV({ filename: "export.csv" }, dataset, measuresUsedList);
 
 }
 
-function convertArrayOfObjectsToCSV(args) 
+function convertArrayOfObjectsToCSV(args, measuresUsedList) 
 {  
     var result, ctr, keys, columnDelimiter, lineDelimiter, data;
 
@@ -105,18 +85,20 @@ function convertArrayOfObjectsToCSV(args)
     columnDelimiter = args.columnDelimiter || ';';
     lineDelimiter = args.lineDelimiter || '\n';
 
-    keys = Object.keys(data[0]);
+    keys = measuresUsedList; //Object.keys(data[0]);
 
     result = '';
     result += keys.join(columnDelimiter);
     result += lineDelimiter;
 
-    data.forEach(function(item) {
+    data.forEach(function(item) 
+	{
         ctr = 0;
-        keys.forEach(function(key) {
+        keys.forEach(function(key) 
+		{
             if (ctr > 0) result += columnDelimiter;
-
-            result += item[key];
+			if(item[key])
+				result += item[key];
             ctr++;
         });
         result += lineDelimiter;
@@ -125,47 +107,28 @@ function convertArrayOfObjectsToCSV(args)
     return result;
 }
 
-function ConvertToCSV(objArray) 
-{
-    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    var str = '';
-
-    for (var i = 0; i < array.length; i++) 
-    {
-        var line = '';
-        for (var index in array[i]) 
-        {
-            if (line != '') line += ';'
-
-            line += array[i][index];
-        }
-        str += line + '\r\n';
-    }
-
-    return str;
-}
-
-function downloadCSV(args, dataset) 
+function downloadCSV(args, dataset, measuresUsedList) 
 {  
         var data, filename, link;
         var csv = convertArrayOfObjectsToCSV({
-            data: dataset
-        });
+            data: dataset 
+        }, measuresUsedList);
         if (csv == null) return;
-        console.log(csv);
+
         filename = args.filename || 'export.csv';
 
-        if (!csv.match(/^data:text\/csv/i)) {
+        if (!csv.match(/^data:text\/csv/i)) 
+		{
             csv = 'data:text/csv;charset=utf-8,' + csv;
+            //location.href = 'data:text/csv;charset=utf-8,' + csv;
         }
         data = encodeURI(csv);
-        
-
-        
-        link = document.createElement('a');
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
+		
+		a = document.createElement('a');
+		document.body.appendChild(a);
+		a.download = filename;
+		a.href = data;
+		a.click();
 }
 
 

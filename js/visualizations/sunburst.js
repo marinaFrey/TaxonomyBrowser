@@ -64,17 +64,23 @@ function Sunburst()
         .innerRadius(function(d) { return Math.max(0, y(d.y + d.dy));})
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy));});
     
+	this.remove = function()
+	{
+		svg.selectAll("*").remove();
+	}
+	
     /*
      * creates sunburst
      */
     this.create = function()
     {
+		
+		
         this_pointer = this;
         d3.json("data/data2.json", function(error, root) 
         {
             // saving node root
             node = root;
-            
             // creating g elements for each node on sunburst
             g = svg.selectAll("g")
                 .data(partition.nodes(root))
@@ -82,9 +88,14 @@ function Sunburst()
             
             // creating path
             path = g.append("path")
-                .filter(function (d){return d.children})
+                //.filter(function (d){return d.children})
+                .filter(function (d){return d.rank})
                 .attr("d", arc)
-                .attr("id", function(d) { return d.name.replace(' ', '_');})
+                .attr("id", function(d) 
+				{ 
+					var newName = d.name.replace(' ', '_');
+					return newName.replace('.', '_');
+				})
                 .style("fill", function(d) 
                 {   
                     d.path = this;
@@ -92,7 +103,9 @@ function Sunburst()
                     d.endAngle = arc.endAngle()(d);
                     //d.outerRadius = arc.outerRadius()(d);
                     d.selected = false;
-                    if(!d.children[0].measures)
+                    //if(!d.children[0].measures)
+					
+                    if(d.rank != "7")
                     {
                         d.color = color(d.name);
                         //d.size = d.children.length;
@@ -114,7 +127,8 @@ function Sunburst()
             
             text = g.append("text")
                 //.filter(function (d){return d.path.getTotalLength() > 100})
-                .filter(function (d){return (d.children);})
+                //.filter(function (d){return (d.children);})
+                .filter(function (d){return (d.rank);})
                 //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
 				.filter(function (d){return d.depth != 0})
                 .attr("dy", function(d,i) 
@@ -133,7 +147,9 @@ function Sunburst()
                 .style("opacity", function(d) 
                 {
 					if(d.endAngle - d.startAngle < 10*Math.PI/180)
+					{	
 						return 0;
+					}
 					else
 						return 1;
                 })
@@ -315,7 +331,7 @@ function Sunburst()
                         .attr("pointer-events", null);
                 }
             });
-            
+            /*
         outside_polyline //= svg.select("g").selectAll("polyline")
             .transition().duration(2000)
             .style("opacity", function(d){ return 1;})
@@ -332,7 +348,7 @@ function Sunburst()
                     pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
                     return [arc2.centroid(d2), outerArc.centroid(d2), pos];
                 };			
-            });
+            });*/
     }
     
     this.togglePartition = function(type)
@@ -406,6 +422,15 @@ function Sunburst()
                     //console.log(this)
                 }
             })
+			.style("opacity", function(d) 
+                {
+					if(d.endAngle - d.startAngle < 10*Math.PI/180)
+					{	
+						return 0;
+					}
+					else
+						return 1;
+                })
             .attr("pointer-events", null);
             
         /*

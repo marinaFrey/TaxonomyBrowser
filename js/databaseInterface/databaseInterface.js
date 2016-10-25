@@ -4,7 +4,7 @@
 function createHierarchyFile()
 {
     var name = "joaozinho";
-    
+    waitingDialog.show('Getting Database...');
     $.ajax({
         url: 'js/databaseInterface/php/generate_json_hierarchy.php',
         type: 'POST',
@@ -12,6 +12,11 @@ function createHierarchyFile()
         success: function(data) 
         {
             console.log(data); // Inspect this in your console
+			
+			sunburst.remove();
+			//sunburst = new Sunburst();
+			sunburst.create();
+			waitingDialog.hide();
         },
         error:function(data)
         {

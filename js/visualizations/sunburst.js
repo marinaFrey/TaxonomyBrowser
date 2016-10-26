@@ -13,6 +13,7 @@ function Sunburst()
 	var databaseSize;
     var showByChildrenNumbers = false;
     var this_pointer;
+	var clickedList = [];
     var normalOpacity = 0.3;
     var width = $("#viz").width(),
         height = 700,
@@ -141,14 +142,14 @@ function Sunburst()
                     }
                     if(d.endAngle == Math.PI*2) 
                     {
-                        return -30; // era 30
+                        return 30; // era -30
                     }
                     return (d.endAngle > 90 * Math.PI/180 ? 30 : 30); 
                 })
                 .style("font-size",function(d) {return "15px";})
                 .style("opacity", function(d) 
                 {
-					if(d.endAngle - d.startAngle < 10*Math.PI/180)
+					if(d.endAngle - d.startAngle < 19*Math.PI/180)
 					{	
 						return 0;
 					}
@@ -295,7 +296,7 @@ function Sunburst()
         var arcText = [];
         var rootDepth = d3.select(this.parentNode).select("text").attr("depth");
         var clickedNode = d;
-
+		
         /*if (marinaquer) 
         {
             d3.select(this.parentNode).select("text").append('tspan').text(function(d)
@@ -440,12 +441,15 @@ function Sunburst()
             .transition().delay(1000)
             .each("start", function(d) 
             {
-                
+				//console.log(d);
+                //console.log(this.parentNode.getBBox().width);
+				//console.log(d.endAngle - d.startAngle);
                 d.endAngle = arc.endAngle()(d);   
                 d.startAngle = arc.startAngle()(d);
+				
                 //if(d.endAngle - d.startAngle < 10*Math.PI/180)
                 if(d.endAngle - d.startAngle < 20*Math.PI/180)
-                {
+                {	
                     d3.select(this.parentNode).style("opacity",function(e)
                     {
                         e.endAngle = arc.endAngle()(e);   
@@ -531,11 +535,14 @@ function Sunburst()
                 };			
             });*/
     }
+	
 
     function midAngle(d)
     {
         return d.startAngle + (d.endAngle - d.startAngle)/2;
     }
+	
+	
     
     /* 
      * Selects node right clicked and all its children 
@@ -544,8 +551,10 @@ function Sunburst()
     function rightClick(d)
     {
         d3.event.preventDefault();
+		
         if( d.selected == false)
         {      
+			clickedList.push({clickedNode:d, toSelect:true});
             d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
             selection.push(d);
             if(d.children)
@@ -556,6 +565,7 @@ function Sunburst()
         }
         else
         {
+			clickedList.push({clickedNode:d, toSelect:false});
             d3.select(this.parentNode.childNodes[0]).style("opacity", normalOpacity);
             selection.splice(selection.indexOf(d),1);
             if(d.children)
@@ -691,6 +701,7 @@ function Sunburst()
       //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "1");
       
       // hiding tooltip
+	  //console.log($('#'+d.path.parentNode.lastChild.id));
       d3.select("#toolbar-options").classed("hidden", true);
     };
 

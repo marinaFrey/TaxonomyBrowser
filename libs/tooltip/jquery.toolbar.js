@@ -40,6 +40,7 @@ if ( typeof Object.create !== 'function' )
             self.toolbar = $('<div class="tool-container" />')
                 .addClass('tool-'+self.options.position)
                 .addClass('toolbar-'+self.options.style)
+				
                 .append('<div class="tool-items" />')
                 .append('<p><strong>'+self.options.name+'</strong></p>')
                 .append('<div class="arrow" />')

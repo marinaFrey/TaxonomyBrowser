@@ -16,7 +16,14 @@ function createHierarchyFile()
 			sunburst.remove();
 			//sunburst = new Sunburst();
 			sunburst.create();
-			waitingDialog.hide();
+			setTimeout(function()
+			{
+				waitingDialog.hide();
+				selection = [];
+				filteredSelection = ["all"];
+				updateShownVisualizationAndOptions();
+			}, 1000);
+			
         },
         error:function(data)
         {

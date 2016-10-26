@@ -61,7 +61,7 @@ function ParallelCoordinates()
                         {
                             if(measureName == dimensions[k])
                             {
-                                values[k] = selection[i].measures[charId_key];
+                                values[k] = selection[filteredSelection[i]].measures[charId_key];
                             }
                         }                     
                     }

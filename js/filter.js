@@ -17,7 +17,9 @@ function FilterPopup()
                                     {name:"is smaller or equal to",isNum:true},
                                     {name:"is bigger or equal to",isNum:true}];
     // options for filtering string variables
-	var operationsListString = [{name:"exists",isNum:false},{name:"doesn't exist",isNum:false},{name:"is",isNum:true}, {name:"is not",isNum:true}];
+	var operationsListString = [{name:"exists",isNum:false},
+                                {name:"doesn't exist",isNum:false},{name:"is",isNum:true}, 
+                                {name:"is not",isNum:true}];
 	var ptr = this;
 	
     /*
@@ -67,11 +69,11 @@ function FilterPopup()
             else
                  comboOption.updateOptions(operationsListString);
         });
-		comboMeasure.updateOptions([{name:"Collection ID", isNum:false},
-                                    {name:"Collected by", isNum:false},
-                                    {name:"Data", isNum:false},
-                                    {name:"Latitude", isNum:true},
-                                    {name:"Longitude", isNum:true}
+		comboMeasure.updateOptions([{name:"Collection ID", group: "SPECIMEN INFO", isNum:false},
+                                    {name:"Collected by", group: "SPECIMEN INFO", isNum:false},
+                                    {name:"Data", group: "SPECIMEN INFO", isNum:false},
+                                    {name:"Latitude", group: "SPECIMEN INFO", isNum:true},
+                                    {name:"Longitude", group: "SPECIMEN INFO", isNum:true}
                                     ].concat(generateMeasuresList()));
         
         // handling combobox to select the filtering used

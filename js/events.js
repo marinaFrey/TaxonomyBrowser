@@ -298,11 +298,11 @@ function updateShownVisualizationAndOptions()
         document.images["nofiltersel"].style = "display:none;";
         document.images["nosel"].style = "display:none;";
         
-        var newOptionsList = [{name:"Collection ID", isNum:false},
-                                {name:"Collected by", isNum:false},
-                                {name:"Data", isNum:false},
-                                {name:"Latitude", isNum:true},
-                                {name:"Longitude", isNum:false}
+        var newOptionsList = [{name:"Collection ID", group: "SPECIMEN INFO", isNum:false},
+                                {name:"Collected by", group: "SPECIMEN INFO", isNum:false},
+                                {name:"Data", group: "SPECIMEN INFO", isNum:false},
+                                {name:"Latitude", group: "SPECIMEN INFO", isNum:true},
+                                {name:"Longitude", group: "SPECIMEN INFO", isNum:false}
                              ].concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
 

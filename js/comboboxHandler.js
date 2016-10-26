@@ -128,11 +128,16 @@ function ComboBox()
      */
 	this.clearOptions = function()
 	{
+        /*
 		var i;
 		for(i=combo.options.length-1;i>=0;i--)
 		{
 			combo.remove(i);
-		}
+		}*/
+        while (combo.firstChild) 
+        {
+            combo.removeChild(combo.firstChild);
+        }
 	}
 	
     /*
@@ -140,45 +145,105 @@ function ComboBox()
      */
 	this.updateOptions = function(optionList)
 	{
+        var previouslySelectedOption = this.getSelectedOption();
         var isNewCombo;
-        if(combo.options.length > 0)
-            isNewCombo = false;
-        else
-            isNewCombo = true;
-            
+            if(combo.options.length > 0)
+                isNewCombo = false;
+            else
+                isNewCombo = true;
+                
         // saves current index name so it can remain unaltered if possible
-        var newIndex = optionList.map(function(e) { return e.name; }).indexOf(this.getSelectedOption());
-		this.clearOptions();
-		optionElementList = [];
-        // adds options from list
-		for (var i = 0; i < optionList.length; i++)
-		{
-			var opt = document.createElement("option");
-			opt.isNumber = optionList[i].isNum;
-			var t = document.createTextNode(optionList[i].name);
-			opt.appendChild(t);
-			optionElementList.push(opt);
-			combo.appendChild(opt);
-            this.setNumericDataType(optionList[i].isNum);
-		}
-        // if previous selection still exists keep it unaltered
-        if(newIndex != -1)
-			this.setSelectedOption(newIndex);
-		else
+        var newIndex = optionList.map(function(e) { return e.name; }).indexOf(previouslySelectedOption);
+
+        this.clearOptions();
+        optionElementList = [];
+        if(optionList[0])
         {
-			this.setSelectedOption(0);
+            if(optionList[0].group)
+            {   
+                var groupList = {};
+                var newOptList = [];
+                for (var i = 0; i < optionList.length; i++)
+                {
+                    var optgroup = document.createElement("optgroup");
+                    optgroup.setAttribute("label", optionList[i].group);
+                    
+                    groupList[optionList[i].group] = optgroup;
+                    
+                    //combo.appendChild(optgroup);
+                }
+                
+                // adds options from list
+                for (var i = 0; i < optionList.length; i++)
+                {
+                    var opt = document.createElement("option");
+                    opt.isNumber = optionList[i].isNum;
+                    var t = document.createTextNode(optionList[i].name);
+                    opt.appendChild(t);
+                    optionElementList.push(opt);
+                    newOptList.push(optionList[i].name);
+                    groupList[optionList[i].group].appendChild(opt);
+                    //combo.appendChild(opt);
+                    this.setNumericDataType(optionList[i].isNum);
+                }
+                
+                for (var key in groupList)
+                {
+                    combo.appendChild(groupList[key]);
+                }
+                
+                NodeList.prototype.forEach = Array.prototype.forEach
+                var children = combo.childNodes;
+                children.forEach(function(item)
+                {
+                    var groupChildren = item.childNodes;
+                    groupChildren.forEach(function(optitem)
+                    {
+                        if(optitem.label == previouslySelectedOption)
+                        {
+                            optitem.setAttribute("selected", "selected");
+                        }
+                    });
+                });
+                
+                //newIndex = newOptList.indexOf(previouslySelectedOption);
+                //console.log(newIndex);
+            }
+            else
+            {
+                // adds options from list
+                for (var i = 0; i < optionList.length; i++)
+                {
+                    var opt = document.createElement("option");
+                    opt.isNumber = optionList[i].isNum;
+                    var t = document.createTextNode(optionList[i].name);
+                    opt.appendChild(t);
+                    optionElementList.push(opt);
+                    combo.appendChild(opt);
+                    this.setNumericDataType(optionList[i].isNum);
+                }
+                
+                // if previous selection still exists keep it unaltered
+                if(newIndex != -1)
+                    this.setSelectedOption(newIndex);
+                else
+                {
+                    this.setSelectedOption(0);
+                    
+                    if(type == FILTER_COMBO && isNewCombo == false)
+                    {
+                        alert("WARNING! Your filters are now invalid to your new selection");
+                    }
+                    if(type == VIZ_COMBO && isNewCombo == false)
+                    {
+                        alert("WARNING! Your visualization parameters are now invalid to your new selection");
+                    }
+                    
+                }
+            }
             
-            if(type == FILTER_COMBO && isNewCombo == false)
-            {
-                alert("WARNING! Your filters are now invalid to your new selection");
-            }
-            if(type == VIZ_COMBO && isNewCombo == false)
-            {
-                alert("WARNING! Your visualization parameters are now invalid to your new selection");
-            }
             
         }
-		
 	}
     
 	/*
@@ -479,11 +544,19 @@ function generateMeasuresList()
                         characterLst[selection[i].characters[j]].character_type_name == "integer number")
 						{
 							
-							m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
+							m_list.push({
+                                id: selection[i].characters[j], 
+                                name: characterLst[selection[i].characters[j]].character_name, 
+                                group: characterLst[selection[i].characters[j]].character_group_name,
+                                isNum: true});
 						}
                     else
 					{
-                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: false});
+                        m_list.push({
+                            id: selection[i].characters[j], 
+                            name: characterLst[selection[i].characters[j]].character_name,
+                            group: characterLst[selection[i].characters[j]].character_group_name,                            
+                            isNum: false});
 					}
                 }
             }
@@ -513,7 +586,11 @@ function generateNumericMeasuresList()
                     
                     if(characterLst[selection[i].characters[j]].character_type_name == "real number" || 
                         characterLst[selection[i].characters[j]].character_type_name == "integer number")
-                        m_list.push({id: selection[i].characters[j], name: characterLst[selection[i].characters[j]].character_name, isNum: true});
+                        m_list.push({
+                            id: selection[i].characters[j], 
+                            name: characterLst[selection[i].characters[j]].character_name, 
+                            group: characterLst[selection[i].characters[j]].character_group_name,
+                            isNum: true});
 
                 }
             }

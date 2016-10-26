@@ -356,6 +356,8 @@ function Sunburst()
                                     e.startAngle = arc.startAngle()(e);
                                     return 0;
                                 });
+                                
+                               
                             }
                             else
                             {
@@ -454,11 +456,20 @@ function Sunburst()
                     {
                         e.endAngle = arc.endAngle()(e);   
                         e.startAngle = arc.startAngle()(e);
+                        d3.select(this.parentNode).attr("pointer-events", "all");
                         return 0;
                     });
+                    
+                     if(d.endAngle - d.startAngle < 5*Math.PI/180)
+                    {
+                        console.log(this.parentNode);
+                        d3.select(this.parentNode).attr("pointer-events", "none");
+                    }
+                    
                 }
                 else
                 {
+                    d3.select(this.parentNode).attr("pointer-events", "all");
                     
                     d3.select(this.parentNode).style("opacity",function(e)
                     {   

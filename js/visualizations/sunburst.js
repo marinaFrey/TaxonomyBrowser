@@ -66,6 +66,7 @@ function Sunburst()
 
     var color = d3.scale.category20c();
 	var childrenColor = d3.scale.category10();
+    var colorTypes = {0:'blue',1:'pink',2:'yellow',3:'purple',4:'orange',5:'green',6:'red'};
     
     var radius = Math.min(width, height) / 2;
     var arc2 = d3.svg.arc()
@@ -86,7 +87,8 @@ function Sunburst()
     this.create = function()
     {
 		
-		
+		var colorList = randomColor({hue:'red',count:20});
+        console.log(colorList);
         this_pointer = this;
         d3.json("data/data2.json", function(error, root) 
         {
@@ -100,6 +102,9 @@ function Sunburst()
                 .data(partition.nodes(root))
                 .enter().append("g");
             
+            console.log(node);
+            defineColoring(node, 0);
+            
             // creating path
             path = g.append("path")
                 //.filter(function (d){return d.children})
@@ -110,26 +115,35 @@ function Sunburst()
 					var newName = d.name.replace(' ', '_');
 					return newName.replace('.', '_');
 				})
-                .style("fill", function(d) 
-                {   
+                .each(function(d)
+                {
                     d.path = this;
                     d.startAngle = arc.startAngle()(d);
                     d.endAngle = arc.endAngle()(d);
                     //d.outerRadius = arc.outerRadius()(d);
                     d.selected = false;
-                    //if(!d.children[0].measures)
-					
+                })
+                
+                .style("fill", function(d) 
+                {   /*
                     if(d.rank != "7")
                     {
-                        d.color = color(d.name);
+                        //d.color = color(d.name);
+                        d.color = randomColor({hue:'blue'});
                         //d.size = d.children.length;
                     }
                     else
                     {
-                        d.color = childrenColor(d.name);
+                        //d.color = childrenColor(d.name);
+                        d.color = randomColor();
                         //d.size = 1;
-                    }
+                    }*/
                     //d.color = color((d.children ? d : d.parent).name);
+                    
+                    if(d.rank == "7")
+                    {
+                        d.color = randomColor();
+                    }
                     return d.color; 
                 })
                 .style("opacity",normalOpacity)
@@ -137,7 +151,8 @@ function Sunburst()
                 .each(stash)
                 ;
 				
-			textPath = g.append("path")
+			
+            textPath = g.append("path")
                 //.filter(function (d){return d.children})
                 .filter(function (d){return d.rank})
                 .attr("d", textArc)
@@ -426,6 +441,22 @@ function Sunburst()
     function midAngle(d)
     {
         return d.startAngle + (d.endAngle - d.startAngle)/2;
+    }
+    
+    function defineColoring(d, j)
+    {
+        d.color = randomColor({hue:colorTypes[j]});
+        console.log(colorTypes[j]);
+        if(d.children)
+        {
+            for( var i = 0; i < d.children.length; i++)
+            {        if(d.children[i].rank && d.children[i].rank != "7")
+                    {
+                        defineColoring(d.children[i], j);
+                        j = getRandomInt(0, 6);
+                    }
+            }
+        }
     }
 	
 	function setShownOnChildren(d)
@@ -829,4 +860,9 @@ function Sunburst()
 			}
 		);
 	}
+    
+    function getRandomInt(min, max) 
+    {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 }

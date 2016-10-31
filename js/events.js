@@ -335,3 +335,15 @@ function updateShownVisualizationAndOptions()
     }
 
 }
+
+function toggleEditionButtons(set)
+{
+    if(set && isLoggedIn)
+    {
+
+    }
+    else
+    {
+    
+    }
+}

@@ -532,6 +532,36 @@ function generateMeasuresList()
 	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
+        if(selection[i].characters)
+		{
+
+            for(var j = 0; j < selection[i].inheritedCharacters.length; j++)
+            {
+                // checks if measure not in list already
+                if(m_list.map(function(e) { return e.id; }).indexOf(selection[i].inheritedCharacters[j])==-1)
+                {
+                    if(characterLst[selection[i].inheritedCharacters[j]].character_type_name == "real number" || 
+                        characterLst[selection[i].inheritedCharacters[j]].character_type_name == "integer number")
+						{
+							
+							m_list.push({
+                                id: selection[i].inheritedCharacters[j], 
+                                name: characterLst[selection[i].inheritedCharacters[j]].character_name, 
+                                group: characterLst[selection[i].inheritedCharacters[j]].character_group_name,
+                                isNum: true});
+						}
+                    else
+					{
+                        m_list.push({
+                            id: selection[i].inheritedCharacters[j], 
+                            name: characterLst[selection[i].inheritedCharacters[j]].character_name,
+                            group: characterLst[selection[i].inheritedCharacters[j]].character_group_name,                            
+                            isNum: false});
+					}
+                }
+            }
+		}
+    
 		if(selection[i].characters)
 		{
 
@@ -575,6 +605,27 @@ function generateNumericMeasuresList()
 	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
+        if(selection[i].inheritedCharacters)
+		{
+
+            for(var j = 0; j < selection[i].inheritedCharacters.length; j++)
+            {	
+                // checks if measure not in list already
+                if(m_list.map(function(e) { return e.id; }).indexOf(selection[i].inheritedCharacters[j])==-1)
+                {
+                    
+                    if(characterLst[selection[i].inheritedCharacters[j]].character_type_name == "real number" || 
+                        characterLst[selection[i].inheritedCharacters[j]].character_type_name == "integer number")
+                        m_list.push({
+                            id: selection[i].inheritedCharacters[j], 
+                            name: characterLst[selection[i].inheritedCharacters[j]].character_name, 
+                            group: characterLst[selection[i].inheritedCharacters[j]].character_group_name,
+                            isNum: true});
+
+                }
+            }
+		}
+        
 		if(selection[i].characters)
 		{
 

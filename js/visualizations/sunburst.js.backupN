@@ -6,9 +6,7 @@ var node;
 function Sunburst()
 {
     //var node;
-	var transitionDuration = 1000;
 	var rootDepth = 0;
-	var rootNode;
     var path;
     var text;
     var outside_polyline;
@@ -56,13 +54,6 @@ function Sunburst()
         .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
         .innerRadius(function(d) { return Math.max(0, y(d.y)); })
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
-		
-	var textArc = d3.svg.arc()
-        .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
-        .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
-        .innerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 - 1/10000)); })
-        .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 + 1/10000)); });
-
 
     var color = d3.scale.category20c();
 	var childrenColor = d3.scale.category10();
@@ -92,7 +83,6 @@ function Sunburst()
         {
             // saving node root
             node = root;
-			rootNode = root;
             // creating g elements for each node on sunburst
             
             
@@ -136,18 +126,6 @@ function Sunburst()
                 //.on("click", click)
                 .each(stash)
                 ;
-				
-			textPath = g.append("path")
-                //.filter(function (d){return d.children})
-                .filter(function (d){return d.rank})
-                .attr("d", textArc)
-				.attr("id", function(d) 
-				{ 
-					var newName = "textPath"+d.name.replace(' ', '_');
-					return newName.replace('.', '_');
-				})
-				.each(function(d){ d.textArcPath = this})
-                .style("opacity",0);
 			
 			databaseSize = path[0].length;
             
@@ -157,37 +135,91 @@ function Sunburst()
                 .filter(function (d){return (d.rank);})
                 //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
 				//.filter(function (d){return d.depth != 0})
-                .attr("dy", function(d) 
-                {   return 0;
+                .attr("dy", function(d,i) 
+                {   
                     if(d.endAngle - d.startAngle == Math.PI*2)
                     {
-                        return 15;
+                        return 30;
                     }
                     if(d.endAngle == Math.PI*2) 
                     {
-                        return 15; // era -30
+                        return 30; // era -30
                     }
-                    return (d.endAngle > 90 * Math.PI/180 ? 15 : 15); 
+                    return (d.endAngle > 90 * Math.PI/180 ? 30 : 30); 
                 })
-                .style("font-size",function(d) {return "14px";})
+                .style("font-size",function(d) {return "15px";})
+                .style("opacity", function(d) 
+                {
+					if(d.endAngle - d.startAngle < 19*Math.PI/180 || d.depth == 0)
+					{	
+						return 0;
+					}
+					else
+						return 1;
+                })
                 .attr('depth', function(d) {return d.depth})
                 .attr('root', 0)
-                .attr('id', function(d)
-				{ 
-					var n = d.name.replace(' ', '_');
-					var n = d.name.replace('.', '_');
-					return 'Name_' + n + '_Depth-' + d.depth; 
-				})
+                .attr('id', function(d){ return 'Name_' +d.name.replace(' ', '_') + '_Depth-' + d.depth + '_Value-' + Math.round(d.value); })
                 .append("textPath")
-				.each(createTooltip)
-                .attr("startOffset", textOffset)
+                .attr("startOffset", function(d,i) 
+                {   
+					$('#'+d.path.parentNode.lastChild.id).toolbar({
+					//$('div[data-toolbar="user-options"]').toolbar({
+						content: '#toolbar-options',
+						name: d.name,
+						position: 'top',
+						style: 'default',
+						adjustment: 50
+
+					}); 
+					
+					
+					$('#'+d.path.parentNode.lastChild.id).on('toolbarItemClick',
+					//$('div[data-toolbar="user-options"]').on('toolbarItemClick',
+						function( event, buttonClicked ) 
+						{
+
+							if(buttonClicked.id == "tooltip_info")
+							{
+								makeTaxonomyPopup(d);
+							}
+							if(buttonClicked.id == "tooltip_add")
+							{
+								if(d.rank == "7")
+									makeAddSpecimenPopup(d);
+								else
+									makeAddTaxonomyPopup(d);
+							}
+							if(buttonClicked.id == "tooltip_trash")
+							{
+							}
+						  
+						}
+					);
+					
+                    if(d.endAngle - d.startAngle == Math.PI*2)
+                    {
+                        
+                        return "25%";
+                    }
+                    
+                    if(d.endAngle == Math.PI*2)
+                    {                    
+                        return "25%";
+                    }
+                    
+                    if(d.endAngle >= 270*Math.PI/180)
+                    {
+                        return "25%";
+                    }
+                    
+                    return (d.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
+                })
                 .style("text-anchor", "middle")
-                .attr("xlink:href",function(d){return "#" + d.textArcPath.id;})	
+                .attr("xlink:href",function(d){return "#" + d.path.id;})	
 				.text(function(d){ return d.name;})
                 ;
-
             
-			//console.log(text);
             /* OUTSIDE TEXT 
 
             var duration = 2000;  
@@ -280,47 +312,132 @@ function Sunburst()
      */
     function click(d) 
     {
-		//console.log(d);
-		if(d.show == false)
-			console.log("fuck");
         // remove all mouse events
         setHover(false);
 		setInteraction(false);
+        d3.selectAll("svg g text tspan").remove();
 
-        
-		rootDepth = d.depth;
+        var arcText = [];
+        rootDepth = d3.select(this.parentNode).select("text").attr("depth");
 		var clickedNode = d;
-		rootNode = d;
-
+		
+        /*if (marinaquer) 
+        {
+            d3.select(this.parentNode).select("text").append('tspan').text(function(d)
+            {return "Format: " + d.ClaimFormat;})
+                .attr("class", "benefitFormat")
+                .attr("dy", 20)
+                .attr("x", 45);             
+        }*/
         //d3.select(".isCenter").classed('isCenter', false);
         //d3.select(this.parentNode).select("text").attr('class', 'isCenter');
         
-		unsetShownOnChildren(node);
-		setShownOnChildren(rootNode);
-		
         var index = 0;
-        path.transition().delay(100)
-            .duration(transitionDuration)
+        path.transition()
+            .duration(1000)
             .attrTween("d", arcTween(d))
-			.style("opacity",pathOpacity)
-            .each("end", function(e, i) 
+            .each("start", function(e, i) 
             {
+                // when transition finished add back all mouse events
                 index ++;
                 if (index == databaseSize) 
 				{
                     setHover(true);
 					setInteraction(true);
 				}
+
+                // check if the animated element's data e lies within the visible angle span given in d
+                if (e.x >= d.x && e.x < (d.x + d.dx)) 
+                {
+					e.show = true;
+				}
+				else
+					e.show = false;
+					
+				//console.log(d);
+				
 			});	
+                    /*
+                    // get a selection of the associated text element
+                    arcText = d3.select(this.parentNode).select("text");
 
-		textPath.transition()
-            .duration(transitionDuration)
-            .attrTween("d", textArcTween(d));	
-
-		text
-			.transition().delay(transitionDuration)
-			.each("start", filterTexts)
-			.attr("pointer-events", null);
+                    // fade in the text element and recalculate positions
+                    arcText.transition().duration(100)
+                        .filter(function (f){return (e.endAngle - e.startAngle > 10*Math.PI/180 );})
+                        .attr("root", function(f) { return rootDepth;})
+                        .style("opacity", function(f) 
+                        {console.log(f);
+                            if(rootDepth > e.depth)
+                                return 0;
+                            if(e.endAngle - e.startAngle < 10*Math.PI/180)
+                                return 0;
+                            else
+                                return 1;
+                        })
+                        .attr("pointer-events", null);*/
+			text
+				.transition().delay(50)
+				.each("start", function(d) 
+				{
+					d.endAngle = arc.endAngle()(d);   
+					d.startAngle = arc.startAngle()(d);
+					//if(d.endAngle - d.startAngle < 10*Math.PI/180)
+					//if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.depth == 0)
+					if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.show == false || d.depth == 0)
+					{
+						d3.select(this.parentNode).style("display","none");
+						d3.select(this.parentNode).style("opacity",function(e)
+						{
+							e.endAngle = arc.endAngle()(e);   
+							e.startAngle = arc.startAngle()(e);
+							return 0;
+						});
+						
+					   
+					}
+					else
+					{	
+						d3.select(this.parentNode).style("display","block");
+						d3.select(this.parentNode).style("opacity",function(e)
+						{   
+							if(this.getAttribute("root") > e.depth)
+								return 0;
+							
+							if(parseInt(clickedNode.rank) > parseInt(d.rank))
+							{
+								//d3.select(this.parentNode).style("display","none");
+								return 0;
+							}
+								
+							e.endAngle = arc.endAngle()(e);   
+							e.startAngle = arc.startAngle()(e);
+							return 1;
+						});
+						
+				
+						d3.select(this).transition().duration(1000)
+						.attr("startOffset", function(f,i) 
+						{   
+							
+							if(f.endAngle - f.startAngle == Math.PI*2)
+							{
+								return "25%";
+							}
+							if(f.endAngle == Math.PI*2) 
+							{
+								return "25%";
+							}
+							if(f.endAngle >= 270*Math.PI/180)
+							{
+								return "25%";
+							}
+							
+							return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
+						});
+						//console.log(this)
+					}
+				})
+				.attr("pointer-events", null);
                 
             
             /*
@@ -353,33 +470,21 @@ function Sunburst()
         {
             showByChildrenNumbers = false;
         }
-		unsetShownOnChildren(node);
-		setShownOnChildren(rootNode);
-		
-        //console.log(node);
-		//console.log(rootNode);
+        
         g = svg.selectAll("g")
             .data(partition.nodes(node))
             .enter().append("g");
-		
+            
+        path
+            .transition()
+            .duration(1000)
+            .attrTween("d", arcTweenData);
 
-         path.transition()
-            .duration(transitionDuration)
-			.style("opacity",pathOpacity)
-			.attrTween("d", arcTween(rootNode))
-            .attrTween("d", arcTweenData); 
-			
-		textPath.transition()
-            .duration(transitionDuration).each("end", filterTexts)
-            .attr("pointer-events", null)
-            .attrTween("d", textArcTween(rootNode))
-			
-         /* text.transition().delay(1000)
-			.duration(transitionDuration)
-             */
-             
-		
-		
+        text
+            .transition()//.delay(1000)
+            .each("start", filterTexts)
+            .attr("pointer-events", null);
+            
         /*
         outside_polyline = g.append("polyline")//select(".lines").selectAll("polyline")
             .filter(function (d){return d.children})
@@ -428,24 +533,7 @@ function Sunburst()
         return d.startAngle + (d.endAngle - d.startAngle)/2;
     }
 	
-	function setShownOnChildren(d)
-    {   
-		d.show = true;
-		//console.log(d);
-		if(d.children)
-		    for( var i = 0; i < d.children.length; i++)
-				if(d.children[i].rank)
-					setShownOnChildren(d.children[i]);
-    }
 	
-	function unsetShownOnChildren(d)
-    {   
-		d.show = false;
-		if(d.children)
-		    for( var i = 0; i < d.children.length; i++)
-				if(d.children[i].rank)
-					unsetShownOnChildren(d.children[i]);
-    }
     
     /* 
      * Selects node right clicked and all its children 
@@ -629,25 +717,9 @@ function Sunburst()
           yd = d3.interpolate(y.domain(), [d.y, 1]),
           yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
       return function(d, i) {
-        if(i)
-		{
-            return function(t) { return arc(d); }
-		}
-		else
-		{	
-			return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
-		}
-	  };
-    }
-	function textArcTween(d) 
-    {
-      var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-          yd = d3.interpolate(y.domain(), [d.y, 1]),
-          yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
-      return function(d, i) {
         return i
-            ? function(t) { return textArc(d); }
-            : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return textArc(d); };
+            ? function(t) { return arc(d); }
+            : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
       };
     }
 
@@ -694,6 +766,8 @@ function Sunburst()
     function insertLineBreaks(d,e)
     {
         var words = d.name.split();
+
+        
     }
 
     function getDY(e)
@@ -740,93 +814,53 @@ function Sunburst()
 		d.startAngle = arc.startAngle()(d);
 		//if(d.endAngle - d.startAngle < 10*Math.PI/180)
 		//if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.depth == 0)
-			//e.endAngle = arc.endAngle()(e);   
-			//e.startAngle = arc.startAngle()(e);
-		//console.log(d);
-		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth == 0 || d.depth < rootDepth)
+		if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.show == false || d.depth == 0)
 		{
-			if(d.depth != 0)
+			d3.select(this.parentNode).style("display","none");
+			d3.select(this.parentNode).style("opacity",function(e)
 			{
-				d3.select(this.parentNode).style("display","none");
-				d3.select(this.parentNode).style("opacity", 0);
-			}
+				e.endAngle = arc.endAngle()(e);   
+				e.startAngle = arc.startAngle()(e);
+				return 0;
+			});
+			
+		   
 		}
 		else
 		{	
 			d3.select(this.parentNode).style("display","block");
-			d3.select(this.parentNode).style("opacity",1);
-			d3.select(this).transition().duration(transitionDuration)
-			.attr("startOffset", textOffset);
-		}
-	}
-	function textOffset(f) 
-	{
-		if(f.endAngle - f.startAngle == Math.PI*2)
-		{
-			return "25%";
-		}
-		if(f.endAngle == Math.PI*2) 
-		{
-			return "25%";
-		}
-		if(f.endAngle >= 270*Math.PI/180)
-		{
-			return "25%";
-		}
-		return (f.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
-	}
-	function pathOpacity(d)
-	{
-		if(d == rootNode.parent)
-			return normalOpacity
-		if(d.show)
-		{
-			if(d.selected)
+			d3.select(this.parentNode).style("opacity",function(e)
+			{   
+				if(this.getAttribute("root") > e.depth)
+					return 0;
+			
+					
+				e.endAngle = arc.endAngle()(e);   
+				e.startAngle = arc.startAngle()(e);
 				return 1;
-			else
-				return normalOpacity;
-		}
-		else
-		{
-			return 0;
-		}
-	}
+			});
+			
 	
-	function createTooltip(d)
-	{
-		$('#'+d.path.parentNode.lastChild.id).toolbar({
-		//$('div[data-toolbar="user-options"]').toolbar({
-			content: '#toolbar-options',
-			name: d.name,
-			position: 'top',
-			style: 'default',
-			adjustment: 40 //era 50
-
-		}); 
-		
-		
-		$('#'+d.path.parentNode.lastChild.id).on('toolbarItemClick',
-		//$('div[data-toolbar="user-options"]').on('toolbarItemClick',
-			function( event, buttonClicked ) 
-			{
-
-				if(buttonClicked.id == "tooltip_info")
-				{
-					makeTaxonomyPopup(d);
-				}
-				if(buttonClicked.id == "tooltip_add")
-				{
-					if(d.rank == "7")
-						makeAddSpecimenPopup(d);
-					else
-						makeAddTaxonomyPopup(d);
-				}
-				if(buttonClicked.id == "tooltip_trash")
-				{
+			d3.select(this).transition().duration(1000)
+			.attr("startOffset", function(f,i) 
+			{   
 				
+				if(f.endAngle - f.startAngle == Math.PI*2)
+				{
+					return "25%";
 				}
-			  
-			}
-		);
+				if(f.endAngle == Math.PI*2) 
+				{
+					return "25%";
+				}
+				if(f.endAngle >= 270*Math.PI/180)
+				{
+					return "25%";
+				}
+				
+				return (f.endAngle >= 90 * Math.PI/180 ? "70%" : "20%");
+			});
+			//console.log(this)
+		}
 	}
 }

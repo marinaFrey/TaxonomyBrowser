@@ -33,12 +33,18 @@ function CharactersManager()
 		// getting information from all its measures and separating them according to their groups
 		for(var charId_key in  characterLst) 
 		{	
+			var stdType;
+					if(characterLst[charId_key].character_type_name == "string")
+						stdType = "text";
+					else
+						stdType = "number";
 			if(measuresGroupList[characterLst[charId_key].character_group_name])
 			{
+				
 				measuresGroupList[characterLst[charId_key].character_group_name].push(
 				{
 					name: characterLst[charId_key].character_name, 
-					type: characterLst[charId_key].character_type_name,
+					type: stdType,
 					charId: characterLst[charId_key].character_id,
 					charTypeId: characterLst[charId_key].character_group_id,
 					information: characterLst[charId_key].information,
@@ -52,7 +58,7 @@ function CharactersManager()
 				measuresGroupList[characterLst[charId_key].character_group_name].push(
 				{
 					name: characterLst[charId_key].character_name, 
-					type: characterLst[charId_key].character_type_name,
+					type: stdType,
 					charId: characterLst[charId_key].character_id,
 					charTypeId: characterLst[charId_key].character_group_id,
 					information: characterLst[charId_key].information,
@@ -220,8 +226,13 @@ function CharactersManager()
 							if(characterLst[charId_key].character_name == character.character_name)
 								canBeAdded = false;
 						}
-						if(canBeAdded)
-							addCharacter(character);
+						if(canBeAdded )
+						{
+							if(character.character_name != "")
+								addCharacter(character);
+							else
+								alert("ERROR! The characteristic you are trying to add must have a name! It will not be saved.");
+						}
 						else
 						{
 							alert("ERROR! The characteristic you are trying to add already exists! It will not be saved.");
@@ -229,8 +240,13 @@ function CharactersManager()
 					}
 					else	
 					{	
-						if(inputList[key][i].hasBeenChanged())
-							editCharacter(character);
+						if(inputList[key][i].hasBeenChanged() )
+						{
+							if(character.character_name != "")
+								editCharacter(character);
+							else
+								alert("ERROR! The characteristic you are trying to add must have a name! It will not be saved.");
+						}
 					}
 				}
 

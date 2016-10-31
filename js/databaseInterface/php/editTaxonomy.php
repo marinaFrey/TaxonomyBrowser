@@ -27,7 +27,7 @@
             $taxonomy['characters'], 
             null 
         );
-
+		
         echo $result;
 
     }

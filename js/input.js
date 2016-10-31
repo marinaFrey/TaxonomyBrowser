@@ -6,7 +6,8 @@ function Input()
 	var combo;
 	var deleteBtn;
 	var toBeDeleted;
-    var type;
+    this.type = new ComboBox();
+	this.fixed = false;
     var label;
     var labelName;
     var input;
@@ -62,10 +63,10 @@ function Input()
 		});*/
         
 		// creating label with type
-		type = new ComboBox();
-		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
-        type.updateOptions([{name:input_type, isNum:false}]);
-		type.disable(true);
+		this.type = new ComboBox();
+		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        this.type.updateOptions([{name:input_type, isNum:false}]);
+		this.type.disable(true);
 		/*
 		type = document.createElement("input");
 		//var t = document.createTextNode("type: "+input_type);
@@ -127,10 +128,10 @@ function Input()
         combo.updateOptions(optionsList);
 		
 		// creating label with type
-		type = new ComboBox();
-		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
-        type.updateOptions([{name:input_type, isNum:false}]);
-		type.disable(true);
+		this.type = new ComboBox();
+		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        this.type.updateOptions([{name:input_type, isNum:false}]);
+		this.type.disable(true);
 		/*
 		type = document.createElement("input");
 		//var t = document.createTextNode("type: "+input_type);
@@ -151,8 +152,9 @@ function Input()
 		info_div.appendChild(information);
 	}
 	
-	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, info, selected)
+	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, info, selected, fixed)
 	{
+		this.fixed = fixed;
 		labelName = name;
         characterID = charID;
         characterGroupID = charGroupID;
@@ -204,10 +206,10 @@ function Input()
 		});*/
         
 		// creating label with type
-		type = new ComboBox();
-		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
-        type.updateOptions([{name:input_type, isNum:false}]);
-		type.disable(true);
+		this.type = new ComboBox();
+		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        this.type.updateOptions([{name:input_type, isNum:false}]);
+		this.type.disable(true);
 		/*
 		type = document.createElement("input");
 		//var t = document.createTextNode("type: "+input_type);
@@ -234,7 +236,7 @@ function Input()
 		labelName = name;
         characterID = charID;
         characterGroupID = charGroupID;
-        
+
 		var main_div = document.createElement('div');
 		var name_div = document.createElement('div');
 		name_div.setAttribute('class',"col-sm-3");
@@ -263,7 +265,6 @@ function Input()
 		deleteBtn.onclick = deleteFunction;
 		check_div.appendChild(deleteBtn);
 		
-		
         // creating combobox with provided id
 		input = document.createElement("input");
         input.type = "text";
@@ -281,13 +282,18 @@ function Input()
 		{  
 			pointer.validateInputType();
 		});*/
-        var opt = allCharactersList.getCharTypesListAsOptions()
-		type = new ComboBox();
-		type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
-        type.updateOptions(opt);
+        var opt = allCharactersList.gerCharTypesListAsOptionsWithStardardNomenclature()
+		this.type = new ComboBox();
+		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
+        this.type.updateOptions(opt);
 		if(input_type != "")
-			type.setSelectedOption(opt.map(function(f){return f.name;}).indexOf(input_type));
-		
+			this.type.setSelectedOption(opt.map(function(f){return f.name;}).indexOf(input_type));
+
+		if(charID)
+			this.type.disable(true);
+		else
+			console.log(this.type);
+
 		// creating label with info
 		information = document.createElement("TEXTAREA");
         //var t = document.createTextNode(info);
@@ -322,20 +328,30 @@ function Input()
     
     this.getType = function()
     {
-		if(type.getSelectedOption())
+		if(this.type.getSelectedOption())
 		{
-			return type.getSelectedOption();
+			return this.type.getSelectedOption();
 		}
 
     }
 	
 	this.getTypeID = function()
-    {
-		
-		if(type.getSelectedOption())
+    {	console.log(this.type);
+		if(this.type)
 		{
-			var typeID = allCharactersList.getCharTypeID(type.getSelectedOption());
-			return typeID;
+			if(this.type.getSelectedOption())
+			{console.log(this.type);
+				var t = this.type.getSelectedOption();
+				var typeID;
+				if(t == "text")
+				{
+					typeID = allCharactersList.getCharTypeID("string");
+				}
+				else
+					typeID = allCharactersList.getCharTypeID("real number");
+
+				return typeID;
+			}
 		}
 
     }
@@ -396,14 +412,14 @@ function Input()
             input.disabled = false;
 			if(characterID)
 			{
-				type.disable(false);
+				this.type.disable(false);
 				information.disabled = false;
 			}
 		}
         else
 		{
             input.disabled = true;
-			type.disable(true);
+			this.type.disable(true);
 			information.disabled = true;
 		}
 	}
@@ -416,8 +432,8 @@ function Input()
             input.disabled = true;
 			input.style = "background:#ff8484;";
 
-			type.disable(true);
-			type.changeStyle("background:#ff8484;");
+			this.type.disable(true);
+			this.type.changeStyle("background:#ff8484;");
 			information.disabled = true;
 			information.style = "background:#ff8484;";
 			
@@ -426,8 +442,8 @@ function Input()
 		{
             input.disabled = false;
 			input.style = "background:#eeeeee;";
-			type.disable(false);
-			type.changeStyle("background:#eeeeee;");
+			this.type.disable(false);
+			this.type.changeStyle("background:#eeeeee;");
 			information.disabled = false;
 			information.style = "background:#eeeeee;";
 		}
@@ -436,6 +452,11 @@ function Input()
 	this.willBeDeleted = function()
 	{
 		return toBeDeleted;
+	}
+	
+	this.isFixed = function()
+	{
+		return this.fixed;
 	}
 	
 	this.hasBeenChanged = function()
@@ -462,7 +483,7 @@ function Input()
     {
         label.remove();
         input.remove();
-		type.remove();
+		this.type.remove();
 		information.remove();
         //br.remove();
         //br2.remove();

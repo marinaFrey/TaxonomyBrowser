@@ -47,6 +47,7 @@ function createCharactersFile()
             console.log(data); // Inspect this in your console
 			allCharactersList.createList();
 			ready = true;
+			createHierarchyFile();
         },
         error:function(data)
         {
@@ -231,10 +232,15 @@ function addTaxonomy(taxonomy, taxonomy_parent)
 
 function editTaxonomy(taxonomy)
 {
+	var parent;
+	if(taxonomy.parent)
+		parent = taxonomy.parent.taxonomy_id;
+	else
+		parent = "";
 	var tx = {
 		id: taxonomy.taxonomy_id,
 		name: taxonomy.name,
-        parent_taxonomy_id: taxonomy.parent.taxonomy_id, 
+        parent_taxonomy_id: parent, 
         rank: taxonomy.rank, 
         information: taxonomy.information, 
         characters:taxonomy.characters

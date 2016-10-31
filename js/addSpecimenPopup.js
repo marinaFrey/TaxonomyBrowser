@@ -125,8 +125,7 @@ function changingSelectedTaxonomy()
         var index = this.list.map(function(e) { return e.name; }).indexOf(this.value);
         var taxonomy = this.list[index].taxonomy;
         var fullCharacterList = taxonomy.characters;
-		
-		console.log(taxonomy);
+		var inheritedCharacterList = taxonomy.inheritedCharacters;
 		
         if(fullCharacterList)
         {
@@ -134,6 +133,36 @@ function changingSelectedTaxonomy()
             
             var measuresGroupList = {};
 			var characterLst = allCharactersList.getList();
+			
+			for(var i = 0; i < inheritedCharacterList.length; i++)
+			{
+				if(measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name])
+				{
+					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
+					{
+						name: characterLst[inheritedCharacterList[i]].character_name, 
+						value: "",
+						type: characterLst[inheritedCharacterList[i]].character_type_name,
+						charId: characterLst[inheritedCharacterList[i]].character_id,
+						charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+						information: characterLst[inheritedCharacterList[i]].information
+					});
+				}
+				else
+				{
+					var list = [];
+					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name] = list;
+					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
+					{
+						name: characterLst[inheritedCharacterList[i]].character_name, 
+						value: "",
+						type: characterLst[inheritedCharacterList[i]].character_type_name,
+						charId: characterLst[inheritedCharacterList[i]].character_id,
+						charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+						information: characterLst[inheritedCharacterList[i]].information
+					});
+				}        
+			}
 			
 			for(var i = 0; i < fullCharacterList.length; i++)
 			{
@@ -213,8 +242,13 @@ function changingSelectedTaxonomy()
                 
             }
             //taxonomy.children.push(specimen);
-            addSpecimen(specimen);
-			$('#basicModal').modal('hide');
+			if(specimen.collection_id != "")
+			{
+				addSpecimen(specimen);
+				$('#basicModal').modal('hide');
+			}
+			else
+				alert("ERROR! The specimen you are trying to add must have a collection ID.");
         };
     }
     else

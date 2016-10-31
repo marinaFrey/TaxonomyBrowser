@@ -51,83 +51,22 @@ function makeTaxonomyPopup(taxonomy)
 	cleanTabs();
 	
 	var characterLst = allCharactersList.getList();
-	if(taxonomy.characters)
-	{
-		var measuresGroupList = {};
-		// getting information from all its measures and separating them according to their groups
-		for(var i = 0; i < taxonomy.characters.length; i++)
-		{
-			if(measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name])
-			{
-				measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name].push(
-				{
-					name: characterLst[taxonomy.characters[i]].character_name, 
-					type: characterLst[taxonomy.characters[i]].character_type_name,
-					charId: characterLst[taxonomy.characters[i]].character_id,
-					charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
-					information: characterLst[taxonomy.characters[i]].information,
-					selected: true
-				});
-			}
-			else
-			{
-				var list = [];
-				measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name] = list;
-				measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name].push(
-				{
-					name: characterLst[taxonomy.characters[i]].character_name, 
-					type: characterLst[taxonomy.characters[i]].character_type_name,
-					charId: characterLst[taxonomy.characters[i]].character_id,
-					charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
-					information: characterLst[taxonomy.characters[i]].information,
-					selected: true
-				});
-			}        
-		}
-		
-		
-		for(var charId_key in  characterLst) 
-		{	
-			if(measuresGroupList[characterLst[charId_key].character_group_name])
-			{
-				if(measuresGroupList[characterLst[charId_key].character_group_name].map(function(e) { return e.charId; }).indexOf(charId_key) == -1)
-				{
-					
-					measuresGroupList[characterLst[charId_key].character_group_name].push(
-					{
-						name: characterLst[charId_key].character_name, 
-						type: characterLst[charId_key].character_type_name,
-						charId: characterLst[charId_key].character_id,
-						charTypeId: characterLst[charId_key].character_group_id,
-						information: characterLst[charId_key].information,
-						selected: false
-					});
-				}
-			}
-			else
-			{
-				var list = [];
-				measuresGroupList[characterLst[charId_key].character_group_name] = list;
-				measuresGroupList[characterLst[charId_key].character_group_name].push(
-				{
-					name: characterLst[charId_key].character_name, 
-					type: characterLst[charId_key].character_type_name,
-					charId: characterLst[charId_key].character_id,
-					charTypeId: characterLst[charId_key].character_group_id,
-					information: characterLst[charId_key].information,
-					selected: false
-				});
-			}        
-		}
-
-		var i = 0;
-		for (var key in measuresGroupList) 
-		{
-			var tab_id = key.replace(/\s+/g, '');
-			addCharactersTab(tab_id,key,measuresGroupList[key]);
-		}
+	var measuresGroupList = {};
 	
+	appendInheritedCharacters(taxonomy, measuresGroupList);
+	
+	appendCharacters(taxonomy,measuresGroupList);
+	
+	appendRemainingPossibleCharacters(taxonomy, measuresGroupList);
+	
+	var i = 0;
+	for (var key in measuresGroupList) 
+	{
+		var tab_id = key.replace(/\s+/g, '');
+		addCharactersTab(tab_id,key,measuresGroupList[key]);
 	}
+	
+	
 	
 	var submitButton = document.getElementById("submitButton");
     submitButton.style = "display:none;";
@@ -185,9 +124,9 @@ function addCharactersTab(id, label, measuresList )
     {
         var newInputMeasures = new Input();
         if(measuresList[i].type == 'string')
-            newInputMeasures.createCharacter("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,measuresList[i].selected);
+            newInputMeasures.createCharacter("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,measuresList[i].selected, measuresList[i].fixed);
         else
-            newInputMeasures.createCharacter("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information, measuresList[i].selected);
+            newInputMeasures.createCharacter("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information, measuresList[i].selected, measuresList[i].fixed);
             
         inputList[label].push(newInputMeasures);
     }
@@ -221,50 +160,22 @@ function editTaxonomyFields(taxonomy)
 
 			for( var i = 0; i < inputList[key].length; i++)
 			{
-				if(inputList[key][i].getIfChecked())
+				if(!inputList[key][i].isFixed())
 				{
-					if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1)
-						taxonomy.characters.push(inputList[key][i].getcharacterID());
-				}
-				else
-				{
-					if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1)
+					if(inputList[key][i].getIfChecked())
 					{
-						taxonomy.characters.splice(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()),1);
-					}
-				}
-				inputList[key][i].toggleTaxonomyEdition(false);
-				/*
-				var index = taxonomy.characters.map(function(e) { return e.name; }).indexOf(inputList[key][i].getLabelName());
-				if(index >= 0)
-				{
-					// update character
-					taxonomy.characters[index].name = inputList[key][i].getValue();
-					taxonomy.characters[index].type = inputList[key][i].getType();
-					taxonomy.characters[index].information = inputList[key][i].getInformation();
-					
-				}
-				else
-				{
-					if(inputList[key][i].getValue() != "" && key != 'general_measures')
-					{
-						// add character
-						taxonomy.characters.push(
-						{
-							name: inputList[key][i].getValue(), 
-							type: inputList[key][i].getType(),
-							charId: inputList[key][i].getchararacterID(),
-							charTypeId: inputList[key][i].getcharacterGroupID(),
-							information: inputList[key][i].getInformation()
-						});
+						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1)
+							taxonomy.characters.push(inputList[key][i].getcharacterID());
 					}
 					else
 					{
-					
+						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1)
+						{
+							taxonomy.characters.splice(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()),1);
+						}
 					}
 				}
 				inputList[key][i].toggleTaxonomyEdition(false);
-				*/
 			}
             
         }
@@ -274,17 +185,147 @@ function editTaxonomyFields(taxonomy)
     };
 }
 
+function appendInheritedCharacters(taxonomy, measuresGroupList)
+{
+	var characterLst = allCharactersList.getList();
+	if(taxonomy.inheritedCharacters)
+	{
+		// getting information from all its measures and separating them according to their groups
+		for(var i = 0; i < taxonomy.inheritedCharacters.length; i++)
+		{
+			if(measuresGroupList[characterLst[taxonomy.inheritedCharacters[i]].character_group_name])
+			{
+				measuresGroupList[characterLst[taxonomy.inheritedCharacters[i]].character_group_name].push(
+				{
+					name: characterLst[taxonomy.inheritedCharacters[i]].character_name, 
+					type: characterLst[taxonomy.inheritedCharacters[i]].character_type_name,
+					charId: characterLst[taxonomy.inheritedCharacters[i]].character_id,
+					charTypeId: characterLst[taxonomy.inheritedCharacters[i]].character_group_id,
+					information: characterLst[taxonomy.inheritedCharacters[i]].information,
+					selected: true,
+					fixed: true
+				});
+			}
+			else
+			{
+				var list = [];
+				measuresGroupList[characterLst[taxonomy.inheritedCharacters[i]].character_group_name] = list;
+				measuresGroupList[characterLst[taxonomy.inheritedCharacters[i]].character_group_name].push(
+				{
+					name: characterLst[taxonomy.inheritedCharacters[i]].character_name, 
+					type: characterLst[taxonomy.inheritedCharacters[i]].character_type_name,
+					charId: characterLst[taxonomy.inheritedCharacters[i]].character_id,
+					charTypeId: characterLst[taxonomy.inheritedCharacters[i]].character_group_id,
+					information: characterLst[taxonomy.inheritedCharacters[i]].information,
+					selected: true,
+					fixed: true
+				});
+			}        
+		}
+		
+	}
+}
+
+function appendCharacters(taxonomy,measuresGroupList)
+{
+	var characterLst = allCharactersList.getList();
+	if(taxonomy.characters)
+	{
+		// getting information from all its measures and separating them according to their groups
+		for(var i = 0; i < taxonomy.characters.length; i++)
+		{
+			if(measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name])
+			{
+				if(measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name].map(function(e) { return e.charId; }).indexOf(characterLst[taxonomy.characters[i]].character_id) == -1)
+				{
+					measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name].push(
+					{
+						name: characterLst[taxonomy.characters[i]].character_name, 
+						type: characterLst[taxonomy.characters[i]].character_type_name,
+						charId: characterLst[taxonomy.characters[i]].character_id,
+						charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
+						information: characterLst[taxonomy.characters[i]].information,
+						selected: true,
+						fixed: false
+					});
+				}
+			}
+			else
+			{
+				var list = [];
+				measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name] = list;
+				measuresGroupList[characterLst[taxonomy.characters[i]].character_group_name].push(
+				{
+					name: characterLst[taxonomy.characters[i]].character_name, 
+					type: characterLst[taxonomy.characters[i]].character_type_name,
+					charId: characterLst[taxonomy.characters[i]].character_id,
+					charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
+					information: characterLst[taxonomy.characters[i]].information,
+					selected: true,
+					fixed: false
+				});
+			}        
+		}
+		
+	}
+}
+
+function appendRemainingPossibleCharacters(taxonomy, measuresGroupList)
+{
+	var characterLst = allCharactersList.getList();
+	for(var charId_key in  characterLst) 
+	{	
+		if(measuresGroupList[characterLst[charId_key].character_group_name])
+		{
+			if(measuresGroupList[characterLst[charId_key].character_group_name].map(function(e) { return e.charId; }).indexOf(charId_key) == -1)
+			{
+				
+				measuresGroupList[characterLst[charId_key].character_group_name].push(
+				{
+					name: characterLst[charId_key].character_name, 
+					type: characterLst[charId_key].character_type_name,
+					charId: characterLst[charId_key].character_id,
+					charTypeId: characterLst[charId_key].character_group_id,
+					information: characterLst[charId_key].information,
+					selected: false,
+					fixed: false
+				});
+			}
+		}
+		else
+		{
+			var list = [];
+			measuresGroupList[characterLst[charId_key].character_group_name] = list;
+			measuresGroupList[characterLst[charId_key].character_group_name].push(
+			{
+				name: characterLst[charId_key].character_name, 
+				type: characterLst[charId_key].character_type_name,
+				charId: characterLst[charId_key].character_id,
+				charTypeId: characterLst[charId_key].character_group_id,
+				information: characterLst[charId_key].information,
+				selected: false,
+				fixed: false
+			});
+		}        
+	}
+}
+
 function allowCharactersSelection()
 {
 	for (var key in inputList) 
     {
         for( var i = 0; i < inputList[key].length; i++)
         {
-            inputList[key][i].toggleTaxonomyEdition(true);
+			if(inputList[key][i].isFixed())
+				inputList[key][i].toggleTaxonomyEdition(false);
+			else
+			{
+				inputList[key][i].toggleTaxonomyEdition(true);
 
-			if(key == 'general_measures' && 
-				(inputList[key][i].getLabelName() == "Name" || inputList[key][i].getLabelName() == "Information"))
-				inputList[key][i].toggleEdition(true);
+				if(key == 'general_measures' && 
+					(inputList[key][i].getLabelName() == "Name" || inputList[key][i].getLabelName() == "Information"))
+					inputList[key][i].toggleEdition(true);
+			}
         }
     }
 }

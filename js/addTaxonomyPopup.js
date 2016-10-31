@@ -57,8 +57,14 @@ function makeAddTaxonomyPopup(parent_taxonomy)
 	
 	var measuresGroupList = {};
 	var characterLst = allCharactersList.getList();
+	
+	appendInheritedCharacters(parent_taxonomy, measuresGroupList);
+	
+	appendRemainingPossibleCharacters(parent_taxonomy, measuresGroupList);
+	
 	// getting information from all its measures and separating them according to their groups
 	//for(var i = 0; i < characterLst.length; i++)
+	/*
 	for(var charId_key in  characterLst) 
 	{	
 		if(measuresGroupList[characterLst[charId_key].character_group_name])
@@ -87,7 +93,7 @@ function makeAddTaxonomyPopup(parent_taxonomy)
 				selected: false
 			});
 		}        
-	}
+	}*/
 	
 	//console.log(measuresGroupList);
 	
@@ -143,44 +149,19 @@ function addTaxonomyFields(parent_taxonomy)
 				}
 			}
 			inputList[key][i].toggleTaxonomyEdition(false);
-			/*
-			var index = taxonomy.characters.map(function(e) { return e.name; }).indexOf(inputList[key][i].getLabelName());
-			if(index >= 0)
-			{
-				// update character
-				taxonomy.characters[index].name = inputList[key][i].getValue();
-				taxonomy.characters[index].type = inputList[key][i].getType();
-				taxonomy.characters[index].information = inputList[key][i].getInformation();
-				
-			}
-			else
-			{
-				if(inputList[key][i].getValue() != "" && key != 'general_measures')
-				{
-					// add character
-					taxonomy.characters.push(
-					{
-						name: inputList[key][i].getValue(), 
-						type: inputList[key][i].getType(),
-						charId: inputList[key][i].getchararacterID(),
-						charTypeId: inputList[key][i].getcharacterGroupID(),
-						information: inputList[key][i].getInformation()
-					});
-				}
-				else
-				{
-				
-				}
-			}
-			inputList[key][i].toggleTaxonomyEdition(false);
-			*/
 		}
 
 		
 	}
+	if(taxonomy.collection_id != "")
+	{
+		addTaxonomy(taxonomy, parent_taxonomy);
+		$('#basicModal').modal('hide');
+	}
+	else
+		alert("ERROR! The taxon you are trying to add must have a name.");
+		
 	
-	addTaxonomy(taxonomy, parent_taxonomy);
-	$('#basicModal').modal('hide');
 	
     
 }

@@ -51,6 +51,16 @@ function Characters()
 		return new_list;
 	}
 	
+	this.gerCharTypesListAsOptionsWithStardardNomenclature = function()
+	{
+		var new_list = [];
+
+		new_list.push({name: "text", isNum: false});
+		new_list.push({name: "number", isNum: false});
+
+		return new_list;
+	}
+	
 	this.getCharTypeID = function(charType)
 	{
 		for( var key in charTypesList)

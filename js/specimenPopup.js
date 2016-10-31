@@ -102,6 +102,9 @@ function makeSpecimenPopup(specimen)
             $('#basicModal').modal('hide');
         }
     };
+	
+	var submitButton = document.getElementById("submitButton");
+    submitButton.style = "display:none;";
     
     
 	$('#basicModal').modal('show');
@@ -193,7 +196,8 @@ function editSpecimenFields(specimen)
 {
     var submitButton = document.getElementById("submitButton");
     submitButton.style = "display:block;";
-    
+	
+	
     
     for (var key in inputList) 
     {
@@ -244,6 +248,40 @@ function appendNotPopulatedMeasuresToTabs(measuresGroupList, specimen)
 {
 	var characterLst = allCharactersList.getList();
 	var fullCharacterList = specimen.parent.characters;
+	var inheritedCharacterList = specimen.parent.inheritedCharacters;
+	
+	for(var i = 0; i < inheritedCharacterList.length; i++)
+	{
+		if(measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name])
+		{
+			if(!( characterLst[inheritedCharacterList[i]].character_id in specimen.measures))
+            {
+				measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
+				{
+					name: characterLst[inheritedCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[inheritedCharacterList[i]].character_type_name,
+					charId: characterLst[inheritedCharacterList[i]].character_id,
+					charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+					information: characterLst[inheritedCharacterList[i]].information
+				});
+			}
+		}
+		else
+		{
+			var list = [];
+			measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name] = list;
+			measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
+			{
+				name: characterLst[inheritedCharacterList[i]].character_name, 
+				value: "",
+				type: characterLst[inheritedCharacterList[i]].character_type_name,
+				charId: characterLst[inheritedCharacterList[i]].character_id,
+				charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+				information: characterLst[inheritedCharacterList[i]].information
+			});
+		}        
+	}
 	
 	for(var i = 0; i < fullCharacterList.length; i++)
 	{

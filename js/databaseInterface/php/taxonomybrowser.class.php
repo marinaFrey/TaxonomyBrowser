@@ -1704,7 +1704,7 @@ class taxonomybrowser
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model Private Function (updateCharactersTaxonomy)
 //------------------------------------------------------------------------------
-	private function updateCharactersTaxonomy($taxonomy_id, &$characters_ids)
+	public function updateCharactersTaxonomy($taxonomy_id, &$characters_ids)
 	{
 		$CharactersFromTaxonomyNodeIds = $this->charactersIds($this->getCharactersFromTaxonomyNode($taxonomy_id));
 		

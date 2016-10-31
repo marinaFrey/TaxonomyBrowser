@@ -46,10 +46,15 @@
             $this->selected = false;
         }
 
-        function setCharacters($chars,$p)
+        function setInheritedCharacters($chars,$p)
         {
-            $this->characters = GenerateCharacterList($chars,$p);
+            $this->inheritedCharacters = GenerateCharacterList($chars,$p);
         }
+		
+		function setCharacters($chars,$p)
+		{
+			$this->characters = GenerateCharacterList($chars,$p);
+		}
 
         function setChildren($children)
         {
@@ -116,7 +121,8 @@
                 if($value['taxonomy_rank_id']== "7")
                 {
                     $child->setTaxonomy($value);
-                    $child->setCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+                    $child->setInheritedCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+                    $child->setCharacters($pointer->getCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
                     $specimens_query_list = $pointer->getSpecimensByTaxonomyId($value['taxonomy_id']);
                     $sp_list = array();
                     foreach($specimens_query_list as $sp)
@@ -131,14 +137,17 @@
                 else
                 {
                     $child->setTaxonomy($value);
-					$child->setCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+					$child->setInheritedCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+					$child->setCharacters($pointer->getCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
                 }
                 $child_children = $pointer->getChilds($value['taxonomy_id']);
                 setHierarchy($child,$child_children,$pointer);
                 array_push($list,$child);	
             }
         
+			$father->setCharacters($pointer->getCharactersFromTaxonomyNode($father->taxonomy_id),$pointer);
             $father->setChildren($list);
+			
         }
         
     }

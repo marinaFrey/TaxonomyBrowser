@@ -2224,6 +2224,71 @@ class taxonomybrowser
 		}
 		return false;
 	}
+	
+	//------------------------------------------------------------------------------
+// TaxonomyBrowser Model loginUserReturningUserInfo Method
+//------------------------------------------------------------------------------
+	public function loginUserReturningUserInfo($username, $password)
+	{
+		
+		$username = mysql_real_escape_string($username);
+		$password = mysql_real_escape_string($password);
+		
+		//$password = $password . md5Salt();
+		
+		
+		//echo md5($password);
+		
+		$query = "SELECT user_id, user_name, user_password, role_id, full_name, email FROM taxonomybrowser.users WHERE user_name = '$username'";
+		$result = mysql_query($query, $this->Connection);
+
+		if(mysql_num_rows($result) == 0)
+		{
+			return false;
+		}
+		
+
+		$user_id = mysql_result($result , 0, "user_id");
+		$role_id = mysql_result($result , 0, "role_id");
+		$user_name = mysql_result($result , 0, "user_name");
+		$user_password = mysql_result($result, 0, "user_password");
+		$full_name = mysql_result($result, 0, "full_name");
+		$email = mysql_result($result, 0, "email");
+		
+		$list = array();
+		$list['id'] = $user_id;
+		$list['role'] = $role_id;
+		$list['user_name'] = $user_name;
+		$list['full_name'] = $full_name;
+		$list['email'] = $email;
+		/*print_r($user_name);
+		print_r($password);
+		print_r($user_password);
+		echo '---';
+		print_r(md5($password));
+		*/
+
+		//if($username == $user_name && md5($password) == $user_password)
+		if(md5($password) == $user_password)
+		{
+			$current_datatime = date( 'Y-m-d H:i:s');
+			$query = "UPDATE taxonomybrowser.users SET last_login = '$current_datatime' WHERE users.user_id = '$user_id' LIMIT 1";
+			$result = mysql_query($query, $this->Connection);
+			if(!$result)
+			{	
+				return false;
+			}
+
+			
+			//session_start();
+			
+			//mata os cookies dos scrollbars
+			//clearAllScrollBarCookies();
+
+			return json_encode($list);
+		}
+		return false;
+	}
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model resetPassword Method
 //------------------------------------------------------------------------------

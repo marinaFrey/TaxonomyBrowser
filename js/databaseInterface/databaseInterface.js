@@ -79,6 +79,92 @@ function createRanksFile()
 
 }
 
+function validateLogin(name,password)
+{
+	var user = {name:name, password:password};
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/login.php',
+        type: 'POST',
+        data: {id:user},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+			if(!data)
+			{
+				wrongLogin();
+				console.log("wrooong");
+			}
+			else
+			{
+				showUsersInformation(data);
+				hideLoginPopup();
+			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
+function editUser(user_info)
+{
+	//var user = {name:name, password:password};
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/editUser.php',
+        type: 'POST',
+        data: {id:user_info},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+			if(!data)
+			{
+
+			}
+			else
+			{
+
+			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
+function resetPassword(user_info)
+{
+	var user = {user_name:"marina", email:"marina.fortes.rey@gmail.com"};
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/resetUserPassword.php',
+        type: 'POST',
+        data: {id:user},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+			if(!data)
+			{
+
+			}
+			else
+			{
+
+			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
 /* SPECIMEN */
 
 function addSpecimen(specimen)

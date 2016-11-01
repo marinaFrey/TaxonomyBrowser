@@ -66,7 +66,7 @@ function Sunburst()
 
     var color = d3.scale.category20c();
 	var childrenColor = d3.scale.category10();
-    var colorTypes = {0:'blue',1:'pink',2:'yellow',3:'purple',4:'orange',5:'green',6:'red'};
+    var colorTypes = {0:'blue',1:'pink',2:'purple',3:'orange',4:'green',5:'red'};
     
     var radius = Math.min(width, height) / 2;
     var arc2 = d3.svg.arc()
@@ -142,7 +142,8 @@ function Sunburst()
                     
                     if(d.rank == "7")
                     {
-                        d.color = randomColor();
+                        //d.color = randomColor();
+						d.color = childrenColor(d.name);
                     }
                     return d.color; 
                 })
@@ -371,29 +372,22 @@ function Sunburst()
 		unsetShownOnChildren(node);
 		setShownOnChildren(rootNode);
 		
-        //console.log(node);
-		//console.log(rootNode);
         g = svg.selectAll("g")
             .data(partition.nodes(node))
             .enter().append("g");
-		
-
-         path.transition()
-            .duration(transitionDuration)
+			
+		 path.transition()
+			.filter(function(d){return d.show == true;})
+			.duration(transitionDuration)
 			.style("opacity",pathOpacity)
-			.attrTween("d", arcTween(rootNode))
-            .attrTween("d", arcTweenData); 
+            .attrTween("d", arcTweenData);  
+
 			
 		textPath.transition()
             .duration(transitionDuration).each("end", filterTexts)
             .attr("pointer-events", null)
             .attrTween("d", textArcTween(rootNode))
-			
-         /* text.transition().delay(1000)
-			.duration(transitionDuration)
-             */
-             
-		
+
 		
         /*
         outside_polyline = g.append("polyline")//select(".lines").selectAll("polyline")
@@ -453,7 +447,7 @@ function Sunburst()
             {        if(d.children[i].rank && d.children[i].rank != "7")
                     {
                         defineColoring(d.children[i], j);
-                        j = getRandomInt(0, 6);
+                        j = getRandomInt(0, 5);
                     }
             }
         }
@@ -740,7 +734,8 @@ function Sunburst()
     }
     
     function arcTweenData(a, i) 
-    {
+    {	
+
         var oi = d3.interpolate({x: a.x0, dx: a.dx0}, a);
         function tween(t) 
         {
@@ -776,7 +771,8 @@ function Sunburst()
 		//console.log(d);
 		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth == 0 || d.depth < rootDepth)
 		{
-			if(d.depth != 0)
+			//if(d.depth != 0)
+			if(false)
 			{
 				d3.select(this.parentNode).style("display","none");
 				d3.select(this.parentNode).style("opacity", 0);
@@ -809,7 +805,9 @@ function Sunburst()
 	function pathOpacity(d)
 	{
 		if(d == rootNode.parent)
-			return normalOpacity
+		{
+				return normalOpacity
+		}
 		if(d.show)
 		{
 			if(d.selected)

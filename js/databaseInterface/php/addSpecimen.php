@@ -15,17 +15,34 @@
 
         $taxonomy_database = new taxonomybrowser($hostname.':'.$db_port, $db_username, $db_password, $dbname);
         
+		$m = null;
         $measures_list = $specimen['measures'];
-        foreach($measures_list as $measure)
-        {
-            $index = $measure['charId'];
-            $m[$index]['character_type_id'] = $measure['charTypeId'];
-            $m[$index]['value'] = $measure['value'];
+		if($specimen['measures'])
+		{
+			foreach($measures_list as $measure)
+			{
+				$index = $measure['charId'];
+				$m[$index]['character_type_id'] = $measure['charTypeId'];
+				$m[$index]['value'] = $measure['value'];
 
+			}
         }
-        
-        //echo json_encode($m);
-        
+        echo $specimen['user_id'];
+		$result = $taxonomy_database->addSpecimenWithUserID
+        (
+            $specimen['taxonomy_id'], 
+            null, 
+            $specimen['collection_ID'], 
+            $specimen['collected_by'], 
+            $specimen['data'], 
+            $specimen['latitude'], 
+            $specimen['longitude'], 
+            $specimen['information'], 
+            null, 
+            $m,
+			$specimen['user_id']
+        );
+        /*
         $result = $taxonomy_database->addSpecimen
         (
             $specimen['taxonomy_id'], 
@@ -37,8 +54,8 @@
             $specimen['longitude'], 
             $specimen['information'], 
             null, 
-            $m 
-        );
+            $m
+        );*/
 
         echo $result;
 

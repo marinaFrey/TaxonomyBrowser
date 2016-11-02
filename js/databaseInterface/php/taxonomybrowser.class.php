@@ -1138,6 +1138,128 @@ class taxonomybrowser
 		
 	}
 //------------------------------------------------------------------------------
+// TaxonomyBrowser Model addSpecimen Method
+//------------------------------------------------------------------------------
+	public function addSpecimenWithUserID($taxonomy_id, $extra_taxonomy_ids, $collection_id, $collected_by, $collected_data, $latitude, $longitude, $information, $bibliographies_ids, $charactersMeasures, $usr_id)
+	{
+		$taxonomy_id = mysql_real_escape_string($taxonomy_id);
+		$collection_id = mysql_real_escape_string($collection_id);
+		$collected_by = mysql_real_escape_string($collected_by);
+		$collected_data = mysql_real_escape_string($collected_data);
+		$latitude = mysql_real_escape_string($latitude);
+		$longitude = mysql_real_escape_string($longitude);
+		$user_id = mysql_real_escape_string($usr_id);
+		
+		
+		//debugPrint($bibliographies_ids);
+		//debugPrint($extra_taxonomy_ids);
+		
+		//return false;
+		
+		if(empty($collected_data))
+		{
+			$collected_data = 'NULL';
+		}
+		else
+		{
+			$collected_data = "'$collected_data'";
+		}
+		if(empty($latitude) && !is_numeric($latitude))
+		{
+			$latitude = 'NULL';
+		}
+		else
+		{
+			$latitude = "'$latitude'";
+		}
+		if(empty($longitude) || !is_numeric($longitude))
+		{
+			$longitude = 'NULL';
+		}
+		else
+		{
+			$longitude = "'$longitude'";
+		}
+	
+		
+		
+		$specimen_id = -1;
+		if($user_id != "-1")
+		{
+			$query = "INSERT INTO taxonomybrowser.specimens
+			(
+				`taxonomy_id` ,
+				`collection_id` ,
+				`collected_by` ,
+				`collected_data` ,
+				`latitude` ,
+				`longitude` ,
+				`information`,
+				`user_id`
+			)
+			VALUES
+			(
+				'$taxonomy_id' ,
+				'$collection_id' ,
+				'$collected_by' ,
+				$collected_data,
+				$latitude ,
+				$longitude ,
+				'$information',
+				'$user_id'
+			)";
+		}
+		else
+		{
+			$query = "INSERT INTO taxonomybrowser.specimens
+			(
+				`taxonomy_id` ,
+				`collection_id` ,
+				`collected_by` ,
+				`collected_data` ,
+				`latitude` ,
+				`longitude` ,
+				`information`
+			)
+			VALUES
+			(
+				'$taxonomy_id' ,
+				'$collection_id' ,
+				'$collected_by' ,
+				$collected_data,
+				$latitude ,
+				$longitude ,
+				'$information'
+			)";
+		}
+		
+		$result = mysql_query($query, $this->Connection);
+		
+		
+		
+		if(!$result)
+		{
+			return false;
+		}
+		
+		
+		
+		$specimen_id = mysql_insert_id();
+		
+		if(!empty($extra_taxonomy_ids) && !$this->updateExtraTaxonomy($specimen_id, $extra_taxonomy_ids))
+			return false;
+		if(!empty($bibliographies_ids) && !$this->updateBibliographySpecimen($specimen_id, $bibliographies_ids))
+			return false;
+		if($charactersMeasures)
+		{
+			if( !$this->updateMeasures($specimen_id, $charactersMeasures))
+				return false;
+		}
+
+		return true;
+		
+	}
+//------------------------------------------------------------------------------
 // TaxonomyBrowser Model getMeasures Method
 //------------------------------------------------------------------------------
 	public function getMeasures($specimen_id)
@@ -1177,7 +1299,7 @@ class taxonomybrowser
 	public function getSpecimens()
 	{
 
-		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information FROM taxonomybrowser.specimens ORDER BY collection_id";
+		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id FROM taxonomybrowser.specimens ORDER BY collection_id";
 		$result = mysql_query($query, $this->Connection);
         
 		$nodes = array();
@@ -1198,6 +1320,7 @@ class taxonomybrowser
 			$tmp['latitude'] = mysql_result($result ,$i, "latitude");
 			$tmp['longitude'] = mysql_result($result ,$i, "longitude");
 			$tmp['information'] = mysql_result($result ,$i, "information");
+			$tmp['user_id'] = mysql_result($result ,$i, "user_id");
 			array_push($nodes, $tmp);
 		}
 		
@@ -1216,7 +1339,7 @@ class taxonomybrowser
 	{
 		$specimen_id = mysql_real_escape_string($specimen_id);
 
-		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information FROM taxonomybrowser.specimens WHERE specimen_id = '$specimen_id'";
+		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id FROM taxonomybrowser.specimens WHERE specimen_id = '$specimen_id'";
 		$result = mysql_query($query, $this->Connection);
 		$node = array();
 		
@@ -1234,6 +1357,7 @@ class taxonomybrowser
 		$node['latitude'] = mysql_result($result, 0, "latitude");
 		$node['longitude'] = mysql_result($result, 0, "longitude");
 		$node['information'] = mysql_result($result, 0, "information");
+		$node['user_id'] = mysql_result($result, 0, "user_id");
 		
 		mysql_free_result($result);
 		
@@ -1248,7 +1372,7 @@ class taxonomybrowser
 	public function getSpecimensByTaxonomyId($taxonomy_id)
 	{
 
-		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information FROM taxonomybrowser.specimens WHERE taxonomy_id = '$taxonomy_id' ORDER BY collection_id";
+		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id FROM taxonomybrowser.specimens WHERE taxonomy_id = '$taxonomy_id' ORDER BY collection_id";
 		$result = mysql_query($query, $this->Connection);
         
 		$nodes = array();
@@ -1269,6 +1393,47 @@ class taxonomybrowser
 			$tmp['latitude'] = mysql_result($result ,$i, "latitude");
 			$tmp['longitude'] = mysql_result($result ,$i, "longitude");
 			$tmp['information'] = mysql_result($result ,$i, "information");
+			$tmp['user_id'] = mysql_result($result ,$i, "user_id");
+			array_push($nodes, $tmp);
+		}
+		
+		mysql_free_result($result);
+		
+		
+		$nodes = stripslashesDeep($nodes);
+		
+		return $nodes;	
+		
+	}	
+	
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model getSpecimensByTaxonomyIdAndUserID Method by taxonomyId
+//------------------------------------------------------------------------------
+	public function getSpecimensByTaxonomyIdAndUserID($taxonomy_id, $user_id)
+	{
+
+		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id FROM taxonomybrowser.specimens WHERE taxonomy_id = '$taxonomy_id' AND (user_id = '$user_id' OR user_id IS NULL) ORDER BY collection_id";
+		$result = mysql_query($query, $this->Connection);
+        
+		$nodes = array();
+		
+		if(mysql_num_rows($result) == 0)
+		{
+			return $nodes;
+		}
+		
+		for($i = 0; $i < mysql_num_rows($result); ++$i)
+		{
+			$tmp = array();
+			$tmp['specimen_id'] = mysql_result($result ,$i, "specimen_id");
+			$tmp['taxonomy_id'] = mysql_result($result ,$i, "taxonomy_id");
+			$tmp['collection_id'] = mysql_result($result ,$i, "collection_id");
+			$tmp['collected_by'] = mysql_result($result ,$i, "collected_by");
+			$tmp['collected_data'] = mysql_result($result ,$i, "collected_data");
+			$tmp['latitude'] = mysql_result($result ,$i, "latitude");
+			$tmp['longitude'] = mysql_result($result ,$i, "longitude");
+			$tmp['information'] = mysql_result($result ,$i, "information");
+			$tmp['user_id'] = mysql_result($result ,$i, "user_id");
 			array_push($nodes, $tmp);
 		}
 		
@@ -2267,9 +2432,9 @@ class taxonomybrowser
 		echo '---';
 		print_r(md5($password));
 		*/
-
+		
 		//if($username == $user_name && md5($password) == $user_password)
-		if(md5($password) == $user_password)
+		if(md5($password . md5Salt()) == $user_password)
 		{
 			$current_datatime = date( 'Y-m-d H:i:s');
 			$query = "UPDATE taxonomybrowser.users SET last_login = '$current_datatime' WHERE users.user_id = '$user_id' LIMIT 1";
@@ -2435,6 +2600,63 @@ class taxonomybrowser
 		 
 		 return false;
 	}	
+	
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model updateUserReturningUserInfo Method 
+//------------------------------------------------------------------------------
+public function updateUserReturningUserInfo($user_id, $role_id, $user_name, $user_password, $full_name, $email)
+{
+	$user_id = mysql_real_escape_string($user_id);
+	$role_id = mysql_real_escape_string($role_id);
+	$user_name = mysql_real_escape_string($user_name);
+	$user_password = mysql_real_escape_string($user_password);
+	
+	//echo $user_password;
+	
+	$full_name = mysql_real_escape_string($full_name);
+	$email = mysql_real_escape_string($email);
+	
+	$list = array();
+	$list['id'] = $user_id;
+	$list['role'] = $role_id;
+	$list['user_name'] = $user_name;
+	$list['full_name'] = $full_name;
+	$list['email'] = $email;
+	
+	$query = '';
+	if(empty($user_password))
+	{
+		$query = "UPDATE taxonomybrowser.users
+		SET role_id = '$role_id',
+		user_name = '$user_name',
+		full_name = '$full_name',
+		email = '$email'
+		WHERE users.user_id = '$user_id'";
+	}
+	else
+	{
+	
+		$user_password = $user_password . md5Salt();
+		$user_password = md5($user_password);
+	
+	
+		$query = "UPDATE taxonomybrowser.users
+		SET role_id = '$role_id',
+		user_name = '$user_name',
+		user_password = '$user_password',
+		full_name = '$full_name',
+		email = '$email'
+		WHERE users.user_id = '$user_id'";
+	}
+	$result = mysql_query($query, $this->Connection);
+	
+	if($result)
+	{
+		return $list;
+	}
+	 
+	 return false;
+}	
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model removeUser Method
 //------------------------------------------------------------------------------

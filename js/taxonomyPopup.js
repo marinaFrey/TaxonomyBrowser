@@ -66,25 +66,32 @@ function makeTaxonomyPopup(taxonomy)
 		addCharactersTab(tab_id,key,measuresGroupList[key]);
 	}
 	
-	
+	var editTaxonomyButton = document.getElementById("editSpecimenButton");
+	var removeTaxonomyButton = document.getElementById("removeSpecimenButton");
+
+	if(userLoggedIn && userLoggedIn.getRole() == "1")
+	{
+		editTaxonomyButton.style = "display:block;";
+		editTaxonomyButton.onclick = function(){return editTaxonomyFields(taxonomy);};
+
+		removeTaxonomyButton.style = "display:block;";
+		removeTaxonomyButton.onclick = function()
+		{
+			if (confirm("Do you really want to delete this Taxonomy? All it's children will be also removed from the database") == true) 
+			{
+				removeTaxonomy(taxonomy);
+				$('#basicModal').modal('hide');
+			}
+		};
+	}
+	else
+	{
+		editTaxonomyButton.style = "display:none;";
+		removeTaxonomyButton.style = "display:none;";
+	}
 	
 	var submitButton = document.getElementById("submitButton");
-    submitButton.style = "display:none;";
-	
-	var editTaxonomyButton = document.getElementById("editSpecimenButton");
-    editTaxonomyButton.style = "display:block;";
-    editTaxonomyButton.onclick = function(){return editTaxonomyFields(taxonomy);};
-    
-    var removeTaxonomyButton = document.getElementById("removeSpecimenButton");
-    removeTaxonomyButton.style = "display:block;";
-    removeTaxonomyButton.onclick = function()
-    {
-        if (confirm("Do you really want to delete this Taxonomy? All it's children will be also removed from the database") == true) 
-        {
-            removeTaxonomy(taxonomy);
-            $('#basicModal').modal('hide');
-        }
-    };
+	submitButton.style = "display:none;";
 	
     $('#basicModal').modal('show');
 }

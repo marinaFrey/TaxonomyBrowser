@@ -18,16 +18,18 @@
         //echo json_encode($m);
         // updateUser($user_id, $role_id, $user_name, $user_password, $full_name, $email)
 		$result = $taxonomy_database->loginUserReturningUserInfo($user['user_name'], $user['password']);
-		if($result)
-		{
-			$result = $taxonomy_database->updateUser($user['id'], $user['role'], $user['user_name'], $user['password'], $user['full_name'], $user['email']);
+		
+		if($result != false)
+		{	
+			$result2 = $taxonomy_database->updateUserReturningUserInfo($user['id'], $user['role'], $user['user_name'], $user['new_password'], $user['full_name'], $user['email']);
 			
-			echo $result;
+			echo json_encode($result2);
 		}
 		else
 		{
-			echo "phodeu";
+			echo false;
 		}
+
         //echo $result;
 
     }

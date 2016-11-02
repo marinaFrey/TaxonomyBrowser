@@ -306,11 +306,11 @@
         <div class="modal-content">
             <!-- title -->
             <div class="modal-header" id="hder">
+				
                 <div class="col-sm-6" >
                     <h4 class="modal-title" id="myModalLabel"></h4>
                 </div>
                 <div class="col-sm-4" ></div>
-                <!-- TEMPORARIO -->
                 
                 <div class="col-sm-1" >
                     <img name="editSpecimenButton" id="editSpecimenButton" src="images/edit3.png" width="64" height="64" border="0" alt="javascript button" title="edit specimen information">
@@ -422,8 +422,8 @@
             </div>
             <div class="form-group">
               <button class="btn btn-primary btn-lg btn-block" onClick="submitLoginPopup()">Sign In</button>
-              <span class="pull-right"><a href="#">Register</a></span>
-			  <span><a href="#">Forgot Password?</a></span>
+              <span class="pull-right"><a href="#" onClick="createNewUser()">Register</a></span>
+			  <span><a href="#" onClick="resetUsersPassword()">Forgot Password?</a></span>
             </div>
           </form>
       </div>
@@ -442,13 +442,13 @@
 	<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h1 class="text-center">User Information</h1>
+			<h1 class="text-center" id="loginConfigModalTitle">User Information</h1>
 		</div>
 		<div class="modal-body">
 		
 			<div id="informationErrorAlert" class="alert alert-danger" role="alert" style="display:none">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>Invalid password.
+				<span class="sr-only">Error:</span> <a id="informationErrorAlertText" style="color:inherit;text-decoration: none">Invalid password.</a>
 			</div>
 			
           <form class="form col-md-12 center-block">
@@ -471,7 +471,7 @@
               <input id="passwordConfirmationConfig" type="password" required=true class="form-control input-lg" placeholder="Confirm New Password">
             </div>
             <div class="form-group">
-              <button class="btn btn-primary btn-lg btn-block" onClick="submitChangesInUser()">Submit</button>
+              <button class="btn btn-primary btn-lg btn-block" id="loginConfigSubmitButton" onClick="submitChangesInUser()">Submit</button>
             </div>
           </form>
       </div>
@@ -561,7 +561,7 @@
 	document.getElementById("maps").style = "display:none;";
     document.getElementById("sel_viz").style = "display:none;";
     
-    //createHierarchyFile();
+    createHierarchyFile();
     //resetPassword("lol");
 	
     

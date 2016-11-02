@@ -12,7 +12,7 @@ function makeSpecimenPopup(specimen)
 	txtLabel.innerHTML = "<h1>"+specimen.name+" ( "+ specimen.collection_id +" )</h1>";
 
     cleanSpecimenMeasuresFromInputList();
-    
+	
     // adding standard specimen information
     var infoLabel = document.getElementById("info_text");
     var newInput2 = new Input();
@@ -80,29 +80,32 @@ function makeSpecimenPopup(specimen)
         addTab(tab_id,key,measuresGroupList[key]);
     }
 
-    
-    //var addSpecimenButton = document.getElementById("addSpecimenButton");
-    //addSpecimenButton.onclick = function(){addSpecimen(specimen);};
-    
-    var editSpecimenButton = document.getElementById("editSpecimenButton");
-    editSpecimenButton.style = "display:block;";
-    editSpecimenButton.onclick = function()
+	var editSpecimenButton = document.getElementById("editSpecimenButton");
+	var removeSpecimenButton = document.getElementById("removeSpecimenButton");
+    if(userLoggedIn)
 	{
-		appendNotPopulatedMeasuresToTabs(measuresGroupList,specimen);
-		editSpecimenFields(specimen);
-	};
-    
-    var removeSpecimenButton = document.getElementById("removeSpecimenButton");
-    removeSpecimenButton.style = "display:block;";
-    removeSpecimenButton.onclick = function()
-    {
-        if (confirm("Do you really want to delete this specimen? This action can't be undone") == true) 
-        {
-            removeSpecimen(specimen);
-            $('#basicModal').modal('hide');
-        }
-    };
-	
+		editSpecimenButton.style = "display:block;";
+		editSpecimenButton.onclick = function()
+		{
+			appendNotPopulatedMeasuresToTabs(measuresGroupList,specimen);
+			editSpecimenFields(specimen);
+		};
+
+		removeSpecimenButton.style = "display:block;";
+		removeSpecimenButton.onclick = function()
+		{
+			if (confirm("Do you really want to delete this specimen? This action can't be undone") == true) 
+			{
+				removeSpecimen(specimen);
+				$('#basicModal').modal('hide');
+			}
+		};
+	}
+	else
+	{
+		editSpecimenButton.style = "display:none;";
+		removeSpecimenButton.style = "display:none;";
+	}
 	var submitButton = document.getElementById("submitButton");
     submitButton.style = "display:none;";
     

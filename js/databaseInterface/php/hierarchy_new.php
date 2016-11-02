@@ -107,7 +107,7 @@
 
 
 
-    function setHierarchy($father, $children, $pointer)
+	function setHierarchy($father, $children, $pointer)
     {
         // checks if has children
         if(count($children)>0)
@@ -142,6 +142,51 @@
                 }
                 $child_children = $pointer->getChilds($value['taxonomy_id']);
                 setHierarchy($child,$child_children,$pointer);
+                array_push($list,$child);	
+            }
+        
+			$father->setCharacters($pointer->getCharactersFromTaxonomyNode($father->taxonomy_id),$pointer);
+            $father->setChildren($list);
+			
+        }
+        
+    }
+	
+    function setHierarchyByUser($father, $children, $pointer, $user)
+    {
+        // checks if has children
+        if(count($children)>0)
+        {
+            $list = array();
+            foreach($children as $value)
+            {
+                
+                //creates object
+                $child = new Hierarchy();
+                if($value['taxonomy_rank_id']== "7")
+                {
+                    $child->setTaxonomy($value);
+                    $child->setInheritedCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+                    $child->setCharacters($pointer->getCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+                    $specimens_query_list = $pointer->getSpecimensByTaxonomyIdAndUserID($value['taxonomy_id'], $user);
+                    $sp_list = array();
+                    foreach($specimens_query_list as $sp)
+                    {
+                        $specimen_h = new Hierarchy();
+                        $specimen_h->setSpecimen($value['scientific_name'],$sp);
+                        $specimen_h->setMeasures($pointer->getMeasures($sp['specimen_id']),$pointer);
+                        array_push($sp_list,$specimen_h);
+                    }
+                    $child->setChildren($sp_list);
+                }
+                else
+                {
+                    $child->setTaxonomy($value);
+					$child->setInheritedCharacters($pointer->getAllCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+					$child->setCharacters($pointer->getCharactersFromTaxonomyNode($value['taxonomy_id']),$pointer);
+                }
+                $child_children = $pointer->getChilds($value['taxonomy_id']);
+                setHierarchyByUser($child,$child_children,$pointer, $user);
                 array_push($list,$child);	
             }
         

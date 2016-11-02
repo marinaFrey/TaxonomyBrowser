@@ -1,6 +1,7 @@
 
 function showLoginPopup()
 {
+	hideLoginConfigurationErrorBlock();
 	var loginErrorAlert = document.getElementById("loginErrorAlert");	
 	loginErrorAlert.style= "display:none";
 	$('#loginModal').modal('show');
@@ -46,14 +47,24 @@ function logout()
 	var userTab = document.getElementById("userTab");	
 	userTab.style= "display:none";
 	
-	userLoggedIn = [];
+	userLoggedIn = null;
+	
+	createHierarchyFile();
 }
 
 /* login configuration */
 
 function changeUsersInfo()
 {
+	hideLoginConfigurationErrorBlock();
 	userLoggedIn.populateChangeUserInformationModal();
+	
+	loginConfigSubmitButton = document.getElementById("loginConfigSubmitButton");
+	loginConfigSubmitButton.onclick = function()
+	{
+		submitChangesInUser();
+		//$('#loginConfigurationModal').modal('hide');
+	};
 }
 
 function submitChangesInUser()
@@ -61,13 +72,92 @@ function submitChangesInUser()
 	userLoggedIn.submitChanges();
 }
 
+function showLoginConfigurationErrorBlock(errorMessage)
+{
+	var informationErrorAlert = document.getElementById("informationErrorAlert");
+	informationErrorAlert.style = "display:block";
+	var informationErrorAlertText = document.getElementById("informationErrorAlertText");
+	informationErrorAlertText.innerHTML = errorMessage;
+}
+
+function hideLoginConfigurationErrorBlock()
+{
+	var informationErrorAlert = document.getElementById("informationErrorAlert");
+	informationErrorAlert.style = "display:none";
+}
+
 function createNewUser()
 {
+	hideLoginConfigurationErrorBlock();
+	var loginConfigModalTitle = document.getElementById("loginConfigModalTitle");
+	loginConfigModalTitle.innerHTML = "Register";
+
+	var usernameConfig = document.getElementById("usernameConfig");	
+	usernameConfig.style = "display:block";
+	usernameConfig.value = "";
+	var emailConfig = document.getElementById("emailConfig");	
+	emailConfig.style = "display:block";
+	emailConfig.value = "";
+	var fullnameConfig = document.getElementById("fullnameConfig");	
+	fullnameConfig.style = "display:block";
+	fullnameConfig.value = "";
+	var passwordConfig = document.getElementById("passwordConfig");	
+	passwordConfig.style = "display:block";
+	passwordConfig.value = "";
+	var passwordConfirmationConfig = document.getElementById("passwordConfirmationConfig");	
+	passwordConfirmationConfig.style = "display:block";
+	passwordConfirmationConfig.value = "";
+	
+	var oldPasswordConfig = document.getElementById("oldPasswordConfig");	
+	oldPasswordConfig.style = "display:none";
+	
+	loginConfigSubmitButton = document.getElementById("loginConfigSubmitButton");
+	loginConfigSubmitButton.onclick = function()
+	{
+		if(passwordConfig.value == passwordConfirmationConfig.value)
+		{
+			addUser({password:passwordConfig.value, full_name:fullnameConfig.value,user_name:usernameConfig.value, email:emailConfig.value});
+			$('#loginConfigurationModal').modal('hide');
+		}
+		else
+		{
+			showLoginConfigurationErrorBlock("Passwords do not match. Please try again.");
+		}
+	};
+
+	$('#loginConfigurationModal').modal('show');
 }
 
 function resetUsersPassword()
 {
+	hideLoginConfigurationErrorBlock();
+	var loginConfigModalTitle = document.getElementById("loginConfigModalTitle");
+	loginConfigModalTitle.innerHTML = "Password Recovery";
 
+	var usernameConfig = document.getElementById("usernameConfig");	
+	usernameConfig.style = "display:block";
+	usernameConfig.value = "";
+	var emailConfig = document.getElementById("emailConfig");	
+	emailConfig.style = "display:block";
+	emailConfig.value = "";
+	
+	var fullnameConfig = document.getElementById("fullnameConfig");	
+	fullnameConfig.style = "display:none";
+	var passwordConfig = document.getElementById("passwordConfig");	
+	passwordConfig.style = "display:none";
+	var passwordConfirmationConfig = document.getElementById("passwordConfirmationConfig");	
+	passwordConfirmationConfig.style = "display:none";
+	var oldPasswordConfig = document.getElementById("oldPasswordConfig");	
+	oldPasswordConfig.style = "display:none";
+	
+	loginConfigSubmitButton = document.getElementById("loginConfigSubmitButton");
+	loginConfigSubmitButton.onclick = function()
+	{
+		resetPassword({user_name:usernameConfig.value, email:emailConfig.value});
+		$('#loginConfigurationModal').modal('hide');
+	};
+	
+	$('#loginConfigurationModal').modal('show');
 }
 
 /* user */
@@ -102,7 +192,7 @@ function User()
 		
 		var userRole;
 		if(this.role == "1")
-			userRole = "Super User";
+			userRole = "Administrator";
 		else
 			userRole = "Standard User";
 			
@@ -126,7 +216,6 @@ function User()
 	
 	this.submitChanges = function()
 	{
-		var informationErrorAlert = document.getElementById("informationErrorAlert");
 		
 		var usernameConfig = document.getElementById("usernameConfig");	
 		this.userName = usernameConfig.value;
@@ -142,15 +231,13 @@ function User()
 		{
 			var oldPasswordConfig = document.getElementById("oldPasswordConfig");	
 				
-			var usr = {id:this.userID, password:oldPasswordConfig.value, full_name:this.fullName,user_name:this.userName,role:this.role, email:this.email};
-			var result = editUser(usr);
-			
-			console.log(result);
-			
+			var usr = {id:this.userID, password:oldPasswordConfig.value, new_password: passwordConfig.value,full_name:this.fullName,user_name:this.userName,role:this.role, email:this.email};
+			editUser(usr);
+
 		}
 		else
 		{
-			informationErrorAlert.style = "display:block";
+			showLoginConfigurationErrorBlock("Passwords do not match. Please try again.");
 		}
 
 	}
@@ -158,6 +245,11 @@ function User()
 	this.getID = function()
 	{
 		return this.userID;
+	}
+	
+	this.getRole = function()
+	{
+		return this.role;
 	}
 	
 }

@@ -17,7 +17,7 @@
         
         //echo json_encode($m);
         // addUser($role_id, $user_name, $user_password, $full_name, $email)
-        $result = $taxonomy_database->addUser($user['role'], $user['user_name'], $user['password'], $user['full_name'], $user['email']);
+        $result = $taxonomy_database->addUser(2, $user['user_name'], $user['password'], $user['full_name'], $user['email']);
 
         echo $result;
 

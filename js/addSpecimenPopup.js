@@ -65,9 +65,14 @@ function makeAddSpecimenPopup(species)
     infoLabel.appendChild(br2);
     
     cleanSpecimenMeasuresFromInputList();
-    
-    // adding standard specimen information
-    var newInput2 = new Input();
+	
+	var newInput1 = new Input();
+    newInput1.createCombo("text",infoLabel, "Access","","",  [{name:"private (you and administrators)", isNum:false},{name:"public (everyone)",isNum:false}], "");
+	newInput1.toggleEdition(true);
+	inputList['general_measures'].push(newInput1);
+	
+	// adding standard specimen information
+	var newInput2 = new Input();
     newInput2.create("text",infoLabel, "Collection ID","","","", "");
     newInput2.toggleEdition(true);
     inputList['general_measures'].push(newInput2);
@@ -217,13 +222,19 @@ function changingSelectedTaxonomy()
             
 			specimen.name = taxonomy.name;
 			specimen.taxonomy_id = taxonomy.taxonomy_id;
-            specimen.collection_id = inputList['general_measures'][0].getValue();
-            specimen.collected_by = inputList['general_measures'][1].getValue();
-            specimen.collected_data = inputList['general_measures'][2].getValue();
-            specimen.latitude = inputList['general_measures'][3].getValue();
-            specimen.longitude = inputList['general_measures'][4].getValue();
-            specimen.information = inputList['general_measures'][5].getValue();
+            var access = inputList['general_measures'][0].getValue();
+            specimen.collection_id = inputList['general_measures'][1].getValue();
+            specimen.collected_by = inputList['general_measures'][2].getValue();
+            specimen.collected_data = inputList['general_measures'][3].getValue();
+            specimen.latitude = inputList['general_measures'][4].getValue();
+            specimen.longitude = inputList['general_measures'][5].getValue();
+            specimen.information = inputList['general_measures'][6].getValue();
             
+			if(access == "private (you and administrators)")
+				specimen.user_id = userLoggedIn.getID();
+			else
+				specimen.user_id = -1;
+			
             specimen.measures = [];
             for (var key in inputList) 
             {
@@ -259,3 +270,4 @@ function changingSelectedTaxonomy()
     }
     
 }
+

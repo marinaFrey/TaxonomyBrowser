@@ -1,9 +1,15 @@
 
 function makeCharactersManagerPopup()
 {
-	console.log("abrindo manager");
-	var manager = new CharactersManager();
-	manager.createInterface();
+	if(userLoggedIn && userLoggedIn.getRole() == "1")
+	{
+		var manager = new CharactersManager();
+		manager.createInterface();
+	}
+	else
+	{
+		alert("You must be logged in an Administrator account to access the Characteristics Manager");
+	}
 }
 
 function CharactersManager()

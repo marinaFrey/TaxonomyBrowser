@@ -3,12 +3,17 @@
 
 function createHierarchyFile()
 {
-    var name = "joaozinho";
+	var user_info;
+	if(userLoggedIn)
+		user_info = {user_id: userLoggedIn.getID(), user_role: userLoggedIn.getRole()};
+	else
+		user_info = {user_id: "-1", user_role: "2"};
+		
     waitingDialog.show('Getting Database...');
     $.ajax({
         url: 'js/databaseInterface/php/generate_json_hierarchy.php',
         type: 'POST',
-        data: {id:name},
+        data: {id:user_info},
         success: function(data) 
         {
             console.log(data); // Inspect this in your console
@@ -89,15 +94,14 @@ function validateLogin(name,password)
         data: {id:user},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
 			if(!data)
 			{
 				wrongLogin();
-				console.log("wrooong");
 			}
 			else
 			{
 				showUsersInformation(data);
+				createHierarchyFile();
 				hideLoginPopup();
 			}
         },
@@ -112,9 +116,38 @@ function validateLogin(name,password)
 function editUser(user_info)
 {
 	//var user = {name:name, password:password};
-	
+
 	$.ajax({
         url: 'js/databaseInterface/php/editUser.php',
+        type: 'POST',
+        data: {id:user_info},
+        success: function(data) 
+        {
+            console.log(data); // Inspect this in your console
+			if(!data)
+			{
+				showLoginConfigurationErrorBlock("Could not login with provided password.");
+			}
+			else
+			{
+				showUsersInformation(data);
+				$('#loginConfigurationModal').modal('hide');
+			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
+function addUser(user_info)
+{
+	//var user = {name:name, password:password};
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/addUser.php',
         type: 'POST',
         data: {id:user_info},
         success: function(data) 
@@ -176,7 +209,8 @@ function addSpecimen(specimen)
 		m.push({charId: key, charTypeId: characterLst[key].character_group_id, value: specimen.measures[key]});
 	}
 
-    var sp = {
+    var sp = 
+	{
         taxonomy_id: specimen.taxonomy_id, 
         collection_ID: specimen.collection_id, 
         collected_by:specimen.collected_by, 
@@ -185,9 +219,11 @@ function addSpecimen(specimen)
         longitude:specimen.longitude, 
         altitude: specimen.altitude, 
         information: specimen.information, 
-        measures:m
-        }
-    
+        measures:m,
+		user_id: specimen.user_id
+	}
+    console.log(sp);
+	
     $.ajax({
         url: 'js/databaseInterface/php/addSpecimen.php',
         type: 'POST',

@@ -23,12 +23,10 @@ function Sunburst()
         radius = Math.min(width, height) / 2;
         
     //x is the rotation of the element, relative to the center of the circle, defined by the "transform" property
-    var x = d3.scale.linear()
-        .range([0, 2 * Math.PI]);
+    var x = d3.scale.linear().range([0, 2 * Math.PI]);
 
     //y is simple distance from the center 
-    var y = d3.scale.linear()
-        .range([0, radius]);
+    var y = d3.scale.linear().range([0, radius]);
 
     var svg = d3.select("#viz").append("svg")
         .attr("width", width)
@@ -40,15 +38,10 @@ function Sunburst()
     var partition = d3.layout.partition()
         .value(function(d) 
 		{ 
-			//return 1; 
             if(showByChildrenNumbers)
-            {
                 return 1; 
-            }
             else
-            {
                 return 1/(d.parent.children.length);
-            }
 		});
 
     var arc = d3.svg.arc()
@@ -62,7 +55,6 @@ function Sunburst()
         .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
         .innerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 - 1/10000)); })
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 + 1/10000)); });
-
 
     var color = d3.scale.category20c();
 	var childrenColor = d3.scale.category10();
@@ -85,10 +77,7 @@ function Sunburst()
      * creates sunburst
      */
     this.create = function()
-    {
-		
-		var colorList = randomColor({hue:'red',count:20});
-        console.log(colorList);
+    {	
         this_pointer = this;
         d3.json("data/data2.json", function(error, root) 
         {
@@ -96,13 +85,11 @@ function Sunburst()
             node = root;
 			rootNode = root;
             // creating g elements for each node on sunburst
-            
-            
+
             g = svg.selectAll("g")
                 .data(partition.nodes(root))
                 .enter().append("g");
             
-            console.log(node);
             defineColoring(node, 0);
             
             // creating path
@@ -138,7 +125,6 @@ function Sunburst()
                         d.color = randomColor();
                         //d.size = 1;
                     }*/
-                    //d.color = color((d.children ? d : d.parent).name);
                     
                     if(d.rank == "7")
                     {
@@ -148,13 +134,11 @@ function Sunburst()
                     return d.color; 
                 })
                 .style("opacity",normalOpacity)
-                //.on("click", click)
                 .each(stash)
                 ;
 				
 			
             textPath = g.append("path")
-                //.filter(function (d){return d.children})
                 .filter(function (d){return d.rank})
                 .attr("d", textArc)
 				.attr("id", function(d) 
@@ -168,11 +152,7 @@ function Sunburst()
 			databaseSize = path[0].length;
             
             text = g.append("text")
-                //.filter(function (d){return d.path.getTotalLength() > 100})
-                //.filter(function (d){return (d.children);})
                 .filter(function (d){return (d.rank);})
-                //.filter(function (d){return (d.endAngle - d.startAngle > 10*Math.PI/180 );})
-				//.filter(function (d){return d.depth != 0})
                 .attr("dy", function(d) 
                 {   return 0;
                     if(d.endAngle - d.startAngle == Math.PI*2)
@@ -285,10 +265,8 @@ function Sunburst()
             setInteraction(true);
 
             this_pointer.togglePartition(showByChildrenNumbers);
-        });
-        
-        d3.select('svg').style("height", height + "px");
-        
+        });     
+        d3.select('svg').style("height", height + "px");  
     }
     
     /* 
@@ -296,11 +274,7 @@ function Sunburst()
      */
     function click(d) 
     {
-		//console.log(d);
-		if(d.show == false)
-			console.log("fuck");
         // remove all mouse events
-        setHover(false);
 		setInteraction(false);
 
         
@@ -308,9 +282,6 @@ function Sunburst()
 		var clickedNode = d;
 		rootNode = d;
 
-        //d3.select(".isCenter").classed('isCenter', false);
-        //d3.select(this.parentNode).select("text").attr('class', 'isCenter');
-        
 		unsetShownOnChildren(node);
 		setShownOnChildren(rootNode);
 		
@@ -324,7 +295,6 @@ function Sunburst()
                 index ++;
                 if (index == databaseSize) 
 				{
-                    setHover(true);
 					setInteraction(true);
 				}
 			});	
@@ -338,7 +308,6 @@ function Sunburst()
 			.each("start", filterTexts)
 			.attr("pointer-events", null);
                 
-            
             /*
         outside_polyline //= svg.select("g").selectAll("polyline")
             .transition().duration(2000)
@@ -362,13 +331,10 @@ function Sunburst()
     this.togglePartition = function(type)
     {
         if(type)
-        {
             showByChildrenNumbers = true;
-        }
         else
-        {
             showByChildrenNumbers = false;
-        }
+
 		unsetShownOnChildren(node);
 		setShownOnChildren(rootNode);
 		
@@ -376,7 +342,7 @@ function Sunburst()
             .data(partition.nodes(node))
             .enter().append("g");
 			
-		 path.transition()
+		path.transition()
 			.filter(function(d){return d.show == true;})
 			.duration(transitionDuration)
 			.style("opacity",pathOpacity)
@@ -384,10 +350,15 @@ function Sunburst()
 
 			
 		textPath.transition()
-            .duration(transitionDuration).each("end", filterTexts)
+            .duration(transitionDuration)
             .attr("pointer-events", null)
+			.attr("startOffset", textOffset)
             .attrTween("d", textArcTween(rootNode))
-
+		
+		text
+			.transition().delay(transitionDuration).duration(transitionDuration)
+			.each("start", filterTexts)
+			.attr("pointer-events", null);
 		
         /*
         outside_polyline = g.append("polyline")//select(".lines").selectAll("polyline")
@@ -431,48 +402,7 @@ function Sunburst()
             });*/
     }
 	
-
-    function midAngle(d)
-    {
-        return d.startAngle + (d.endAngle - d.startAngle)/2;
-    }
-    
-    function defineColoring(d, j)
-    {
-        d.color = randomColor({hue:colorTypes[j]});
-        console.log(colorTypes[j]);
-        if(d.children)
-        {
-            for( var i = 0; i < d.children.length; i++)
-            {        if(d.children[i].rank && d.children[i].rank != "7")
-                    {
-                        defineColoring(d.children[i], j);
-                        j = getRandomInt(0, 5);
-                    }
-            }
-        }
-    }
-	
-	function setShownOnChildren(d)
-    {   
-		d.show = true;
-		//console.log(d);
-		if(d.children)
-		    for( var i = 0; i < d.children.length; i++)
-				if(d.children[i].rank)
-					setShownOnChildren(d.children[i]);
-    }
-	
-	function unsetShownOnChildren(d)
-    {   
-		d.show = false;
-		if(d.children)
-		    for( var i = 0; i < d.children.length; i++)
-				if(d.children[i].rank)
-					unsetShownOnChildren(d.children[i]);
-    }
-    
-    /* 
+	/* 
      * Selects node right clicked and all its children 
      * painting it with full opacity and adding it to the selected list 
      */
@@ -503,8 +433,242 @@ function Sunburst()
 			updateShownVisualizationAndOptions();
         }
     }
+
+	function setInteraction(set)
+	{
+		if (!set) 
+		{
+			// events for texts
+            d3.selectAll('text')
+				.on("click", null)
+				.on("contextmenu", null)
+				.on("mouseover", null)
+				.on("mouseout", null);
+            
+            // events for paths
+            d3.selectAll('path')
+				.on("click", null)
+				.on("contextmenu", null)
+				.on("mouseover", null)
+				.on("mouseout", null);		
+		}
+		else 
+		{
+			// events for texts
+            d3.selectAll('text')
+				.on("click", click)
+				.on("contextmenu", rightClick);
+            
+            // events for paths
+            d3.selectAll('path')
+				.on("click", click)
+				.on("contextmenu", rightClick);
+		}
+	}
+
+	// Interpolate the scales!
+    function arcTween(d) 
+    {
+      var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+          yd = d3.interpolate(y.domain(), [d.y, 1]),
+          yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
+      return function(d, i) {
+        if(i)
+		{
+            return function(t) { return arc(d); }
+		}
+		else
+		{	
+			return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
+		}
+	  };
+    }
+	
+	function textArcTween(d) 
+    {
+      var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+          yd = d3.interpolate(y.domain(), [d.y, 1]),
+          yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
+      return function(d, i) {
+        return i
+            ? function(t) { return textArc(d); }
+            : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return textArc(d); };
+      };
+    }
     
-    /* 
+    function arcTweenData(a, i) 
+    {	
+
+        var oi = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+        function tween(t) 
+        {
+            var b = oi(t);
+            a.x0 = b.x;
+            a.dx0 = b.dx;
+            return arc(b);
+        }
+        if (i == 0) 
+        {
+            // If we are on the first arc, adjust the x domain to match the root node
+            // at the current zoom level. (We only need to do this once.)
+            var xd = d3.interpolate(x.domain(), [node.x, node.x + node.dx]);
+            return function(t) 
+            {
+                x.domain(xd(t));
+                return tween(t);
+            };
+        } 
+        else 
+        {
+            return tween;
+        }
+    }
+	
+	function filterTexts(d) 
+	{
+		d.endAngle = arc.endAngle()(d);   
+		d.startAngle = arc.startAngle()(d);
+		/*
+		console.log(d.name)
+		console.log(this.getComputedTextLength());
+		console.log(d.textArcPath.getTotalLength());*/
+		
+		//if(d.endAngle - d.startAngle < 10*Math.PI/180)
+		//if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.depth == 0)
+			//e.endAngle = arc.endAngle()(e);   
+			//e.startAngle = arc.startAngle()(e);
+		/*
+		if(d.show)
+		{
+			d3.select(this.parentNode).style("display","block");
+		}
+		else
+		{	console.log(d);
+			d3.select(this.parentNode).style("display","none");
+		}*/
+		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth == 0 || d.depth < rootDepth || this.getComputedTextLength() > (d.textArcPath.getTotalLength())/2)
+		{
+			if(d.depth != 0)
+			{
+				d3.select(this.parentNode).style("display","none");
+				d3.select(this.parentNode).style("opacity", 0)
+			}
+		}
+		else
+		{	
+			d3.select(this.parentNode)
+				.style("opacity", 0);
+				
+			d3.select(this.parentNode)
+				.transition().duration(transitionDuration)
+				.style("display","block")
+				.style("opacity",1);
+				
+			d3.select(this).transition().duration(transitionDuration)
+			.attr("startOffset", textOffset);
+		}
+	}
+	function textOffset(f) 
+	{
+		if(f.endAngle - f.startAngle == Math.PI*2)
+		{
+			return "25%";
+		}
+		if(((f.startAngle + f.endAngle)/2 < 270*Math.PI/180) && ((f.startAngle + f.endAngle)/2 > 90*Math.PI/180))
+			return "75%"
+		else
+			return "25%"
+		/* if(f.endAngle - f.startAngle == Math.PI*2)
+		{
+			return "25%";
+		}
+		if((f.startAngle + f.endAngle)/2 == Math.PI*2) 
+		{
+			return "25%";
+		}
+		if(f.endAngle >= 270*Math.PI/180)
+		{
+			return "25%";
+		}
+		return (f.endAngle >= 90 * Math.PI/180 ? "75%" : "25%"); */
+	}
+	
+	function pathOpacity(d)
+	{
+		if(d == rootNode.parent)
+		{
+				return normalOpacity
+		}
+		if(d.show)
+		{
+			if(d.selected)
+				return 1;
+			else
+				return normalOpacity;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	/* CREATE TOOLTIP */
+	
+	function createTooltip(d)
+	{
+		$('#'+d.path.parentNode.lastChild.id).toolbar({
+		//$('div[data-toolbar="user-options"]').toolbar({
+			content: '#toolbar-options',
+			name: d.name,
+			position: 'top',
+			style: 'default',
+			adjustment: 40 //era 50
+
+		}); 
+		
+		
+		$('#'+d.path.parentNode.lastChild.id).on('toolbarItemClick',
+		//$('div[data-toolbar="user-options"]').on('toolbarItemClick',
+			function( event, buttonClicked ) 
+			{
+
+				if(buttonClicked.id == "tooltip_info")
+				{
+					makeTaxonomyPopup(d);
+				}
+				if(buttonClicked.id == "tooltip_add")
+				{
+					if(userLoggedIn)
+					{
+						if(d.rank == "7")
+						{
+							makeAddSpecimenPopup(d);
+						}
+						else
+						{
+							if(userLoggedIn.getRole() == "1")
+								makeAddTaxonomyPopup(d);
+							else
+								alert("You must be an Administrator to add new taxons to the database.");
+						}
+					}
+					else
+					{
+						alert("You must be logged in to add new information to the database.");
+					}
+				}
+				if(buttonClicked.id == "tooltip_trash")
+				{
+				
+				}
+			  
+			}
+		);
+	}
+	
+	/* HELPER FUNCTIONS */
+	
+	/* 
      * Adds node to selected list and applies same function to all its children
      * BEWARE recursive function
      */
@@ -545,319 +709,52 @@ function Sunburst()
         }
     }
 	
-	function setInteraction(set)
-	{
-		if (!set) 
-		{
-			// events for texts
-            d3.selectAll('text')
-				.on("click", null)
-				.on("contextmenu", null)
-				.on("mouseover", null)
-				.on("mouseout", null);
-            
-            // events for paths
-            d3.selectAll('path')
-				.on("click", null)
-				.on("contextmenu", null)
-				.on("mouseover", null)
-				.on("mouseout", null);		
-		}
-		else 
-		{
-			// events for texts
-            d3.selectAll('text')
-				.on("click", click)
-				.on("contextmenu", rightClick)
-				.on("mouseover", doHover)
-				.on("mouseout", unDoHover);
-            
-            // events for paths
-            d3.selectAll('path')
-				.on("click", click)
-				.on("contextmenu", rightClick)
-				.on("mouseover", doHover)
-				.on("mouseout", unDoHover);
-		}
-	}
-    
-    function setHover(set) 
+	
+	function defineColoring(d, j)
     {
-      if (!set) 
-      {
-        d3.selectAll('text')
-          //.on("mouseover", null)
-          .on("mouseout", null);
-
-        d3.selectAll('path')
-          //.on("mouseover", null)
-          .on("mouseout", null); 
-      }
-      else 
-      {
-        d3.selectAll('text')
-          //.on("mouseover", doHover)
-          .on("mouseout", unDoHover);
-
-        d3.selectAll('path')
-          //.on("mouseover", doHover)
-          .on("mouseout", unDoHover); 
-      }
-    }
-
-    function doHover(d) 
-    {
-      //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "0.6");
-	  //console.log(rootDepth+"<="+d.depth);
-		if(rootDepth <= d.depth && d.path)
-		{
-			
-		}
-		else
-		{
-			//d3.select("#toolbar-options").classed("hidden", true);
-		}
-      
-        /*
-        if((d.endAngle - d.startAngle < 10*Math.PI/180 ) || d.depth == 0)
+        d.color = randomColor({hue:colorTypes[j]});
+        if(d.children)
         {
-            // tooltip 
-            var xPosition = d3.event.pageX;
-            var yPosition = d3.event.pageY; 
-
-            //Update the tooltip position and value
-            d3.select("#tooltip")
-              .style("left", xPosition + "px")
-              .style("top", yPosition - 50 + "px")
-              .select("#name")
-              .text(d.name);
-
-            d3.select("#tooltip").classed("hidden", false);
-        }*/
-    
-      
-    };
-
-    function unDoHover(d) 
-    {
-      //d3.select(this.parentNode.childNodes[0]).transition().duration(200).attr("opacity", "1");
-      
-      // hiding tooltip
-	  //console.log($('#'+d.path.parentNode.lastChild.id));
-      d3.select("#toolbar-options").classed("hidden", true);
-    };
-
-    // Interpolate the scales!
-    function arcTween(d) 
-    {
-      var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-          yd = d3.interpolate(y.domain(), [d.y, 1]),
-          yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
-      return function(d, i) {
-        if(i)
-		{
-            return function(t) { return arc(d); }
-		}
-		else
-		{	
-			return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
-		}
-	  };
-    }
-	function textArcTween(d) 
-    {
-      var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-          yd = d3.interpolate(y.domain(), [d.y, 1]),
-          yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
-      return function(d, i) {
-        return i
-            ? function(t) { return textArc(d); }
-            : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return textArc(d); };
-      };
-    }
-
-    function getAnchor(d, e) 
-    {
-          var rotation = (x(d.x + d.dx / 2) - Math.PI / 2) / Math.PI * 180;
-          if (!d.parent || d3.select(e).classed('isCenter')){
-            return 'middle';
-          }
-          else if (rotation > 90 && rotation <= 270) {
-            return 'end';
-          }
-          else {
-            return 'start';
-          }
-    }
-
-    function computeTextTransform(d, e) 
-    {
-        if (!d.parent || d3.select(e).classed('isCenter')){ return "rotate(0)"};
-        var output;
-        var rotation = (x(d.x + d.dx / 2) - Math.PI / 2) / Math.PI * 180;
-        var translation = y(d.y) + 3;
-        var extraRotate = '';
-        if (rotation >= 90 && rotation <= 270) 
-        { 
-            extraRotate = -180;
+            for( var i = 0; i < d.children.length; i++)
+            {        if(d.children[i].rank && d.children[i].rank != "7")
+                    {
+                        defineColoring(d.children[i], j);
+                        j = getRandomInt(0, 5);
+                    }
+            }
         }
-        // se o path eh bem longo dava um problema que eh resolvido com isso - not sure why
-
-        if(d.path.getTotalLength() > 1000)
-        {
-            extraRotate = 0;
-        }
-        // multi line label
-        if((d.name || "").split(" ").length > 1)
-            insertLineBreaks(d,e);
-            
-        output = "rotate("+rotation+")"+"translate("+translation+")"+(extraRotate ? "rotate("+extraRotate+")" : "")
-
-        return output;
     }
-    
-    function insertLineBreaks(d,e)
-    {
-        var words = d.name.split();
+	
+	function setShownOnChildren(d)
+    {   
+		d.show = true;
+		//console.log(d);
+		if(d.children)
+		    for( var i = 0; i < d.children.length; i++)
+				if(d.children[i].rank)
+					setShownOnChildren(d.children[i]);
     }
-
-    function getDY(e)
-    {
-      return (d3.select(e).classed('isCenter')) ? '4em' : '.35em'
+	
+	function unsetShownOnChildren(d)
+    {   
+		d.show = false;
+		if(d.children)
+		    for( var i = 0; i < d.children.length; i++)
+				if(d.children[i].rank)
+					unsetShownOnChildren(d.children[i]);
     }
-    
-    // Setup for switching data: stash the old values for transition.
+	
+	// Setup for switching data: stash the old values for transition.
     function stash(d) 
     {
       d.x0 = d.x;
       d.dx0 = d.dx;
     }
-    
-    function arcTweenData(a, i) 
-    {	
-
-        var oi = d3.interpolate({x: a.x0, dx: a.dx0}, a);
-        function tween(t) 
-        {
-            var b = oi(t);
-            a.x0 = b.x;
-            a.dx0 = b.dx;
-            return arc(b);
-        }
-        if (i == 0) 
-        {
-            // If we are on the first arc, adjust the x domain to match the root node
-            // at the current zoom level. (We only need to do this once.)
-            var xd = d3.interpolate(x.domain(), [node.x, node.x + node.dx]);
-            return function(t) 
-            {
-                x.domain(xd(t));
-                return tween(t);
-            };
-        } 
-        else 
-        {
-            return tween;
-        }
-    }
-	function filterTexts(d) 
-	{
-		d.endAngle = arc.endAngle()(d);   
-		d.startAngle = arc.startAngle()(d);
-		//if(d.endAngle - d.startAngle < 10*Math.PI/180)
-		//if(d.endAngle - d.startAngle < 20*Math.PI/180 || d.depth == 0)
-			//e.endAngle = arc.endAngle()(e);   
-			//e.startAngle = arc.startAngle()(e);
-		//console.log(d);
-		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth == 0 || d.depth < rootDepth)
-		{
-			//if(d.depth != 0)
-			if(false)
-			{
-				d3.select(this.parentNode).style("display","none");
-				d3.select(this.parentNode).style("opacity", 0);
-			}
-		}
-		else
-		{	
-			d3.select(this.parentNode).style("display","block");
-			d3.select(this.parentNode).style("opacity",1);
-			d3.select(this).transition().duration(transitionDuration)
-			.attr("startOffset", textOffset);
-		}
-	}
-	function textOffset(f) 
-	{
-		if(f.endAngle - f.startAngle == Math.PI*2)
-		{
-			return "25%";
-		}
-		if(f.endAngle == Math.PI*2) 
-		{
-			return "25%";
-		}
-		if(f.endAngle >= 270*Math.PI/180)
-		{
-			return "25%";
-		}
-		return (f.endAngle >= 90 * Math.PI/180 ? "75%" : "25%");
-	}
-	function pathOpacity(d)
-	{
-		if(d == rootNode.parent)
-		{
-				return normalOpacity
-		}
-		if(d.show)
-		{
-			if(d.selected)
-				return 1;
-			else
-				return normalOpacity;
-		}
-		else
-		{
-			return 0;
-		}
-	}
 	
-	function createTooltip(d)
-	{
-		$('#'+d.path.parentNode.lastChild.id).toolbar({
-		//$('div[data-toolbar="user-options"]').toolbar({
-			content: '#toolbar-options',
-			name: d.name,
-			position: 'top',
-			style: 'default',
-			adjustment: 40 //era 50
-
-		}); 
-		
-		
-		$('#'+d.path.parentNode.lastChild.id).on('toolbarItemClick',
-		//$('div[data-toolbar="user-options"]').on('toolbarItemClick',
-			function( event, buttonClicked ) 
-			{
-
-				if(buttonClicked.id == "tooltip_info")
-				{
-					makeTaxonomyPopup(d);
-				}
-				if(buttonClicked.id == "tooltip_add")
-				{
-					if(d.rank == "7")
-						makeAddSpecimenPopup(d);
-					else
-						makeAddTaxonomyPopup(d);
-				}
-				if(buttonClicked.id == "tooltip_trash")
-				{
-				
-				}
-			  
-			}
-		);
-	}
+	function midAngle(d)
+    {
+        return d.startAngle + (d.endAngle - d.startAngle)/2;
+    }
     
     function getRandomInt(min, max) 
     {

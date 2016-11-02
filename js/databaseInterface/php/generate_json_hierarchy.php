@@ -6,6 +6,8 @@
     
     if (isset($_POST['id'])) 
     {
+		$user = $_POST['id'];
+		
         $hostname = 'localhost';
         $dbname = 'taxonomybrowser';
         $db_password = 'z8ta22j';
@@ -18,7 +20,10 @@
         $r->setTaxonomy($root_tax);
         $c = $taxonomy_database->getChilds($root_tax['taxonomy_id']);
         
-        setHierarchy($r,$c,$taxonomy_database);
+		if( $user['user_role'] == "2")
+			setHierarchyByUser($r,$c,$taxonomy_database, $user['user_id']);
+		else
+			setHierarchy($r,$c,$taxonomy_database);
         
         
         $myfile = fopen("../../../data/data2.json", "w") or die("Unable to open file!");

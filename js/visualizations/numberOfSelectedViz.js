@@ -19,15 +19,18 @@ function numberOfSelectedViz()
             var counter = [];
             for (var i = 0; i < filteredSelection.length; i++)
             {
-                var index = counter.map(function(e) { return e.name; }).indexOf(selection[filteredSelection[i]].name);
-                if(index !=-1)
-                {
-                    counter[index].size += 1;
-                }
-                else
-                {
-                    counter.push({color:selection[filteredSelection[i]].color, name:selection[filteredSelection[i]].name, size:1});
-                }
+				if(!selection[filteredSelection[i]].rank)
+				{
+					var index = counter.map(function(e) { return e.name; }).indexOf(selection[filteredSelection[i]].name);
+					if(index !=-1)
+					{
+						counter[index].size += 1;
+					}
+					else
+					{
+						counter.push({color:selection[filteredSelection[i]].color, name:selection[filteredSelection[i]].name, size:1});
+					}
+				}
                 
             }
             
@@ -46,7 +49,7 @@ function numberOfSelectedViz()
         {
             for (var i = 0; i < selection.length; i++)
             {
-                if(selection[i].characters)
+                if(selection[i].rank && selection[i].rank == "7")
                 {
                     var txtLabel = document.createElement("H0");
                     txtLabel.innerHTML = "<b><font color="+selection[i].color+">   " + selection[i].name + ":  </b>"+ selection[i].children.length+ " espécime(s) selecionados</font><br>";
@@ -79,26 +82,30 @@ function numberOfSelectedViz()
             var counter = [];
             for (var i = 0; i < filteredSelection.length; i++)
             {
-                var index = counter.map(function(e) { return e.name; }).indexOf(selection[filteredSelection[i]].name);
-                if(index !=-1)
-                {
-                    counter[index].size += 1;
-                }
-                else
-                {
-                    counter.push({color:selection[filteredSelection[i]].color, name:selection[filteredSelection[i]].name, size:1});
-                }
+				if(!selection[filteredSelection[i]].rank)
+				{
+					var index = counter.map(function(e) { return e.name; }).indexOf(selection[filteredSelection[i]].name);
+					if(index !=-1)
+					{
+						counter[index].size += 1;
+					}
+					else
+					{
+						counter.push({color:selection[filteredSelection[i]].color, name:selection[filteredSelection[i]].name, size:1});
+					}
+				}
                 
             }
             
             for (var i = 0; i < counter.length; i++)
             {
-                var txtLabel = document.createElement("H0");
-                txtLabel.innerHTML = "<b><font color="+counter[i].color+">   " + counter[i].name + ":  </b>"+ counter[i].size+ " selected specimen(s)</font><br>";
-                total += counter[i].size;
-                analysis_div.appendChild(txtLabel);
-                labels_analysis.push(txtLabel);
-                //dataset.push({name: selection[filteredSelection[i]].name, size: selection[filteredSelection[i]].children.length, color:selection[filteredSelection[i]].color});
+					var txtLabel = document.createElement("H0");
+					txtLabel.innerHTML = "<b><font color="+counter[i].color+">   " + counter[i].name + ":  </b>"+ counter[i].size+ " selected specimen(s)</font><br>";
+					total += counter[i].size;
+					analysis_div.appendChild(txtLabel);
+					labels_analysis.push(txtLabel);
+					//dataset.push({name: selection[filteredSelection[i]].name, size: selection[filteredSelection[i]].children.length, color:selection[filteredSelection[i]].color});
+
             }
             
                 
@@ -108,15 +115,18 @@ function numberOfSelectedViz()
             var counter = [];
             for (var i = 0; i < selection.length; i++)
             {
-                var index = counter.map(function(e) { return e.name; }).indexOf(selection[i].name);
-                if(index !=-1)
-                {
-                    counter[index].size += 1;
-                }
-                else
-                {
-                    counter.push({color:selection[i].color, name:selection[i].name, size:1});
-                }
+				if(!selection[i].rank)
+				{
+					var index = counter.map(function(e) { return e.name; }).indexOf(selection[i].name);
+					if(index !=-1)
+					{
+						counter[index].size += 1;
+					}
+					else
+					{
+						counter.push({color:selection[i].color, name:selection[i].name, size:1});
+					}
+				}
             }   
             
             for (var i = 0; i < counter.length; i++)

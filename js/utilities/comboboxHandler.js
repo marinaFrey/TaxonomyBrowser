@@ -532,7 +532,7 @@ function generateMeasuresList()
 	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
-        if(selection[i].characters)
+        if(selection[i].inheritedCharacters)
 		{
 
             for(var j = 0; j < selection[i].inheritedCharacters.length; j++)

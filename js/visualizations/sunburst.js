@@ -59,7 +59,15 @@ function Sunburst()
     var color = d3.scale.category20c();
 	var childrenColor = d3.scale.category10();
     var colorTypes = {0:'blue',1:'pink',2:'purple',3:'orange',4:'green',5:'red'};
-    
+	var TaxonsColorsList = 
+			{
+				0: ['#C6DBEF','#9ECAE1','#6BAED6', '#3182BD'], 
+				1: ['#FDD098','#FDAE6B','#FD8D3C','#E6550D'], 
+				2: ['#C7E9C0','#A1D99B','#74C476','#31A354'], 
+				3:['#DADAEB','#BCBDDC','#9E9AC8','#756BB1'], 
+				4:['#EBDAE3','#DCBCCD','#C89AAD','#B16B84']
+			};
+	
     var radius = Math.min(width, height) / 2;
     var arc2 = d3.svg.arc()
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy));})
@@ -90,7 +98,7 @@ function Sunburst()
                 .data(partition.nodes(root))
                 .enter().append("g");
             
-            defineColoring(node, 0);
+            defineColoring(node, 0,0);
             
             // creating path
             path = g.append("path")
@@ -657,8 +665,24 @@ function Sunburst()
 						alert("You must be logged in to add new information to the database.");
 					}
 				}
-				if(buttonClicked.id == "tooltip_trash")
+				if(buttonClicked.id == "tooltip_edit")
 				{
+					
+					if(userLoggedIn)
+					{
+						if(userLoggedIn.getRole() == "1")
+						{
+							makeTaxonomyPopup(d);
+							editTaxonomyFields(d);
+						}
+						else
+							alert("You must be an Administrator to edit taxons from the database.");
+						
+					}
+					else
+					{
+						alert("You must be logged in to edit information from the database.");
+					}
 				
 				}
 			  
@@ -710,16 +734,21 @@ function Sunburst()
     }
 	
 	
-	function defineColoring(d, j)
+	function defineColoring(d, colorGroup, colorTone)
     {
-        d.color = randomColor({hue:colorTypes[j]});
+		colorTone = (colorTone +1)% 4;
+		console.log(colorGroup);
+		console.log(colorTone);
+		console.log(TaxonsColorsList[colorGroup]);
+		d.color = TaxonsColorsList[colorGroup][colorTone];//randomColor({hue:colorTypes[j]});
         if(d.children)
         {
             for( var i = 0; i < d.children.length; i++)
-            {        if(d.children[i].rank && d.children[i].rank != "7")
+            {       if(d.children[i].rank && d.children[i].rank != "7")
                     {
-                        defineColoring(d.children[i], j);
-                        j = getRandomInt(0, 5);
+                        defineColoring(d.children[i], colorGroup,colorTone);
+                        colorGroup = (colorGroup + /*getRandomInt(1,4)*/+1) % 5;
+						//colorGroup = (colorGroup +1) % 5;
                     }
             }
         }

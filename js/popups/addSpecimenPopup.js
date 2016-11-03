@@ -44,7 +44,6 @@ function makeAddSpecimenPopup(species)
 	//infoLabel.style = "float:left;";
 	
 	var list = [];
-	console.log(species);
     getTaxNames(species.parent, list);
 	
     for( var i = 0; i < list.length; i++)

@@ -29,6 +29,10 @@ function makeTaxonomyPopup(taxonomy)
 			hierarchylistString += " <\h4><br>"
 	}
 	
+	var list = [0,0];
+	getToBeDeletedNumbers(taxonomy, list);
+	console.log(list);
+	
     // adding standard specimen information
     var infoLabel = document.getElementById("info_text");
     infoLabel.innerHTML = hierarchylistString;
@@ -42,7 +46,7 @@ function makeTaxonomyPopup(taxonomy)
     newInput3.create("text",infoLabel, "Rank","","",ranklist[taxonomy.rank], "");
     inputList['general_measures'].push(newInput3);
     var newInput4 = new Input();
-    newInput4.create("text",infoLabel, "Specimens","","",taxonomy.value , "");
+    newInput4.create("text",infoLabel, "Specimens","","",list[1] , "");
     inputList['general_measures'].push(newInput4);
     var newInput5 = new Input();
     newInput5.create("text",infoLabel, "Information","","", taxonomy.information, "");
@@ -73,16 +77,21 @@ function makeTaxonomyPopup(taxonomy)
 	{
 		editTaxonomyButton.style = "display:block;";
 		editTaxonomyButton.onclick = function(){return editTaxonomyFields(taxonomy);};
-
-		removeTaxonomyButton.style = "display:block;";
-		removeTaxonomyButton.onclick = function()
+		if(taxonomy.rank != "1")
 		{
-			if (confirm("Do you really want to delete this Taxonomy? All it's children will be also removed from the database") == true) 
+			removeTaxonomyButton.style = "display:block;";
+			removeTaxonomyButton.onclick = function()
 			{
-				removeTaxonomy(taxonomy);
-				$('#basicModal').modal('hide');
-			}
-		};
+				
+				if (confirm("Do you really want to delete this Taxonomy? A total of "+list[0]+" taxons and "+list[1]+" specimens will be removed") == true) 
+				{
+					removeTaxonomy(taxonomy);
+					$('#basicModal').modal('hide');
+				}
+			};
+		}
+		else
+			removeTaxonomyButton.style = "display:none;";
 	}
 	else
 	{
@@ -335,4 +344,20 @@ function allowCharactersSelection()
 			}
         }
     }
+}
+
+function getToBeDeletedNumbers(d, list)
+{
+	if(d.rank)
+		list[0] += 1;
+		
+	if(d.collection_id)
+		list[1] += 1;
+	if(d.children)
+	{
+		for( var i = 0; i < d.children.length; i++)
+		{
+			getToBeDeletedNumbers(d.children[i], list);
+		}	
+	}
 }

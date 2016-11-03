@@ -23,26 +23,34 @@
 	<script type="text/javascript" src="js/visualizations/numberOfSelectedViz.js"></script>
 	<script type="text/javascript" src="js/visualizations/parallelCoordinates.js"></script>
     
-    <!--OTHER-->
-	<script type="text/javascript" src="js/events.js"></script>
-	<script type="text/javascript" src="js/comboboxHandler.js"></script>
-	<script type="text/javascript" src="js/specimenPopup.js"></script>
-	<script type="text/javascript" src="js/taxonomyPopup.js"></script>
-	<script type="text/javascript" src="js/addTaxonomyPopup.js"></script>
-	<script type="text/javascript" src="js/addSpecimenPopup.js"></script>
-	<script type="text/javascript" src="js/input.js"></script>
-	<script type="text/javascript" src="js/characters.js"></script>
-	<script type="text/javascript" src="js/charactersManagerPopup.js"></script>
-	<script type="text/javascript" src="js/ranks.js"></script>
-	<script type="text/javascript" src="js/analysisPopup.js"></script>
-	<script type="text/javascript" src="js/filter.js"></script>
+	<!-- DATABASE INTERFACE -->
+	<script type="text/javascript" src="js/databaseInterface/characters.js"></script>
+	<script type="text/javascript" src="js/databaseInterface/login.js"></script>
+	<script type="text/javascript" src="js/databaseInterface/databaseInterface.js"></script>
+	<script type="text/javascript" src="js/databaseInterface/ranks.js"></script>	
 	
-	<script type="text/javascript" src="js/export.js"></script>
+	
+	<!-- POPUPS -->
+	<script type="text/javascript" src="js/popups/specimenPopup.js"></script>
+	<script type="text/javascript" src="js/popups/taxonomyPopup.js"></script>
+	<script type="text/javascript" src="js/popups/addTaxonomyPopup.js"></script>
+	<script type="text/javascript" src="js/popups/addSpecimenPopup.js"></script>
+	<script type="text/javascript" src="js/popups/analysisPopup.js"></script>
+	<script type="text/javascript" src="js/popups/charactersManagerPopup.js"></script>
+
+	<!--OTHER-->
+	<script type="text/javascript" src="js/utilities/events.js"></script>
+	<script type="text/javascript" src="js/utilities/comboboxHandler.js"></script>
+	<script type="text/javascript" src="js/utilities/input.js"></script>
+	<script type="text/javascript" src="js/utilities/filter.js"></script>
+	<script type="text/javascript" src="js/utilities/export.js"></script>
+	
+	<!-- OTHER LIBS -->
 	<script type="text/javascript" src="libs/loadingBar.js"></script>
 	<script type="text/javascript" src="libs/randomColor-master/randomColor.js"></script>
-	<script type="text/javascript" src="js/login.js"></script>
+	
     
-	<script type="text/javascript" src="js/databaseInterface/databaseInterface.js"></script>
+	
 	
     
     <!--JQUERY-->
@@ -107,11 +115,15 @@
                 <li><a href="#" onClick="return makeCharactersManagerPopup();">
 					<span class="glyphicon glyphicon-cog"></span>
 					Characteristics Manager
-				</a></li>
+				</a></li><!--
                 <li><a href="#" onClick="return exportSelection();">
 					<span class="glyphicon glyphicon-download-alt"></span>
 					Export Selected Specimens</a>
 				</li>
+				<li><a href="#" onClick="return showAnalysisPopup();">
+					<span class="glyphicon glyphicon-signal"></span>
+					Analysis on Selected Specimens</a>
+				</li>-->
 				<!--
                  <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Options<span class="caret"></span>
@@ -188,15 +200,15 @@
     <div class="row">
         <div class="col-sm-4" style="text-align: center" >
             <!--<img name="taxtreetitle" src="images/taxonomyTree.png" width="300" height="50" border="0" title="here you can select by right-clicking any specimen you want to visualize">-->
-            <h2><b><font color="#8a23b2">Taxonomy Tree</font></b></h2> 
+            <h2><b><font color="#bf83ea">Taxonomy Tree</font></b></h2> 
         </div>
         <div class="col-sm-2" style="text-align: center">
             <!--<img name="filteringtitle" src="images/filtering.png" width="180" height="50" border="0" title="here you can filter the selected specimen you want to visualize">-->
-			<h2><b><font color="#2363b2">Filtering</font></b></h2>
+			<h2><b><font color="#75C9FF">Filtering</font></b></h2>
 		</div>
         <div class="col-sm-6" style="text-align: center">
             <!--<img name="viztitle" src="images/visualization.png" width="300" height="45" border="0" title="here you can see the visualizations!">-->
-			<h2><b><font color="#62961f">Visualizations</font></b></h2>
+			<h2><b><font color="#89DE78">Visualizations</font></b></h2> <!-- #b5f279 -->
 		</div>
     </div>
     
@@ -220,9 +232,10 @@
         
         <!-- icons for filtering -->
 		<div class="col-sm-2" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
-			<img name="filterRemoveButton" src="images/filter_remove.png" width="80" height="80" border="0" alt="javascript button" onClick="return removeFilters();" title="remove all filters from selection">
+			<!--<img name="filterRemoveButton" src="images/filter_remove.png" width="80" height="80" border="0" alt="javascript button" onClick="return removeFilters();" title="remove all filters from selection"> -->
+			<img name="analysis" src="images/analysis_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return showAnalysisPopup();" title="analysis of selected specimens"> 
 			<img name="filterEditButton" src="images/filter_edit.png" width="80" height="80" border="0" alt="javascript button" onClick="return openFilters();" title="filter manager">
-			<img name="analysis" src="images/analysis_button.png" width="110" height="80" border="0" alt="javascript button" onClick="return showAnalysisPopup();">
+			<img name="export" src="images/export_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return exportSelection();" title="export selected specimens"> 
             <!--<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">	-->	
 		</div>
         <!-- icons for selecting wich visualization to show -->
@@ -297,7 +310,7 @@
 <div id="toolbar-options" class="hidden">
    <a id="tooltip_info" href="#"><i class="fa fa-info" ></i></a>
    <a id="tooltip_add" href="#"><i class="fa fa-plus" ></i></a>
-   <a id="tooltip_trash" href="#"><i class="fa fa-trash" ></i></a>
+   <a id="tooltip_edit" href="#"><i class="fa fa-pencil" ></i></a>
 </div>
 
 <!-- POPUP MODAL SPECIMENS-->

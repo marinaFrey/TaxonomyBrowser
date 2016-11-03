@@ -129,7 +129,7 @@
 }
 .tool-container.tool-top,
 .tool-container.tool-bottom {
-  height: 40px;
+  height: 70px;
   border-bottom: 0px solid #beb8b8;
 }
 .tool-container.tool-top .tool-item,
@@ -160,12 +160,12 @@
 }
 .tool-top .tool-item:first-child:hover,
 .tool-bottom .tool-item:first-child:hover {
-  border-top-left-radius: 6px;
+  /*border-top-left-radius: 6px;*/
   border-bottom-left-radius: 6px;
 }
 .tool-top .tool-item:last-child:hover,
 .tool-bottom .tool-item:last-child:hover {
-  border-top-right-radius: 6px;
+  /*border-top-right-radius: 6px;*/
   border-bottom-right-radius: 6px;
 }
 .tool-vertical-top .tool-item:first-child:hover,

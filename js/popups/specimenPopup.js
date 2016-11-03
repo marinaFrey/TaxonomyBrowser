@@ -15,6 +15,7 @@ function makeSpecimenPopup(specimen)
 	
     // adding standard specimen information
     var infoLabel = document.getElementById("info_text");
+	
     var newInput2 = new Input();
     newInput2.create("text",infoLabel, "Collection ID","","",specimen.collection_id, "");
     inputList['general_measures'].push(newInput2);

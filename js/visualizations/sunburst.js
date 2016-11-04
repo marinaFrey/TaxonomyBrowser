@@ -568,7 +568,7 @@ function Sunburst()
 		}*/
 		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth < rootDepth || d.nameLength > (d.textArcPath.getTotalLength())/2)
 		{
-			if((d.endAngle-d.startAngle)<5*Math.PI/180)
+			if((d.endAngle-d.startAngle)<5*Math.PI/180 || d.depth < rootDepth)
 				d3.select(this.parentNode).style("display","none");
 			d3.select(this.parentNode).style("opacity", 0)
 		}

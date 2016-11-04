@@ -4,7 +4,8 @@
 <head>
     <title>Taxonomy Browser</title>
     <meta charset="utf-8">
-    
+    <link rel="icon" href="images/icon_site.png">
+	
     <!--BOOTSTRAP-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -44,6 +45,12 @@
 	<script type="text/javascript" src="js/utilities/input.js"></script>
 	<script type="text/javascript" src="js/utilities/filter.js"></script>
 	<script type="text/javascript" src="js/utilities/export.js"></script>
+	
+	<!-- TUTORIAL -->
+	<script type="text/javascript" src="js/utilities/tutorial.js"></script>
+	<link href="libs/introjs230/introjs.css" rel="stylesheet">
+	<script type="text/javascript" src="libs/introjs230/intro.js"></script>
+    <!--<link href="../assets/css/bootstrap-responsive.min.css" rel="stylesheet">-->
 	
 	<!-- OTHER LIBS -->
 	<script type="text/javascript" src="libs/loadingBar.js"></script>
@@ -112,7 +119,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#" onClick="return makeCharactersManagerPopup();">
+                <li><a href="#" id="charactersManager" onClick="return makeCharactersManagerPopup();">
 					<span class="glyphicon glyphicon-cog"></span>
 					Characteristics Manager
 				</a></li><!--
@@ -181,6 +188,12 @@
 						</li>
                     </ul>
                 </li> 
+				
+				<li><a href="#" id="tutorialButton" href="javascript:void(0);" onClick="startIntro();">
+					<span  class="glyphicon glyphicon-info-sign"></span>
+					Tour
+				</a></li>
+				
             </ul>
         </div>
     </div>
@@ -204,7 +217,7 @@
         </div>
         <div class="col-sm-2" style="text-align: center">
             <!--<img name="filteringtitle" src="images/filtering.png" width="180" height="50" border="0" title="here you can filter the selected specimen you want to visualize">-->
-			<h2><b><font color="#75C9FF">Filtering</font></b></h2>
+			<h2><b><font color="#75C9FF">Specimens</font></b></h2>
 		</div>
         <div class="col-sm-6" style="text-align: center">
             <!--<img name="viztitle" src="images/visualization.png" width="300" height="45" border="0" title="here you can see the visualizations!">-->
@@ -215,9 +228,9 @@
 	<!-- SETTINGS -->
 	<div class="row">
         <!-- radio buttons to select type of partitioning made in sunburst -->
-        <div class="col-sm-4" style="background-color:#bf83ea;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
-            <img name="byspecies" src="images/species2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
-            <img name="byspecimen" src="images/specimen.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
+        <div class="col-sm-4" id="taxtreeoptions" style="background-color:#bf83ea;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
+            <img name="byspecies" id="byspecies" src="images/species2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
+            <img name="byspecimen" id="byspecimen" src="images/specimen.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
         <!--
             <div class="col-sm-2" style="text-align: center" >
                 
@@ -231,20 +244,20 @@
         </div>
         
         <!-- icons for filtering -->
-		<div class="col-sm-2" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
+		<div class="col-sm-2" id="filteringoptions" style="background-color:#75C9FF;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
 			<!--<img name="filterRemoveButton" src="images/filter_remove.png" width="80" height="80" border="0" alt="javascript button" onClick="return removeFilters();" title="remove all filters from selection"> -->
-			<img name="analysis" src="images/analysis_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return showAnalysisPopup();" title="analysis of selected specimens"> 
-			<img name="filterEditButton" src="images/filter_edit.png" width="80" height="80" border="0" alt="javascript button" onClick="return openFilters();" title="filter manager">
-			<img name="export" src="images/export_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return exportSelection();" title="export selected specimens"> 
+			<img name="analysis" id="analysis" src="images/analysis_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return showAnalysisPopup();" title="analysis of selected specimens"> 
+			<img name="filterEditButton" id="filterEditButton" src="images/filter_edit.png" width="80" height="80" border="0" alt="javascript button" onClick="return openFilters();" title="filter manager">
+			<img name="export" id="export" src="images/export_button_round.png" width="80" height="80" border="0" alt="javascript button" onClick="return exportSelection();" title="export selected specimens"> 
             <!--<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">	-->	
 		</div>
         <!-- icons for selecting wich visualization to show -->
-        <div class="col-sm-6"  style="background-color:#b5f279;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
+        <div class="col-sm-6" id="vizoptions"  style="background-color:#b5f279;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
             <!--<img name="bars" src="images/bars.png" width="180" height="140" border="0" alt="javascript button" onClick="return showBars();"style= " border: 4px solid yellow;border-radius: 38px;" >-->
             <!--<img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >-->
-            <img name="coord" src="images/coord2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showParallelCoord();" title="show parallel coordinates visualization" >
-            <img name="dots" src="images/bullets2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showDots();" title="show scatterplot visualization">
-            <img name="map" src="images/map2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showMap();" title="show map visualization">
+            <img name="coord" id="coord" src="images/coord2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showParallelCoord();" title="show parallel coordinates visualization" >
+            <img name="dots" id="dots" src="images/bullets2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showDots();" title="show scatterplot visualization">
+            <img name="map" id="map" src="images/map2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showMap();" title="show map visualization">
             
         </div>
         
@@ -259,7 +272,7 @@
 	<!-- VISUALIZATIONS -->
 	<div class="row" >
         <!-- sunburst -->
-		<div class="col-sm-4"  id="viz" style="text-align:center" data-toolbar="user-options"></div>
+		<div class="col-sm-4"  id="viz" style="text-align:center" data-toolbar="user-options" ></div>
         <!-- specimens selected -->
 		<div class="col-sm-2"  id="selected_view" ></div>
         <!-- other visualizations -->

@@ -189,6 +189,8 @@ function Sunburst()
                 .attr("xlink:href",function(d){return "#" + d.textArcPath.id;})	
 				.text(function(d){ return d.name;})
                 ;
+		text
+                .each(function(d){d.nameLength = this.getComputedTextLength()})
 
             
 			//console.log(text);
@@ -307,12 +309,17 @@ function Sunburst()
 				}
 			});	
 
+		text
+	    	.transition()
+			.each("start",function(d){d3.select(this.parentNode).style("opacity", 0);})
+
 		textPath.transition()
             .duration(transitionDuration)
             .attrTween("d", textArcTween(d));	
 
 		text
-			.transition().delay(transitionDuration)
+			.transition()
+			.delay(transitionDuration)
 			.each("start", filterTexts)
 			.attr("pointer-events", null);
                 
@@ -349,6 +356,10 @@ function Sunburst()
         g = svg.selectAll("g")
             .data(partition.nodes(node))
             .enter().append("g");
+
+		text
+	    	.transition()
+			.each("start",function(d){d3.select(this.parentNode).style("opacity", 0);})
 			
 		path.transition()
 			.filter(function(d){return d.show == true;})
@@ -364,7 +375,8 @@ function Sunburst()
             .attrTween("d", textArcTween(rootNode))
 		
 		text
-			.transition().delay(transitionDuration).duration(transitionDuration)
+			.transition()
+			.delay(transitionDuration)
 			.each("start", filterTexts)
 			.attr("pointer-events", null);
 		
@@ -554,26 +566,26 @@ function Sunburst()
 		{	console.log(d);
 			d3.select(this.parentNode).style("display","none");
 		}*/
-		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth == 0 || d.depth < rootDepth || this.getComputedTextLength() > (d.textArcPath.getTotalLength())/2)
+		if(d.endAngle - d.startAngle < 1*Math.PI/180 || d.show == false || d.depth < rootDepth || d.nameLength > (d.textArcPath.getTotalLength())/2)
 		{
-			if(d.depth != 0)
-			{
+			if((d.endAngle-d.startAngle)<5*Math.PI/180)
 				d3.select(this.parentNode).style("display","none");
-				d3.select(this.parentNode).style("opacity", 0)
-			}
+			d3.select(this.parentNode).style("opacity", 0)
 		}
 		else
 		{	
-			d3.select(this.parentNode)
-				.style("opacity", 0);
+			//d3.select(this.parentNode)
+			//	.style("opacity", 0);
 				
 			d3.select(this.parentNode)
 				.transition().duration(transitionDuration)
 				.style("display","block")
 				.style("opacity",1);
 				
-			d3.select(this).transition().duration(transitionDuration)
-			.attr("startOffset", textOffset);
+			d3.select(this)
+				.transition()
+				.duration(transitionDuration)
+				.attr("startOffset", textOffset);
 		}
 	}
 	function textOffset(f) 

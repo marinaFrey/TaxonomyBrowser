@@ -377,7 +377,7 @@
                     <h4 class="modal-title" id="analysisModalLabel"></h4>
                 </div>
                 <div class="col-sm-2" ></div>
-                <div class="col-sm-4"  id="analysis_combos" style="text-align:right;margin-top: 20px;"></div>	
+                <div class="col-sm-4"  id="espacoembranco" style="text-align:right;margin-top: 20px;"></div>	
             </div>
             <!-- info -->
             <div class="modal-body" id="info-body">
@@ -388,6 +388,7 @@
                         <div class="well" id="counting_text" style="text-align:center;"></div>
                         
                         <div id="analysis_title" style="text-align:center;"></div>
+						<div id="analysis_combos" style="text-align:center;"></div>
                         <div class="well" id="analysis_text" style="text-align:center;"></div>
                     </div>
                     <div class="col-sm-2" ></div>
@@ -558,8 +559,8 @@
 	}, 250);
 	
     // creating sunburst
-    var sunburst = new Sunburst;
-    sunburst.create();
+    var sunburst = new Sunburst();
+    //sunburst.create();
     
     var selectedSpecimenViz = new SelectedSpecimens();
     selectedSpecimenViz.create();

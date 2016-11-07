@@ -87,6 +87,7 @@ function Sunburst()
     this.create = function()
     {	
         this_pointer = this;
+		
         d3.json("data/data2.json", function(error, root) 
         {
             // saving node root
@@ -438,7 +439,6 @@ function Sunburst()
             if(d.children)
                 setSelectionOnChildren(d);
             d.selected = true;
-            //console.log(selection);
 			updateShownVisualizationAndOptions();
         }
         else
@@ -749,9 +749,6 @@ function Sunburst()
 	function defineColoring(d, colorGroup, colorTone)
     {
 		colorTone = (colorTone +1)% 4;
-		console.log(colorGroup);
-		console.log(colorTone);
-		console.log(TaxonsColorsList[colorGroup]);
 		d.color = TaxonsColorsList[colorGroup][colorTone];//randomColor({hue:colorTypes[j]});
         if(d.children)
         {
@@ -769,7 +766,6 @@ function Sunburst()
 	function setShownOnChildren(d)
     {   
 		d.show = true;
-		//console.log(d);
 		if(d.children)
 		    for( var i = 0; i < d.children.length; i++)
 				if(d.children[i].rank)

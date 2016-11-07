@@ -31,7 +31,7 @@
         fwrite($myfile, $txt);
         fclose($myfile);
         
-        echo "success";
+        echo 1;
 
     }
 ?>

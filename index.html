@@ -229,8 +229,8 @@
 	<div class="row">
         <!-- radio buttons to select type of partitioning made in sunburst -->
         <div class="col-sm-4" id="taxtreeoptions" style="background-color:#bf83ea;webkit-border-radius: 11px;border-radius: 15px;text-align: center">
-            <img name="byspecies" id="byspecies" src="images/species2.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
-            <img name="byspecimen" id="byspecimen" src="images/specimen.png" width="110" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
+            <img name="byspecies" id="byspecies" src="images/species2.png" width="220" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" title="partition taxonomy tree by number of species">
+            <img name="byspecimen" id="byspecimen" src="images/specimen.png" width="220" height="80" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" title="partition taxonomy tree by number of specimens">
         <!--
             <div class="col-sm-2" style="text-align: center" >
                 
@@ -278,9 +278,12 @@
         <!-- other visualizations -->
 		<div class="col-sm-6" id="right_viz" style="text-align:center">
             <!-- image that shows when there is nothing selected -->
-            <img name="nosel"  src="images/no_selection.png" border="0" style="display:flex;justify-content:center;align-items:center;">
+				<p style='text-align:center;'><img name="nosel"  src="images/no_selection.png" border="0" style="display:flex;justify-content:center;align-items:center;"></p>
+
             <!-- image that shows when the filter removes all specimens -->
-            <img name="nofiltersel"  src="images/no_filter_selection.png" border="0" style="display:none;justify-content:center;align-items:center;">
+				<p style='text-align:center;'><img name="nofiltersel"  src="images/no_filter_selection.png" border="0" style="display:none;justify-content:center;align-items:center;"></p>
+            
+            
             <!-- visualizations -->
             <div id="sel_viz" ></div>
             <!-- google maps API -->

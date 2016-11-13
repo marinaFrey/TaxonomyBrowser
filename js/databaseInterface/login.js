@@ -1,3 +1,4 @@
+var ACCESS_OPTION_NAME = "ACCESS";
 
 function showLoginPopup()
 {
@@ -27,11 +28,11 @@ function showUsersInformation(user_info)
 	loginButton.style= "display:none";
 	var userTab = document.getElementById("userTab");	
 	userTab.style= "display:block";
-	
+
 	user = JSON.parse(user_info);
 	
 	userLoggedIn = new User();
-	userLoggedIn.create(user.id, user.full_name,user.user_name,user.role, user.email);
+	userLoggedIn.create(user.id, user.full_name,user.user_name,user.role, user.email, user.user_groups);
 	userLoggedIn.populateUserInterface();
 }
 
@@ -169,14 +170,16 @@ function User()
 	this.userID;
 	this.role;
 	this.email;
+	this.groups;
 	
-	this.create = function(id,full_name,user_name,role,email)
+	this.create = function(id,full_name,user_name,role,email, groups)
 	{
 		this.userName = user_name;
 		this.fullName = full_name;
 		this.userID = id;
 		this.role = role;
 		this.email = email;
+		this.groups = groups;
 	}
 	
 	this.populateUserInterface = function()
@@ -251,5 +254,41 @@ function User()
 	{
 		return this.role;
 	}
+	
+	this.getUserGroupsAsOptionList = function()
+	{
+		var new_list = [
+		{
+			name:"private (you and administrators)", 
+			id: "none",
+			group: ACCESS_OPTION_NAME,
+			isNum:false
+		},
+		{
+			name:"public (everyone)",
+			id: "none",
+			group: ACCESS_OPTION_NAME,
+			isNum:false
+		}];
+		
+		for( var key in this.groups)
+		{
+			new_list.push({name: this.groups[key],id: "none", group: ACCESS_OPTION_NAME, isNum: false});
+		}
+		
+		return new_list;
+	}
+	
+	this.getIndexByGroupName = function(name)
+	{
+		for( var key in this.groups)
+		{
+			if(this.groups[key] == name)
+			{
+				return key;
+			}
+		}
+	}
+	
 	
 }

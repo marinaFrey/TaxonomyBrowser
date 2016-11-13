@@ -54,6 +54,26 @@ function FilterPopup()
      */
 	this.addFilter = function()
 	{
+		var main_div = document.createElement('div');
+		var space_div = document.createElement('div');
+		space_div.setAttribute('class',"col-sm-1");
+		main_div.appendChild(space_div);
+		var measure_div = document.createElement('div');
+		measure_div.setAttribute('class',"col-sm-4");
+		main_div.appendChild(measure_div);
+		var option_div = document.createElement('div');
+		option_div.setAttribute('class',"col-sm-3");
+		option_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(option_div);
+		var label_div = document.createElement('div');
+		label_div.setAttribute('class',"col-sm-3");
+		label_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(label_div);
+		var rmv_div = document.createElement('div');
+		rmv_div.setAttribute('class',"col-sm-1");
+		main_div.appendChild(rmv_div);
+		infoLabel.appendChild(main_div);
+		
         // creating input for the filter and delete icon
 		var comboMeasure = new ComboBox();
         var comboOption = new ComboBox();
@@ -62,22 +82,29 @@ function FilterPopup()
         var br = document.createElement("br");
         
         // populating combobox with all measures and additional information
-		comboMeasure.createFilterCombo("comboMeasure", function()
+		comboMeasure.createFilterCombo("comboMeasure", measure_div, function()
         {
-            if(comboMeasure.isNumeric())
-                comboOption.updateOptions(operationsListNumeric);
-            else
-                 comboOption.updateOptions(operationsListString);
+			if(comboMeasure.getGroupName() == ACCESS_OPTION_NAME)
+			{
+				comboOption.changeStyle("opacity:0;");
+
+			}
+			else
+			{
+				comboOption.changeStyle("opacity:1;");
+				if(comboMeasure.isNumeric())
+					comboOption.updateOptions(operationsListNumeric);
+				else
+					 comboOption.updateOptions(operationsListString);
+			}
         });
-		comboMeasure.updateOptions([{name:"Collection ID", group: "SPECIMEN INFO", isNum:false},
-                                    {name:"Collected by", group: "SPECIMEN INFO", isNum:false},
-                                    {name:"Data", group: "SPECIMEN INFO", isNum:false},
-                                    {name:"Latitude", group: "SPECIMEN INFO", isNum:true},
-                                    {name:"Longitude", group: "SPECIMEN INFO", isNum:true}
-                                    ].concat(generateMeasuresList()));
+		
+		
+		initialOptList = createStandardOptionsList();
+		comboMeasure.updateOptions(initialOptList.concat(generateMeasuresList()));
         
         // handling combobox to select the filtering used
-		comboOption.createFilterCombo("comboOption", function()
+		comboOption.createFilterCombo("comboOption", option_div, function()
 		{
             // if option does not need further input, hide text input
 			if(comboOption.getSelectedOption() == "exists" || comboOption.getSelectedOption() == "doesn't exist")
@@ -97,6 +124,7 @@ function FilterPopup()
 
         input.type = "text";
 		input.disabled = true;
+		input.size = 25;
 		input.addEventListener("input", function()  // ou "change" se soh chama quando troca de contexto
 		{
             // checks if input is not a number and warns user when filtering option is only for numeric values
@@ -116,7 +144,7 @@ function FilterPopup()
                 input.style.borderColor="#ddd";
             }
 		});
-        infoLabel.appendChild(input);
+        label_div.appendChild(input);
         
         // adding remove icon
 		oImg.setAttribute('src', 'images/remove.png');
@@ -126,8 +154,8 @@ function FilterPopup()
 		{
 			ptr.removeFilter(comboMeasure, comboOption, input, br, this);
 		};
-		infoLabel.appendChild(oImg);
-		infoLabel.appendChild(br);
+		rmv_div.appendChild(oImg);
+		main_div.appendChild(br);
 		
         comboMeasure.makeClick();
         
@@ -139,11 +167,43 @@ function FilterPopup()
      */
 	this.removeFilter = function(comboM, comboO, inputLine, br, rmvButton)
 	{
-		infoLabel.removeChild(rmvButton);
-		comboM.remove("filters_info");
-		comboO.remove("filters_info");
-		infoLabel.removeChild(inputLine);
-		infoLabel.removeChild(br);
+
+		var comboMeasureParentDiv = comboM.getParentDiv();
+		while (comboMeasureParentDiv.hasChildNodes()) 
+		{
+			comboMeasureParentDiv.removeChild(comboMeasureParentDiv.lastChild);
+		}
+		comboMeasureParentDiv.remove();
+		
+		var comboOptionParentDiv = comboO.getParentDiv();
+		while (comboOptionParentDiv.hasChildNodes()) 
+		{
+			comboOptionParentDiv.removeChild(comboOptionParentDiv.lastChild);
+		}
+		comboOptionParentDiv.remove();
+		
+		var comboLabelParentDiv = inputLine.parentNode;
+		while (comboLabelParentDiv.hasChildNodes()) 
+		{
+			comboLabelParentDiv.removeChild(comboLabelParentDiv.lastChild);
+		}
+		comboLabelParentDiv.remove();
+		
+		var comboRmvButtonParentDiv = rmvButton.parentNode;
+		while (comboRmvButtonParentDiv.hasChildNodes()) 
+		{
+			comboRmvButtonParentDiv.removeChild(comboRmvButtonParentDiv.lastChild);
+		}
+		comboRmvButtonParentDiv.remove();
+		
+		var comboBrParentDiv = br.parentNode;
+		while (comboBrParentDiv.hasChildNodes()) 
+		{
+			comboBrParentDiv.removeChild(comboBrParentDiv.lastChild);
+		}
+		comboBrParentDiv.remove();
+	
+		
 		filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(comboM),1);
 		
 	}
@@ -179,12 +239,7 @@ function removeFilters()
         document.images["nofiltersel"].style = "display:none;";
         document.images["nosel"].style = "display:none;";
         
-        var newOptionsList = [{name:"Collection ID", isNum:false},
-                                {name:"Collected by", isNum:false},
-                                {name:"Data", isNum:false},
-                                {name:"Latitude", isNum:true},
-                                {name:"Longitude", isNum:false}
-                             ].concat(generateMeasuresList());
+        var newOptionsList = createStandardOptionsList().concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
 
         
@@ -221,7 +276,6 @@ function applyFilters()
     // cleans current filtered selection
     filteredSelection = [];
     var characterLst = allCharactersList.getList();
-	console.log(filters);
     for (var i = 0; i < selection.length; i++)
     {
         //if(selection[i].measures)
@@ -234,376 +288,400 @@ function applyFilters()
                 var measure = filters[k].comboMeasure.getSelectedOption();
                 var option = filters[k].comboOption.getSelectedOption();
                 var value = filters[k].input.value;
-
-                // tests if filter is true depending on selected filter and measure
-                switch(option)
-                {
-                    case "exists":
-                    
-						switch(measure)
-						{
-							case "Collection ID":
-								if(selection[i].collection_id == "") 
-								{
-									accept = false;
-								}  
-							break;
-							
-							case "Collected by":
-							
-								if(selection[i].collected_by == "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Data":
-							
-								if(selection[i].collected_data == "") 
-								{
-									accept = false;
-								}  
-								
-							break;
-							
-							case "Latitude":
-							
-								if(selection[i].latitude == "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Longitude":
-							
-								if(selection[i].longitude == "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-                            // default are all measures
-							default:
-                                if(selection[i].measures)
-                                {
-                                    var exists = false;
-                                    // gets measure that needs filtering
-                                    //for(var j = 0; j < selection[i].measures.length; j++)
-									for(var charId_key in  selection[i].measures) 
-                                    {
-                                        if(characterLst[charId_key].character_name == measure) 
-                                        {
-                                            exists = true;
-                                        }  
-                                    }
-                                    if(exists == false)
-                                        accept = false;
-                                }
-							break;
-						}
-                        
-                    break;
-                    case "doesn't exist":
-						switch(measure)
-						{
-							case "Collection ID":
-								if(selection[i].collection_id != "") 
-								{
-									accept = false;
-								}  
-							break;
-							
-							case "Collected by":
-							
-								if(selection[i].collected_by != "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Data":
-							
-								if(selection[i].collected_data != "") 
-								{
-									accept = false;
-								}  
-								
-							break;
-							
-							case "Latitude":
-							
-								if(selection[i].latitude != "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Longitude":
-							
-								if(selection[i].longitude != "") 
-								{
-									accept = false;
-								}  
-							
-							break;
-							// default are all measures
-							default:
-								if(selection[i].measures)
-                                {
-                                    var exists = false;
-                                    //for(var j = 0; j < selection[i].measures.length; j++)
-									for(var charId_key in  selection[i].measures) 
-                                    {
-                                        if(characterLst[charId_key].character_name == measure) 
-                                        {
-                                            exists = true;
-                                        }  
-                                    }
-                                    if(exists == true)
-                                        accept = false;
-								}
-							break;
-						}
- 
-                    break;
-                    case "is":
-					
-						switch(measure)
-						{
-							case "Collection ID":
-								if(selection[i].collection_id != value) 
-								{
-									accept = false;
-								}  
-							break;
-							
-							case "Collected by":
-							
-								if(selection[i].collected_by !=  value) 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Data":
-							
-								if(selection[i].collected_data !=  value) 
-								{
-									accept = false;
-								}  
-								
-							break;
-							
-							case "Latitude":
-							
-								if(selection[i].latitude !=  value) 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Longitude":
-							
-								if(selection[i].longitude !=  value)  
-								{
-									accept = false;
-								}  
-							
-							break;
-							// default are all measures
-							default:
-								if(selection[i].measures)
-                                {
-                                    var exists = false;
-									//console.log("is");
-                                    //for(var j = 0; j < selection[i].measures.length; j++)
-                                    for(var charId_key in  selection[i].measures) 
-									{	
-										//console.log(filters[k].comboOption.isNumeric());
-                                        if(filters[k].comboMeasure.isNumeric())
-                                        {
-											
-                                            if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
-                                            {
-                                                exists = true;
-                                            }  
-                                        }
-                                        else
-                                        {
-											
-                                            if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
-                                            {
-                                                exists = true;
-                                            }  
-                                        }
-                                        
-                                    }
-                                    if(exists == false)
-                                        accept = false;
-                                }
-							break;
-						}
-                        
-                    break;
-                    
-                    case "is not":
-						switch(measure)
-						{
-							case "Collection ID":
-								if(selection[i].collection_id == value) 
-								{
-									accept = false;
-								}  
-							break;
-							
-							case "Collected by":
-							
-								if(selection[i].collected_by ==  value) 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Data":
-							
-								if(selection[i].collected_data ==  value) 
-								{
-									accept = false;
-								}  
-								
-							break;
-							
-							case "Latitude":
-							
-								if(selection[i].latitude ==  value) 
-								{
-									accept = false;
-								}  
-							
-							break;
-							
-							case "Longitude":
-							
-								if(selection[i].longitude ==  value)  
-								{
-									accept = false;
-								}  
-							
-							break;
-							// default are all measures
-							default:
-								
-                                if(selection[i].measures)
-                                {
-                                    var exists = false;
-                                    //for(var j = 0; j < selection[i].measures.length; j++)
-                                    for(var charId_key in  selection[i].measures)
+				
+				if(filters[k].comboMeasure.getGroupName() == ACCESS_OPTION_NAME)
+				{	
+					switch(measure)
+					{
+						case "private (you and administrators)":
+							if(!selection[i].user_name || selection[i].group_name)
+							{
+								console.log(selection[i]);
+								accept = false;
+							}
+						break;
+						case "public (everyone)":
+							if(selection[i].user_name)
+								accept = false;
+						break;
+						default:
+							if(!selection[i].group_name || measure != selection[i].group_name)
+								accept = false;
+						break;
+					}
+				}
+				else
+				{
+					// tests if filter is true depending on selected filter and measure
+					switch(option)
+					{
+						case "exists":
+						
+							switch(measure)
+							{
+								case "Collection ID":
+									if(selection[i].collection_id == "") 
 									{
-                                        if(filters[k].comboMeasure.isNumeric())
-                                        {
-                                            if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
-                                            {
-                                            
-                                                exists = true;
-                                            }  
-                                        }
-                                        else
-                                        {
-                                            if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
-                                            {
-                                                exists = true;
-                                            }  
-                                        }
-                                        
-                                    }
-                                    if(exists == true)
-                                        accept = false;
-                                }
-							break;
-						}
-                        
-                    
-                    break;
-                    // has to be numeric
-                    case "is smaller than":
-                        if(selection[i].measures)
-                        {
-                            var exists = false;
-                            //for(var j = 0; j < selection[i].measures.length; j++)
-                            for(var charId_key in  selection[i].measures)
+										accept = false;
+									}  
+								break;
+								
+								case "Collected by":
+								
+									if(selection[i].collected_by == "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Data":
+								
+									if(selection[i].collected_data == "") 
+									{
+										accept = false;
+									}  
+									
+								break;
+								
+								case "Latitude":
+								
+									if(selection[i].latitude == "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Longitude":
+								
+									if(selection[i].longitude == "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								// default are all measures
+								default:
+									if(selection[i].measures)
+									{
+										var exists = false;
+										// gets measure that needs filtering
+										//for(var j = 0; j < selection[i].measures.length; j++)
+										for(var charId_key in  selection[i].measures) 
+										{
+											if(characterLst[charId_key].character_name == measure) 
+											{
+												exists = true;
+											}  
+										}
+										if(exists == false)
+											accept = false;
+									}
+								break;
+							}
+							
+						break;
+						case "doesn't exist":
+							switch(measure)
 							{
-                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) < parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }         
-                            }
-                            if(exists == false)
-                                accept = false;
-                        }
-                    break;
-                    // has to be numeric
-                    case "is bigger than":
-                        if(selection[i].measures)
-                        {
-                            var exists = false;
-                            //for(var j = 0; j < selection[i].measures.length; j++)
-							for(var charId_key in  selection[i].measures)
-                            {
-                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) > parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }         
-                            }
-                            if(exists == false)
-                                accept = false;
-                        }
-                        
-                    break;
-                    // has to be numeric
-                    case "is smaller or equal to":
-                        if(selection[i].measures)
-                        {
-                            var exists = false;
-                            //for(var j = 0; j < selection[i].measures.length; j++)
-                            for(var charId_key in  selection[i].measures)
+								case "Collection ID":
+									if(selection[i].collection_id != "") 
+									{
+										accept = false;
+									}  
+								break;
+								
+								case "Collected by":
+								
+									if(selection[i].collected_by != "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Data":
+								
+									if(selection[i].collected_data != "") 
+									{
+										accept = false;
+									}  
+									
+								break;
+								
+								case "Latitude":
+								
+									if(selection[i].latitude != "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Longitude":
+								
+									if(selection[i].longitude != "") 
+									{
+										accept = false;
+									}  
+								
+								break;
+								// default are all measures
+								default:
+									if(selection[i].measures)
+									{
+										var exists = false;
+										//for(var j = 0; j < selection[i].measures.length; j++)
+										for(var charId_key in  selection[i].measures) 
+										{
+											if(characterLst[charId_key].character_name == measure) 
+											{
+												exists = true;
+											}  
+										}
+										if(exists == true)
+											accept = false;
+									}
+								break;
+							}
+	 
+						break;
+						case "is":
+						
+							switch(measure)
 							{
-                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) <= parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }         
-                            }
-                            if(exists == false)
-                                accept = false;
-                        }
-                    break;
-                    // has to be numeric
-                    case "is bigger or equal to":
-                        if(selection[i].measures)
-                        {
-                            var exists = false;
-                            //for(var j = 0; j < selection[i].measures.length; j++)
-                            for(var charId_key in  selection[i].measures)
+								case "Collection ID":
+									if(selection[i].collection_id != value) 
+									{
+										accept = false;
+									}  
+								break;
+								
+								case "Collected by":
+								
+									if(selection[i].collected_by !=  value) 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Data":
+								
+									if(selection[i].collected_data !=  value) 
+									{
+										accept = false;
+									}  
+									
+								break;
+								
+								case "Latitude":
+								
+									if(selection[i].latitude !=  value) 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Longitude":
+								
+									if(selection[i].longitude !=  value)  
+									{
+										accept = false;
+									}  
+								
+								break;
+								// default are all measures
+								default:
+									if(selection[i].measures)
+									{
+										var exists = false;
+										//console.log("is");
+										//for(var j = 0; j < selection[i].measures.length; j++)
+										for(var charId_key in  selection[i].measures) 
+										{	
+											//console.log(filters[k].comboOption.isNumeric());
+											if(filters[k].comboMeasure.isNumeric())
+											{
+												
+												if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
+												{
+													exists = true;
+												}  
+											}
+											else
+											{
+												
+												if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
+												{
+													exists = true;
+												}  
+											}
+											
+										}
+										if(exists == false)
+											accept = false;
+									}
+								break;
+							}
+							
+						break;
+						
+						case "is not":
+							switch(measure)
 							{
-                                if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) >= parseFloat(value))) 
-                                {
-                                    exists = true;
-                                }         
-                            }
-                            if(exists == false)
-                                accept = false;
-                        }
-                    break;
-                }
-                
-            }
+								case "Collection ID":
+									if(selection[i].collection_id == value) 
+									{
+										accept = false;
+									}  
+								break;
+								
+								case "Collected by":
+								
+									if(selection[i].collected_by ==  value) 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Data":
+								
+									if(selection[i].collected_data ==  value) 
+									{
+										accept = false;
+									}  
+									
+								break;
+								
+								case "Latitude":
+								
+									if(selection[i].latitude ==  value) 
+									{
+										accept = false;
+									}  
+								
+								break;
+								
+								case "Longitude":
+								
+									if(selection[i].longitude ==  value)  
+									{
+										accept = false;
+									}  
+								
+								break;
+								// default are all measures
+								default:
+									
+									if(selection[i].measures)
+									{
+										var exists = false;
+										//for(var j = 0; j < selection[i].measures.length; j++)
+										for(var charId_key in  selection[i].measures)
+										{
+											if(filters[k].comboMeasure.isNumeric())
+											{
+												if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) == parseFloat(value))) 
+												{
+												
+													exists = true;
+												}  
+											}
+											else
+											{
+												if((characterLst[charId_key].character_name == measure) && (selection[i].measures[charId_key] == value)) 
+												{
+													exists = true;
+												}  
+											}
+											
+										}
+										if(exists == true)
+											accept = false;
+									}
+								break;
+							}
+							
+						
+						break;
+						// has to be numeric
+						case "is smaller than":
+							if(selection[i].measures)
+							{
+								var exists = false;
+								//for(var j = 0; j < selection[i].measures.length; j++)
+								for(var charId_key in  selection[i].measures)
+								{
+									if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) < parseFloat(value))) 
+									{
+										exists = true;
+									}         
+								}
+								if(exists == false)
+									accept = false;
+							}
+						break;
+						// has to be numeric
+						case "is bigger than":
+							if(selection[i].measures)
+							{
+								var exists = false;
+								//for(var j = 0; j < selection[i].measures.length; j++)
+								for(var charId_key in  selection[i].measures)
+								{
+									if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) > parseFloat(value))) 
+									{
+										exists = true;
+									}         
+								}
+								if(exists == false)
+									accept = false;
+							}
+							
+						break;
+						// has to be numeric
+						case "is smaller or equal to":
+							if(selection[i].measures)
+							{
+								var exists = false;
+								//for(var j = 0; j < selection[i].measures.length; j++)
+								for(var charId_key in  selection[i].measures)
+								{
+									if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) <= parseFloat(value))) 
+									{
+										exists = true;
+									}         
+								}
+								if(exists == false)
+									accept = false;
+							}
+						break;
+						// has to be numeric
+						case "is bigger or equal to":
+							if(selection[i].measures)
+							{
+								var exists = false;
+								//for(var j = 0; j < selection[i].measures.length; j++)
+								for(var charId_key in  selection[i].measures)
+								{
+									if((characterLst[charId_key].character_name == measure) && (parseFloat(selection[i].measures[charId_key]) >= parseFloat(value))) 
+									{
+										exists = true;
+									}         
+								}
+								if(exists == false)
+									accept = false;
+							}
+						break;
+					}
+					
+				}
+			}
             if(accept == true && !selection[i].rank)
             {
                 // adds index of specimen in the "selected" list as entry to "filteredSelection" list
@@ -628,5 +706,22 @@ function updateFilterOptions(newOptions)
 	{
 		filters[i].comboMeasure.updateOptions(newOptions);
 	}
+}
+
+function createStandardOptionsList()
+{
+	var initialOptList = [];
+	var specimenOptList = [{name:"Collection ID", group: "SPECIMEN INFO", isNum:false},
+								{name:"Collected by", group: "SPECIMEN INFO", isNum:false},
+								{name:"Data", group: "SPECIMEN INFO", isNum:false},
+								{name:"Latitude", group: "SPECIMEN INFO", isNum:true},
+								{name:"Longitude", group: "SPECIMEN INFO", isNum:true}
+								];
+	if(userLoggedIn)
+		initialOptList = initialOptList.concat(userLoggedIn.getUserGroupsAsOptionList());
+		
+	initialOptList = initialOptList.concat(specimenOptList);
+	
+	return initialOptList;
 }
 

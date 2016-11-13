@@ -66,7 +66,8 @@ function makeAddSpecimenPopup(species)
     cleanSpecimenMeasuresFromInputList();
 	
 	var newInput1 = new Input();
-    newInput1.createCombo("text",infoLabel, "Access","","",  [{name:"private (you and administrators)", isNum:false},{name:"public (everyone)",isNum:false}], "");
+	var accessList = userLoggedIn.getUserGroupsAsOptionList();
+    newInput1.createCombo("text",infoLabel, "Access","","", accessList, "");
 	newInput1.toggleEdition(true);
 	inputList['general_measures'].push(newInput1);
 	
@@ -126,51 +127,55 @@ function getTaxNames(d, list)
 
 function changingSelectedTaxonomy()
 {
-        var index = this.list.map(function(e) { return e.name; }).indexOf(this.value);
-        var taxonomy = this.list[index].taxonomy;
-        var fullCharacterList = taxonomy.characters;
-		var inheritedCharacterList = taxonomy.inheritedCharacters;
+	var index = this.list.map(function(e) { return e.name; }).indexOf(this.value);
+	var taxonomy = this.list[index].taxonomy;
+	var fullCharacterList = taxonomy.characters;
+	var inheritedCharacterList = taxonomy.inheritedCharacters;
+	
+	if(fullCharacterList)
+	{
+		cleanTabs();
 		
-        if(fullCharacterList)
-        {
-            cleanTabs();
-            
-            var measuresGroupList = {};
-			var characterLst = allCharactersList.getList();
-			
-			for(var i = 0; i < inheritedCharacterList.length; i++)
+		var measuresGroupList = {};
+		var characterLst = allCharactersList.getList();
+		
+		for(var i = 0; i < inheritedCharacterList.length; i++)
+		{
+			if(measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name])
 			{
-				if(measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name])
+				measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
 				{
-					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
-					{
-						name: characterLst[inheritedCharacterList[i]].character_name, 
-						value: "",
-						type: characterLst[inheritedCharacterList[i]].character_type_name,
-						charId: characterLst[inheritedCharacterList[i]].character_id,
-						charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
-						information: characterLst[inheritedCharacterList[i]].information
-					});
-				}
-				else
-				{
-					var list = [];
-					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name] = list;
-					measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
-					{
-						name: characterLst[inheritedCharacterList[i]].character_name, 
-						value: "",
-						type: characterLst[inheritedCharacterList[i]].character_type_name,
-						charId: characterLst[inheritedCharacterList[i]].character_id,
-						charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
-						information: characterLst[inheritedCharacterList[i]].information
-					});
-				}        
+					name: characterLst[inheritedCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[inheritedCharacterList[i]].character_type_name,
+					charId: characterLst[inheritedCharacterList[i]].character_id,
+					charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+					unit_id : characterLst[inheritedCharacterList[i]].unit_id,
+					information: characterLst[inheritedCharacterList[i]].information
+				});
 			}
-			
-			for(var i = 0; i < fullCharacterList.length; i++)
+			else
 			{
-				if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
+				var list = [];
+				measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name] = list;
+				measuresGroupList[characterLst[inheritedCharacterList[i]].character_group_name].push(
+				{
+					name: characterLst[inheritedCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[inheritedCharacterList[i]].character_type_name,
+					charId: characterLst[inheritedCharacterList[i]].character_id,
+					charTypeId: characterLst[inheritedCharacterList[i]].character_group_id,
+					unit_id : characterLst[inheritedCharacterList[i]].unit_id,
+					information: characterLst[inheritedCharacterList[i]].information
+				});
+			}        
+		}
+		
+		for(var i = 0; i < fullCharacterList.length; i++)
+		{
+			if(measuresGroupList[characterLst[fullCharacterList[i]].character_group_name])
+			{
+				if(!( measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].map(function(f){return f.charId;}).indexOf(characterLst[fullCharacterList[i]].character_id)))
 				{
 					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
 					{
@@ -179,37 +184,41 @@ function changingSelectedTaxonomy()
 						type: characterLst[fullCharacterList[i]].character_type_name,
 						charId: characterLst[fullCharacterList[i]].character_id,
 						charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+						unit_id : characterLst[fullCharacterList[i]].unit_id,
 						information: characterLst[fullCharacterList[i]].information
 					});
 				}
-				else
-				{
-					var list = [];
-					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
-					measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
-					{
-						name: characterLst[fullCharacterList[i]].character_name, 
-						value: "",
-						type: characterLst[fullCharacterList[i]].character_type_name,
-						charId: characterLst[fullCharacterList[i]].character_id,
-						charTypeId: characterLst[fullCharacterList[i]].character_group_id,
-						information: characterLst[fullCharacterList[i]].information
-					});
-				}        
 			}
-            for (var key in measuresGroupList) 
-            {
-                var tab_id = key.replace(/\s+/g, '');
-                addTab(tab_id,key,measuresGroupList[key]);
-            }
-            
-            for (var key in inputList) 
-            {
-                for( var i = 0; i < inputList[key].length; i++)
-                {
-                    inputList[key][i].toggleEdition(true);
-                }
-            }
+			else
+			{
+				var list = [];
+				measuresGroupList[characterLst[fullCharacterList[i]].character_group_name] = list;
+				measuresGroupList[characterLst[fullCharacterList[i]].character_group_name].push(
+				{
+					name: characterLst[fullCharacterList[i]].character_name, 
+					value: "",
+					type: characterLst[fullCharacterList[i]].character_type_name,
+					charId: characterLst[fullCharacterList[i]].character_id,
+					charTypeId: characterLst[fullCharacterList[i]].character_group_id,
+					unit_id : characterLst[fullCharacterList[i]].unit_id,
+					information: characterLst[fullCharacterList[i]].information
+				});
+			}        
+		}
+		
+		for (var key in measuresGroupList) 
+		{
+			var tab_id = key.replace(/\s+/g, '');
+			addTab(tab_id,key,measuresGroupList[key]);
+		}
+		
+		for (var key in inputList) 
+		{
+			for( var i = 0; i < inputList[key].length; i++)
+			{
+				inputList[key][i].toggleEdition(true);
+			}
+		}
         
         
         var submitEditSpecimenButton = document.getElementById("submitButton");
@@ -230,9 +239,23 @@ function changingSelectedTaxonomy()
             specimen.information = inputList['general_measures'][6].getValue();
             
 			if(access == "private (you and administrators)")
+			{
 				specimen.user_id = userLoggedIn.getID();
+				specimen.group_id = -1;
+			}
 			else
-				specimen.user_id = -1;
+			{
+				if(access == "public (everyone)")
+				{
+					specimen.user_id = -1;
+					specimen.group_id = -1;
+				}
+				else
+				{
+					specimen.user_id = userLoggedIn.getID();
+					specimen.group_id = userLoggedIn.getIndexByGroupName(access);
+				}
+			}
 			
             specimen.measures = [];
             for (var key in inputList) 

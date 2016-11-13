@@ -8,6 +8,7 @@ function Input()
 	var toBeDeleted;
     this.type = new ComboBox();
 	this.fixed = false;
+	this.unit;
     var label;
     var labelName;
     var input;
@@ -15,8 +16,10 @@ function Input()
     var characterID;
     var characterGroupID;
     var br, br2;
+	var label_size = 25;
+	var information_size = 40;
     
-    this.create = function(input_type, parent, name, charID, charGroupID, value, info)
+    this.create = function(input_type, parent, name, charID, charGroupID, value, unit_id, info)
     {
         //information = info;
         //type = input_type;
@@ -26,13 +29,18 @@ function Input()
         
 		var main_div = document.createElement('div');
 		var name_div = document.createElement('div');
-		name_div.setAttribute('class',"col-sm-5");
+		name_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(name_div);
+		var unit_div = document.createElement('div');
+		unit_div.setAttribute('class',"col-sm-2");
+		unit_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(unit_div);
 		var type_div = document.createElement('div');
 		type_div.setAttribute('class',"col-sm-2");
+		type_div.style="display:flex;justify-content:center;align-items:center;";
 		main_div.appendChild(type_div);
 		var info_div = document.createElement('div');
-		info_div.setAttribute('class',"col-sm-5");
+		info_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(info_div);
 		parent.appendChild(main_div);
 		
@@ -43,7 +51,7 @@ function Input()
 		
         // creating label with name
 		label = document.createElement("H0");
-        label.innerHTML = "<b>"+ name + ":</b>  ";
+        label.innerHTML = "<b>"+ name + ":</b> <br> ";
 		name_div.appendChild(label);
         
         // creating input with provided id
@@ -52,7 +60,7 @@ function Input()
         input.step = "any";
         input.value = value;
         input.disabled = true;
-        input.size = 25;
+        input.size = label_size + 10;
 		name_div.appendChild(input);
         
 		//var pointer = this;
@@ -62,6 +70,18 @@ function Input()
 			pointer.validateInputType();
 		});*/
         
+		// creating label with unit
+		var allOptUnits = allUnitsList.getList();
+		var optUnits = allUnitsList.getUnitListAsOptions();
+		this.unit = new ComboBox();
+		this.unit.createTaxonomyCombo(name+"combo_unit", unit_div, function(){}, []);
+		this.unit.updateOptions(optUnits);
+        if(unit_id != null && unit_id != "")
+			this.unit.setSelectedOption(optUnits.map(function(f){return f.name;}).indexOf(allOptUnits[unit_id].unit_name));
+		else	
+			this.unit.setSelectedOption(0);
+		this.unit.disable(true);
+		
 		// creating label with type
 		this.type = new ComboBox();
 		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
@@ -81,7 +101,7 @@ function Input()
 		// creating label with info
 		information = document.createElement("TEXTAREA");
         var t = document.createTextNode(info);
-		information.cols = 50;
+		information.cols = information_size - 5;
 		information.disabled = true;
 		information.appendChild(t);
 		info_div.appendChild(information);
@@ -102,13 +122,18 @@ function Input()
         
 		var main_div = document.createElement('div');
 		var name_div = document.createElement('div');
-		name_div.setAttribute('class',"col-sm-5");
+		name_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(name_div);
+		var unit_div = document.createElement('div');
+		unit_div.setAttribute('class',"col-sm-2");
+		unit_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(unit_div);
 		var type_div = document.createElement('div');
 		type_div.setAttribute('class',"col-sm-2");
+		type_div.style="display:flex;justify-content:center;align-items:center;";
 		main_div.appendChild(type_div);
 		var info_div = document.createElement('div');
-		info_div.setAttribute('class',"col-sm-5");
+		info_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(info_div);
 		parent.appendChild(main_div);
 		
@@ -117,6 +142,7 @@ function Input()
 		input = document.createElement("input");;
 		deleteBtn = document.createElement("img");
 		
+		
         // creating label with name
 		label = document.createElement("H0");
         label.innerHTML = "<b>"+ name + ":</b>  ";
@@ -124,8 +150,16 @@ function Input()
         
         // creating combobox with provided id
 		combo = new ComboBox();
-		combo.createTaxonomyCombo(name+"combo", name_div, function(){}, [])
+		combo.createTaxonomyCombo(name+"combo", name_div, function(){}, optionsList)
         combo.updateOptions(optionsList);
+		
+		// creating label with unit
+
+		this.unit = new ComboBox();
+		this.unit.createTaxonomyCombo(name+"combo_unit", unit_div, function(){}, []);
+		this.unit.updateOptions([{name: "", isNum: false}]);
+		this.unit.setSelectedOption(0);
+		this.unit.disable(true);
 		
 		// creating label with type
 		this.type = new ComboBox();
@@ -146,13 +180,13 @@ function Input()
 		// creating label with info
 		information = document.createElement("TEXTAREA");
         var t = document.createTextNode(info);
-		information.cols = 50;
+		information.cols = information_size - 20;
 		information.disabled = true;
 		information.appendChild(t);
 		info_div.appendChild(information);
 	}
 	
-	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, info, selected, fixed)
+	this.createCharacter = function(input_type, parent, name, charID, charGroupID, value, unit_id, info, selected, fixed)
 	{
 		this.fixed = fixed;
 		labelName = name;
@@ -166,11 +200,16 @@ function Input()
 		var name_div = document.createElement('div');
 		name_div.setAttribute('class',"col-sm-3");
 		main_div.appendChild(name_div);
+		var unit_div = document.createElement('div');
+		unit_div.setAttribute('class',"col-sm-2");
+		unit_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(unit_div);
 		var type_div = document.createElement('div');
 		type_div.setAttribute('class',"col-sm-2");
+		type_div.style="display:flex;justify-content:center;align-items:center;";
 		main_div.appendChild(type_div);
 		var info_div = document.createElement('div');
-		info_div.setAttribute('class',"col-sm-6");
+		info_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(info_div);
 		parent.appendChild(main_div);
         
@@ -195,7 +234,7 @@ function Input()
         input.step = "any";
         input.value = name;
         input.disabled = true;
-        input.size = 25;
+        input.size = label_size;
 		name_div.appendChild(input);
         
 		//var pointer = this;
@@ -205,6 +244,18 @@ function Input()
 			pointer.validateInputType();
 		});*/
         
+		// creating label with unit
+		var allOptUnits = allUnitsList.getList();
+		var optUnits = allUnitsList.getUnitListAsOptions();
+		this.unit = new ComboBox();
+		this.unit.createTaxonomyCombo(name+"combo_unit", unit_div, function(){}, []);
+		this.unit.updateOptions(optUnits);
+        if(unit_id != null && unit_id != "")
+			this.unit.setSelectedOption(optUnits.map(function(f){return f.name;}).indexOf(allOptUnits[unit_id].unit_name));
+		else	
+			this.unit.setSelectedOption(0);
+		this.unit.disable(true);
+		
 		// creating label with type
 		this.type = new ComboBox();
 		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
@@ -225,13 +276,13 @@ function Input()
 		// creating label with info
 		information = document.createElement("TEXTAREA");
         var t = document.createTextNode(info);
-		information.cols = 50;
+		information.cols = information_size - 5;
 		information.disabled = true;
 		information.appendChild(t);
 		info_div.appendChild(information);
 	}
 	
-	this.createCharacterForManaging = function(input_type, parent, add_before_div, name, charID, charGroupID, value, info, deleteFunction)
+	this.createCharacterForManaging = function(input_type, parent, add_before_div, name, charID, charGroupID, value, unit_id, info, deleteFunction)
 	{
 		labelName = name;
         characterID = charID;
@@ -241,15 +292,22 @@ function Input()
 		var name_div = document.createElement('div');
 		name_div.setAttribute('class',"col-sm-3");
 		main_div.appendChild(name_div);
+		var unit_div = document.createElement('div');
+		unit_div.setAttribute('class',"col-sm-2");
+		unit_div.style="display:flex;justify-content:center;align-items:center;";
+		main_div.appendChild(unit_div);
 		var type_div = document.createElement('div');
 		type_div.setAttribute('class',"col-sm-2");
+		type_div.style="display:flex;justify-content:center;align-items:center;";
 		main_div.appendChild(type_div);
 		var info_div = document.createElement('div');
-		info_div.setAttribute('class',"col-sm-6");
+		info_div.setAttribute('class',"col-sm-4");
 		main_div.appendChild(info_div);
 		var check_div = document.createElement('div');
 		check_div.setAttribute('class',"col-sm-1");
+		check_div.style="display:flex;justify-content:right;align-items:right;";
 		main_div.appendChild(check_div);
+		
 		parent.insertBefore(main_div, add_before_div);
 		//parent.appendChild(main_div);
         
@@ -273,7 +331,7 @@ function Input()
         input.defaultValue = name;
 		
         //input.disabled = true;
-        input.size = 25;
+        input.size = label_size;
 		name_div.appendChild(input);
         
 		//var pointer = this;
@@ -282,6 +340,24 @@ function Input()
 		{  
 			pointer.validateInputType();
 		});*/
+		
+		// creating label with unit
+		var allOptUnits = allUnitsList.getList();
+		var optUnits = allUnitsList.getUnitListAsOptions();
+
+		this.unit = new ComboBox();
+		this.unit.createTaxonomyCombo(name+"combo_unit", unit_div, function(){}, [])
+		this.unit.updateOptions(optUnits);
+		if(unit_id != null && unit_id != "")
+			this.unit.setSelectedOption(optUnits.map(function(f){return f.name;}).indexOf(allOptUnits[unit_id].unit_name));
+		else	
+			this.unit.setSelectedOption(0);
+			
+		if(charID)
+			this.unit.disable(true);
+
+		
+		
         var opt = allCharactersList.gerCharTypesListAsOptionsWithStardardNomenclature()
 		this.type = new ComboBox();
 		this.type.createTaxonomyCombo(name+"combo", type_div, function(){}, [])
@@ -298,7 +374,7 @@ function Input()
 		information = document.createElement("TEXTAREA");
         //var t = document.createTextNode(info);
 		information.defaultValue = info;
-		information.cols = 50;
+		information.cols = information_size;
 		//information.disabled = true;
 		//information.appendChild(t);
 		info_div.appendChild(information);
@@ -313,13 +389,27 @@ function Input()
 	{
 		return sel_checkbox.checked;
 	}
+	
     this.getValue = function()
     {
 		if(combo.getSelectedOption())
+		{
 			return combo.getSelectedOption();
+		}
         else
 			return input.value;
     }
+	
+	this.getComboTaxonomyID = function()
+	{
+		if(combo.getSelectedOption())
+		{
+			var list = combo.getList();
+			
+			var index = list.map(function(e) { return e.name; }).indexOf(combo.getSelectedOption());
+			return list[index].taxonomy.taxonomy_id;
+		}
+	}
     
     this.getLabelName = function()
     {
@@ -336,7 +426,7 @@ function Input()
     }
 	
 	this.getTypeID = function()
-    {	console.log(this.type);
+    {	
 		if(this.type)
 		{
 			if(this.type.getSelectedOption())
@@ -350,6 +440,20 @@ function Input()
 				else
 					typeID = allCharactersList.getCharTypeID("real number");
 
+				return typeID;
+			}
+		}
+
+    }
+	
+	this.getUnitID = function()
+    {	
+		if(this.unit)
+		{
+			if(this.unit.getSelectedOption())
+			{
+				var typeID;
+				typeID = allUnitsList.getIndexByUnitname(this.unit.getSelectedOption());
 				return typeID;
 			}
 		}
@@ -370,6 +474,11 @@ function Input()
     {
         return characterGroupID;
     }
+	
+	this.setComboOption = function(option)
+	{
+		combo.setSelectedOption(option);
+	}
     
     this.hide = function()
     {
@@ -390,11 +499,29 @@ function Input()
     this.toggleEdition = function(canBeEdited)
     {
         if(canBeEdited)
-            input.disabled = false;
+		{
+			if(combo.getSelectedOption())
+				combo.disable(false);
+			else
+				input.disabled = false;
+		}
         else
-            input.disabled = true;
+		{
+			if(combo.getSelectedOption())
+				combo.disable(true);
+			else
+				input.disabled = true;
+		}
         
     }
+	
+	this.toggleComboEdition = function(canBeEdited)
+	{
+		if(canBeEdited)
+			combo.disable(false);
+        else
+			combo.disable(true);
+	}
 	
 	this.toggleTaxonomyEdition = function(canBeEdited)
 	{
@@ -413,6 +540,7 @@ function Input()
 			if(characterID)
 			{
 				this.type.disable(false);
+				this.unit.disable(false);
 				information.disabled = false;
 			}
 		}
@@ -420,6 +548,7 @@ function Input()
 		{
             input.disabled = true;
 			this.type.disable(true);
+			this.unit.disable(true);
 			information.disabled = true;
 		}
 	}
@@ -484,6 +613,7 @@ function Input()
         label.remove();
         input.remove();
 		this.type.remove();
+		this.unit.remove();
 		information.remove();
         //br.remove();
         //br2.remove();

@@ -3,11 +3,16 @@ function Ranks()
 {
 	var rankList;
 	
-	this.createFile = function()
+	this.createList = function()
 	{
 		createRanksFile();
 	}
 	
+	this.receiveListFromDatabase = function(list)
+	{
+		rankList = JSON.parse(list);
+	}
+	/*
     this.createList = function()
     {
 		$.getJSON("data/ranks.json", function(json) 
@@ -16,7 +21,7 @@ function Ranks()
 			return rankList;
 		});
 	}
-	
+	*/
 	this.getList = function()
 	{
 		return rankList;

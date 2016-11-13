@@ -29,6 +29,7 @@
 	<script type="text/javascript" src="js/databaseInterface/login.js"></script>
 	<script type="text/javascript" src="js/databaseInterface/databaseInterface.js"></script>
 	<script type="text/javascript" src="js/databaseInterface/ranks.js"></script>	
+	<script type="text/javascript" src="js/databaseInterface/units.js"></script>	
 	
 	
 	<!-- POPUPS -->
@@ -527,6 +528,7 @@
     var firstTimeMultipleCombos = true;
     var firstTimeCombos = true;
     var userLoggedIn;
+	var lockInteraction = false;
     
     // all selected taxonomy and specimen from sunburst
     var selection = [];
@@ -548,13 +550,14 @@
 			.append("g");
     
 	var allCharactersList = new Characters();
-	//allCharactersList.createFile();
-	allCharactersList.createList();
+	//allCharactersList.createList();
 	
 	
 	var allRanksList = new Ranks();
-	//allRanksList.createFile();
 	allRanksList.createList();
+	
+	var allUnitsList = new Units();
+	allUnitsList.createList();
 	
 	setTimeout(function()
 	{

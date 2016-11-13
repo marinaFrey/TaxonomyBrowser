@@ -4,7 +4,7 @@ function makeAddTaxonomyPopup(parent_taxonomy)
     // creating title from taxonomy's name
 	var txtLabel = document.getElementById("myModalLabel");
 	txtLabel.className = "modal-title";
-	txtLabel.innerHTML = "<h1> Add Taxonomy </h1>";
+	txtLabel.innerHTML = "<h1> Add Taxon </h1>";
 
     cleanSpecimenMeasuresFromInputList();
     
@@ -139,11 +139,16 @@ function addTaxonomyFields(parent_taxonomy)
 			if(inputList[key][i].getIfChecked())
 			{
 				if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1)
-					taxonomy.characters.push(inputList[key][i].getcharacterID());
+				{				
+					if(parent_taxonomy.inheritedCharacters.indexOf(inputList[key][i].getcharacterID()) == -1 && parent_taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1)
+					{
+						taxonomy.characters.push(inputList[key][i].getcharacterID());
+					}
+				}
 			}
 			else
 			{
-				if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1)
+				if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1 )
 				{
 					taxonomy.characters.splice(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()),1);
 				}

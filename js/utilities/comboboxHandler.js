@@ -33,7 +33,7 @@ function ComboBox()
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
 		document.getElementById("comboboxes").appendChild(combo);
-		
+		combo.style.width = '120px';
 		type = VIZ_COMBO;
 		
         // updates visualization when changing selection
@@ -76,18 +76,16 @@ function ComboBox()
 	/*
      * creates combobox for filtering, no label added
      */
-	this.createFilterCombo = function(combo_id, clickFunction)
+	this.createFilterCombo = function(combo_id,parent, clickFunction)
 	{
 		id = combo_id;
 
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
-		var parent = document.getElementById("filters_info")
         parent.appendChild(combo);
 		combo.addEventListener("change", clickFunction);
         combo.clickFunction = clickFunction;
         combo.style.width = '200px';
-		
 		type = FILTER_COMBO;
 	}
     
@@ -178,6 +176,8 @@ function ComboBox()
                 {
                     var opt = document.createElement("option");
                     opt.isNumber = optionList[i].isNum;
+					opt.group = optionList[i].group;
+
                     var t = document.createTextNode(optionList[i].name);
                     opt.appendChild(t);
                     optionElementList.push(opt);
@@ -257,6 +257,12 @@ function ComboBox()
 			return false;
 	}
 	
+	this.getList = function()
+	{
+		if(combo.list)
+			return combo.list;
+	}
+	
     /*
      * set selected combobox option id
      */
@@ -269,6 +275,7 @@ function ComboBox()
     {
         combo.clickFunction();
     }
+	
     
     /*
      * hide combobox
@@ -329,6 +336,17 @@ function ComboBox()
 		return optionElementList[combo.selectedIndex].isNumber;
         //return isNum;
     }
+	
+	this.getGroupName = function()
+    {
+		return optionElementList[combo.selectedIndex].group;
+        //return isNum;
+    }
+	
+	this.getParentDiv = function()
+	{
+		return combo.parentNode;
+	}
 
 }
 
@@ -530,6 +548,7 @@ function generateMeasuresList()
 {
 	var m_list = [];
 	var characterLst = allCharactersList.getList();
+	
 	for (var i = 0; i < selection.length; i++)
 	{
         if(selection[i].inheritedCharacters)

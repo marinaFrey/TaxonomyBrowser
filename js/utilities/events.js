@@ -58,17 +58,23 @@ function showBars()
 
 function showSunburstbySpecies()
 {
-    document.images["byspecies"].src="images/species2.png";
-    document.images["byspecimen"].src ="images/specimen.png";
-    console.log("showbyspecies");
-    sunburst.togglePartition(false);
+	if(!lockInteraction)
+	{
+		document.images["byspecies"].src="images/species2.png";
+		document.images["byspecimen"].src ="images/specimen.png";
+		console.log("showbyspecies");
+		sunburst.togglePartition(false);
+	}
 }
 
 function showSunburstbySpecimen()
 {
-    document.images["byspecies"].src="images/species.png";
-    document.images["byspecimen"].src ="images/specimen2.png"; 
-    sunburst.togglePartition(true);
+	if(!lockInteraction)
+	{
+		document.images["byspecies"].src="images/species.png";
+		document.images["byspecimen"].src ="images/specimen2.png"; 
+		sunburst.togglePartition(true);
+	}
 }
 
 /*
@@ -298,12 +304,7 @@ function updateShownVisualizationAndOptions()
         document.images["nofiltersel"].style = "display:none;";
         document.images["nosel"].style = "display:none;";
         
-        var newOptionsList = [{name:"Collection ID", group: "SPECIMEN INFO", isNum:false},
-                                {name:"Collected by", group: "SPECIMEN INFO", isNum:false},
-                                {name:"Data", group: "SPECIMEN INFO", isNum:false},
-                                {name:"Latitude", group: "SPECIMEN INFO", isNum:true},
-                                {name:"Longitude", group: "SPECIMEN INFO", isNum:false}
-                             ].concat(generateMeasuresList());
+        var newOptionsList = createStandardOptionsList().concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
 
         if(filters.length > 0)

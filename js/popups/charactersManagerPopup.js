@@ -36,6 +36,7 @@ function CharactersManager()
 		
 		var measuresGroupList = {};
 		var characterLst = allCharactersList.getList();
+		console.log(characterLst);
 		// getting information from all its measures and separating them according to their groups
 		for(var charId_key in  characterLst) 
 		{	
@@ -54,6 +55,7 @@ function CharactersManager()
 					charId: characterLst[charId_key].character_id,
 					charTypeId: characterLst[charId_key].character_group_id,
 					information: characterLst[charId_key].information,
+					unit_id : characterLst[charId_key].unit_id,
 					selected: false
 				});
 			}
@@ -68,6 +70,7 @@ function CharactersManager()
 					charId: characterLst[charId_key].character_id,
 					charTypeId: characterLst[charId_key].character_group_id,
 					information: characterLst[charId_key].information,
+					unit_id : characterLst[charId_key].unit_id,
 					selected: false
 				});
 			}        
@@ -153,7 +156,7 @@ function CharactersManager()
 		for( var i = 0; i < measuresList.length; i++)
 		{
 			var newInputMeasures = new Input();
-			newInputMeasures.createCharacterForManaging(measuresList[i].type,div, btn_div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,rmvFunction);
+			newInputMeasures.createCharacterForManaging(measuresList[i].type,div, btn_div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "",measuresList[i].unit_id, measuresList[i].information,rmvFunction);
 			
 			inputList[label].push(newInputMeasures);
 		}
@@ -181,7 +184,7 @@ function CharactersManager()
 	{
 		
 		var newInputMeasures = new Input();
-		newInputMeasures.createCharacterForManaging("",this.div_ptr, this.addBtn_div, "", "", this.groupID, "", "",this.pointer.removeCharacter);
+		newInputMeasures.createCharacterForManaging("",this.div_ptr, this.addBtn_div, "", "", this.groupID, "","", "",this.pointer.removeCharacter);
 
 		inputList[this.group].push(newInputMeasures);
 	}
@@ -202,7 +205,6 @@ function CharactersManager()
 	
 	this.submit = function()
 	{
-		console.log("submit");
 		for (var key in inputList) 
 		{
 			for( var i = 0; i < inputList[key].length; i++)
@@ -213,9 +215,10 @@ function CharactersManager()
 					character_name: inputList[key][i].getValue(),
 					information: inputList[key][i].getInformation(),
 					character_group_id: inputList[key][i].getcharacterGroupID(),
-					character_type_id: inputList[key][i].getTypeID()
+					character_type_id: inputList[key][i].getTypeID(),
+					unit_id: inputList[key][i].getUnitID()
 				}
-
+				
 				if(inputList[key][i].willBeDeleted())
 				{
 					if(character.character_id)
@@ -233,7 +236,7 @@ function CharactersManager()
 								canBeAdded = false;
 						}
 						if(canBeAdded )
-						{
+						{	
 							if(character.character_name != "")
 								addCharacter(character);
 							else

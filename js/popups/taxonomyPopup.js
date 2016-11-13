@@ -140,9 +140,9 @@ function addCharactersTab(id, label, measuresList )
     {
         var newInputMeasures = new Input();
         if(measuresList[i].type == 'string')
-            newInputMeasures.createCharacter("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information,measuresList[i].selected, measuresList[i].fixed);
+            newInputMeasures.createCharacter("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].unit_id, measuresList[i].information,measuresList[i].selected, measuresList[i].fixed);
         else
-            newInputMeasures.createCharacter("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "", measuresList[i].information, measuresList[i].selected, measuresList[i].fixed);
+            newInputMeasures.createCharacter("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, "",measuresList[i].unit_id, measuresList[i].information, measuresList[i].selected, measuresList[i].fixed);
             
         inputList[label].push(newInputMeasures);
     }
@@ -180,12 +180,12 @@ function editTaxonomyFields(taxonomy)
 				{
 					if(inputList[key][i].getIfChecked())
 					{
-						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1)
+						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) == -1 && taxonomy.inheritedCharacters.indexOf(inputList[key][i].getcharacterID()) == -1)
 							taxonomy.characters.push(inputList[key][i].getcharacterID());
 					}
 					else
 					{
-						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1)
+						if(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()) != -1 && taxonomy.inheritedCharacters.indexOf(inputList[key][i].getcharacterID()) != -1)
 						{
 							taxonomy.characters.splice(taxonomy.characters.indexOf(inputList[key][i].getcharacterID()),1);
 						}
@@ -218,6 +218,7 @@ function appendInheritedCharacters(taxonomy, measuresGroupList)
 					charId: characterLst[taxonomy.inheritedCharacters[i]].character_id,
 					charTypeId: characterLst[taxonomy.inheritedCharacters[i]].character_group_id,
 					information: characterLst[taxonomy.inheritedCharacters[i]].information,
+					unit_id: characterLst[taxonomy.inheritedCharacters[i]].unit_id,
 					selected: true,
 					fixed: true
 				});
@@ -233,6 +234,7 @@ function appendInheritedCharacters(taxonomy, measuresGroupList)
 					charId: characterLst[taxonomy.inheritedCharacters[i]].character_id,
 					charTypeId: characterLst[taxonomy.inheritedCharacters[i]].character_group_id,
 					information: characterLst[taxonomy.inheritedCharacters[i]].information,
+					unit_id: characterLst[taxonomy.inheritedCharacters[i]].unit_id,
 					selected: true,
 					fixed: true
 				});
@@ -261,6 +263,7 @@ function appendCharacters(taxonomy,measuresGroupList)
 						charId: characterLst[taxonomy.characters[i]].character_id,
 						charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
 						information: characterLst[taxonomy.characters[i]].information,
+						unit_id: characterLst[taxonomy.characters[i]].unit_id,
 						selected: true,
 						fixed: false
 					});
@@ -277,6 +280,7 @@ function appendCharacters(taxonomy,measuresGroupList)
 					charId: characterLst[taxonomy.characters[i]].character_id,
 					charTypeId: characterLst[taxonomy.characters[i]].character_group_id,
 					information: characterLst[taxonomy.characters[i]].information,
+					unit_id: characterLst[taxonomy.characters[i]].unit_id,
 					selected: true,
 					fixed: false
 				});
@@ -303,6 +307,7 @@ function appendRemainingPossibleCharacters(taxonomy, measuresGroupList)
 					charId: characterLst[charId_key].character_id,
 					charTypeId: characterLst[charId_key].character_group_id,
 					information: characterLst[charId_key].information,
+					unit_id: characterLst[charId_key].unit_id,
 					selected: false,
 					fixed: false
 				});
@@ -319,6 +324,7 @@ function appendRemainingPossibleCharacters(taxonomy, measuresGroupList)
 				charId: characterLst[charId_key].character_id,
 				charTypeId: characterLst[charId_key].character_group_id,
 				information: characterLst[charId_key].information,
+				unit_id: characterLst[charId_key].unit_id,
 				selected: false,
 				fixed: false
 			});

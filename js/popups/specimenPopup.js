@@ -15,24 +15,42 @@ function makeSpecimenPopup(specimen)
 	
     // adding standard specimen information
     var infoLabel = document.getElementById("info_text");
+	if(specimen.group_name)
+		infoLabel.innerHTML = "specimen's visibility: in group '"+specimen.group_name+"', added by "+specimen.user_name+" <br> <br>";
+	else
+	{
+		if(specimen.user_name)
+			infoLabel.innerHTML = "specimen's visibility: private, added by "+specimen.user_name+" <br> <br>";
+		else
+			infoLabel.innerHTML = "specimen's visibility: public <br> <br>";
+	}
+	
+	var speciesOpt = [];
+	getAllSpecies(node, speciesOpt);
+	
+	var newInput1 = new Input();
+    newInput1.createCombo("text",infoLabel, "Species","","",speciesOpt,"");
+	newInput1.setComboOption(speciesOpt.map(function(f){return f.name;}).indexOf(specimen.name));	
+	newInput1.toggleEdition(false);
+    inputList['general_measures'].push(newInput1);
 	
     var newInput2 = new Input();
-    newInput2.create("text",infoLabel, "Collection ID","","",specimen.collection_id, "");
+    newInput2.create("text",infoLabel, "Collection ID","","",specimen.collection_id,"", "");
     inputList['general_measures'].push(newInput2);
     var newInput3 = new Input();
-    newInput3.create("text",infoLabel, "Collected by","","",specimen.collected_by, "");
+    newInput3.create("text",infoLabel, "Collected by","","",specimen.collected_by,"", "");
     inputList['general_measures'].push(newInput3);
     var newInput4 = new Input();
-    newInput4.create("text",infoLabel, "Data","","",specimen.collected_data , "");
+    newInput4.create("text",infoLabel, "Data","","",specimen.collected_data ,"", "");
     inputList['general_measures'].push(newInput4);
     var newInput5 = new Input();
-    newInput5.create("number",infoLabel, "Latitude","","", specimen.latitude, "");
+    newInput5.create("number",infoLabel, "Latitude","","", specimen.latitude,"", "");
     inputList['general_measures'].push(newInput5);
     var newInput6 = new Input();
-    newInput6.create("number",infoLabel, "Longitude","","", specimen.longitude, "");
+    newInput6.create("number",infoLabel, "Longitude","","", specimen.longitude,"", "");
     inputList['general_measures'].push(newInput6);
     var newInput7 = new Input();
-    newInput7.create("text",infoLabel, "Information","","",specimen.information, "");
+    newInput7.create("text",infoLabel, "Information","","",specimen.information,"", "");
     inputList['general_measures'].push(newInput7);
 
     var measuresGroupList = {};
@@ -51,6 +69,7 @@ function makeSpecimenPopup(specimen)
 				type: characterLst[charId_key].character_type_name,
 				charId: characterLst[charId_key].character_id,
 				charTypeId: characterLst[charId_key].character_group_id,
+				unit_id : characterLst[charId_key].unit_id,
 				information: characterLst[charId_key].information
             });
         }
@@ -65,6 +84,7 @@ function makeSpecimenPopup(specimen)
 				type: characterLst[charId_key].character_type_name,
 				charId: characterLst[charId_key].character_id,
 				charTypeId: characterLst[charId_key].character_group_id,
+				unit_id : characterLst[charId_key].unit_id,
 				information: characterLst[charId_key].information
             });
         }      
@@ -149,9 +169,9 @@ function addTab(id, label, measuresList )
     {
         var newInputMeasures = new Input();
         if(measuresList[i].type == 'string')
-            newInputMeasures.create("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, measuresList[i].value, measuresList[i].information);
+            newInputMeasures.create("text",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, measuresList[i].value, measuresList[i].unit_id,measuresList[i].information);
         else
-            newInputMeasures.create("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, measuresList[i].value, measuresList[i].information);
+            newInputMeasures.create("number",div, measuresList[i].name, measuresList[i].charId, measuresList[i].charTypeId, measuresList[i].value, measuresList[i].unit_id, measuresList[i].information);
             
         inputList[label].push(newInputMeasures);
     }
@@ -215,35 +235,49 @@ function editSpecimenFields(specimen)
     {
         submitButton.style = "display:none;";
         
-        specimen.collection_id = inputList['general_measures'][0].getValue();
-        specimen.collected_by = inputList['general_measures'][1].getValue();
-        specimen.collected_data = inputList['general_measures'][2].getValue();
-        specimen.latitude = inputList['general_measures'][3].getValue();
-        specimen.longitude = inputList['general_measures'][4].getValue();
-        specimen.information = inputList['general_measures'][5].getValue();
+        specimen.taxonomy_id = inputList['general_measures'][0].getComboTaxonomyID();
+		specimen.collection_id = inputList['general_measures'][1].getValue();
+        specimen.collected_by = inputList['general_measures'][2].getValue();
+        specimen.collected_data = inputList['general_measures'][3].getValue();
+        specimen.latitude = inputList['general_measures'][4].getValue();
+        specimen.longitude = inputList['general_measures'][5].getValue();
+        specimen.information = inputList['general_measures'][6].getValue();
 		
         for (var key in inputList) 
         {
 
                 for( var i = 0; i < inputList[key].length; i++)
                 {
-                    if(inputList[key][i].getcharacterID() in specimen.measures)
+                    //if(inputList[key][i].getcharacterID() in specimen.measures)
+                    if((inputList[key][i].getValue() != "" && key != 'general_measures'))
                     {
                         specimen.measures[inputList[key][i].getcharacterID()] = inputList[key][i].getValue();
                     }
+					else
+					{
+						if(inputList[key][i].getcharacterID() in specimen.measures)
+						{
+							delete specimen.measures[inputList[key][i].getcharacterID()];
+						}
+					}
+					/*
                     else
                     {
                         if(inputList[key][i].getValue() != "" && key != 'general_measures')
                         {
+							console.log(inputList[key][i].getValue());
 							specimen.measures[inputList[key][i].getcharacterID()] = inputList[key][i].getValue();
+							console.log(inputList[key][i].getcharacterID());
+							console.log(specimen.measures[inputList[key][i].getcharacterID()]);
                         }
 
-                    }
+                    }*/
                     inputList[key][i].toggleEdition(false);
                 }
             
         }
-        editSpecimen(specimen);
+        //console.log(specimen);
+		editSpecimen(specimen);
     };
     
 }
@@ -329,6 +363,24 @@ function appendNotPopulatedMeasuresToTabs(measuresGroupList, specimen)
         addTab(tab_id,key,measuresGroupList[key]);
     }
 
+}
+
+function getAllSpecies(d, list)
+{
+	//console.log(ranklist.length);
+    for( var i = 0; i < d.children.length; i++)
+    {
+		
+		if(d.children[i].rank == "7")
+			list.push({name: d.children[i].name, isNum: false, taxonomy: d.children[i]});
+
+        if(d.children[i].children && d.children[i].rank != "7")
+        {   
+            getAllSpecies(d.children[i], list);
+        }
+
+            
+    }
 }
 
 

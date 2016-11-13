@@ -14,14 +14,16 @@
         
         $characters = $taxonomy_database->getCharactersWithAssociativeArray();
         
-		echo json_encode($characters);
-		/*
-        $myfile = fopen("../../../data/characters.json", "w") or die("Unable to open file!");
-        $txt = json_encode($characters);
-        fwrite($myfile, $txt);
-        fclose($myfile);
+		$result = $taxonomy_database->getUnitsWithAssociativeArray();
+
+        echo json_encode($result);
+		
+        //$myfile = fopen("../../../data/units.json", "w") or die("Unable to open file!");
+       // $txt = json_encode($characters);
+        //fwrite($myfile, $txt);
+        //fclose($myfile);
         
-        echo "successfully created characters file";*/
+        //echo "successfully created characters file";
         
 
     }

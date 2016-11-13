@@ -21,6 +21,8 @@
             $this->longitude = $sp['longitude'];
             //$this->altitude = $sp['altitude'];
             $this->information = $sp['information'];
+			$this->user_name = $sp['user_name'];
+			$this->group_name = $sp['group_name'];
             $this->selected = false;	
         }
 

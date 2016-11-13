@@ -96,9 +96,9 @@ function Sunburst()
             // creating g elements for each node on sunburst
 
             g = svg.selectAll("g")
-                .data(partition.nodes(root))
+                .data(partition.nodes(node))
                 .enter().append("g");
-            
+				
             defineColoring(node, 0,0);
             
             // creating path
@@ -146,7 +146,7 @@ function Sunburst()
                 .each(stash)
                 ;
 				
-			
+
             textPath = g.append("path")
                 .filter(function (d){return d.rank})
                 .attr("d", textArc)
@@ -180,7 +180,7 @@ function Sunburst()
                 .attr('id', function(d)
 				{ 
 					var n = d.name.replace(' ', '_');
-					var n = d.name.replace('.', '_');
+					var n = n.replace('.', '_');
 					return 'Name_' + n + '_Depth-' + d.depth; 
 				})
                 .append("textPath")
@@ -188,9 +188,13 @@ function Sunburst()
                 .attr("startOffset", textOffset)
                 .style("text-anchor", "middle")
                 .attr("xlink:href",function(d){return "#" + d.textArcPath.id;})	
-				.text(function(d){ return d.name;})
+				.text(function(d)
+				{ 
+					return d.name;
+				})
                 ;
-		text
+				
+			text
                 .each(function(d){d.nameLength = this.getComputedTextLength()})
 
             
@@ -272,7 +276,10 @@ function Sunburst()
                     //console.log(this.endA);
                 })
                 ; */
-
+			
+			unsetShownOnChildren(node);
+			setShownOnChildren(rootNode);
+			
             setInteraction(true);
 
             this_pointer.togglePartition(showByChildrenNumbers);
@@ -283,19 +290,21 @@ function Sunburst()
     /* 
      * Click function on path d
      */
-    function click(d) 
+    //function click(d) 
+    this.click = function(d) 
     {
+
         // remove all mouse events
 		setInteraction(false);
 
-        
+
 		rootDepth = d.depth;
 		var clickedNode = d;
 		rootNode = d;
 
 		unsetShownOnChildren(node);
 		setShownOnChildren(rootNode);
-		
+
         var index = 0;
         path.transition().delay(100)
             .duration(transitionDuration)
@@ -345,7 +354,8 @@ function Sunburst()
     }
     
     this.togglePartition = function(type)
-    {
+    {	
+
         if(type)
             showByChildrenNumbers = true;
         else
@@ -360,8 +370,8 @@ function Sunburst()
 
 		text
 	    	.transition()
-			.each("start",function(d){d3.select(this.parentNode).style("opacity", 0);})
-			
+			.each("start",function(d){d3.select(this.parentNode).style("opacity", 0);});
+		
 		path.transition()
 			.filter(function(d){return d.show == true;})
 			.duration(transitionDuration)
@@ -458,6 +468,7 @@ function Sunburst()
 	{
 		if (!set) 
 		{
+			lockInteraction = true;
 			// events for texts
             d3.selectAll('text')
 				.on("click", null)
@@ -474,14 +485,15 @@ function Sunburst()
 		}
 		else 
 		{
+			lockInteraction = false;
 			// events for texts
             d3.selectAll('text')
-				.on("click", click)
+				.on("click", this_pointer.click)
 				.on("contextmenu", rightClick);
             
             // events for paths
             d3.selectAll('path')
-				.on("click", click)
+				.on("click", this_pointer.click)
 				.on("contextmenu", rightClick);
 		}
 	}
@@ -570,6 +582,8 @@ function Sunburst()
 		{
 			if((d.endAngle-d.startAngle)<5*Math.PI/180 || d.depth < rootDepth)
 				d3.select(this.parentNode).style("display","none");
+			else
+				d3.select(this.parentNode).style("display","block");
 			d3.select(this.parentNode).style("opacity", 0)
 		}
 		else

@@ -11,12 +11,12 @@ function Characters()
 	
     this.createList = function()
     {
-		$.getJSON("data/characters.json", function(json) 
-		{
-			charList = json;
-			//console.log(json);
-			return charList;
-		});
+		createCharactersFile();
+	}
+	
+	this.receiveListFromDatabase = function(list)
+	{
+		charList = JSON.parse(list);
 	}
 	
 	this.createCharTypesList = function()

@@ -27,7 +27,6 @@
 
 			}
         }
-        echo $specimen['user_id'];
 		$result = $taxonomy_database->addSpecimenWithUserID
         (
             $specimen['taxonomy_id'], 
@@ -40,7 +39,8 @@
             $specimen['information'], 
             null, 
             $m,
-			$specimen['user_id']
+			$specimen['user_id'],
+			$specimen['group_id']
         );
         /*
         $result = $taxonomy_database->addSpecimen

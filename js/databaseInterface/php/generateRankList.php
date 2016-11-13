@@ -17,12 +17,15 @@
         
         $ranks = $taxonomy_database->getTaxonomyRanksWithAssociativeArray();
 		
+		echo json_encode($ranks);
+		
+		/*
 		$myfile = fopen("../../../data/ranks.json", "w") or die("Unable to open file!");
         $txt = json_encode($ranks);
         fwrite($myfile, $txt);
         fclose($myfile);
         
-        echo "successfully created ranks file";
+        echo "successfully created ranks file";*/
 
     }
 

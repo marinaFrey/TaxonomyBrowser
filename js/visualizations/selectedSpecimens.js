@@ -57,9 +57,36 @@ function SelectedSpecimens()
                 
         groups.sort(function(){return .5 - Math.random();});
         
+		var gravityValue = 0.2;
+		var chargeValue = -15;
+		
         // if there is no filter applied, all selection is used 
         if(filteredSelection[0] == "all")
         {   
+			if(selection.length > 1200)
+			{
+				gravityValue = 0.35;
+				chargeValue = -10;
+			}
+			else
+			{
+				if(selection.length < 100)
+				{
+					chargeValue = -150;
+				}
+				else
+				{
+					if(selection.length < 300)
+						chargeValue = -50;
+					else
+					if(selection.length < 500)
+					{
+						//gravityValue = -0.01;
+						chargeValue = -25;
+					}
+				}
+			}
+			var r = setRadius(selection.length);
             for(var i = 0; i < selection.length; i++)
             {
                 if(selection[i].measures)
@@ -68,7 +95,7 @@ function SelectedSpecimens()
                     // defining circle with species color
                     nodes.push(
                     {
-                        radius: 5,//setRadius(selection.length),
+                        radius: r,//setRadius(selection.length),
                         color: selection[i].color, 
                         cx: width / 2,
                         cy:  y(pos), 
@@ -80,6 +107,30 @@ function SelectedSpecimens()
         }
         else
         {
+			if(filteredSelection.length > 1200)
+			{
+				gravityValue = 0.35;
+				chargeValue = -10;
+			}
+			else
+			{
+				if(filteredSelection.length < 100)
+				{
+					chargeValue = -130;
+				}
+				else
+				{
+					if(filteredSelection.length < 300)
+						chargeValue = -50;
+					else
+					if(filteredSelection.length < 500)
+					{
+						//gravityValue = -0.01;
+						chargeValue = -25;
+					}
+				}
+			}
+			var r = setRadius(filteredSelection.length);
             // if there is filter applied, filteredSelection vector is used as index to access selected specimens in dataset
             for (var i = 0; i < filteredSelection.length; i++)
             {
@@ -87,7 +138,7 @@ function SelectedSpecimens()
                 // defining circle with species color
                 nodes.push(
                 {
-                    radius: 5,//setRadius(filteredSelection.length),
+                    radius: r,//setRadius(filteredSelection.length),
                     color: selection[filteredSelection[i]].color, 
                     cx: width / 2,
                     cy:  y(pos), 
@@ -98,6 +149,8 @@ function SelectedSpecimens()
 
         force
             .nodes(nodes)
+			.gravity(gravityValue)
+            .charge(chargeValue)
             .on("tick", ptr.tick)
             .start();
             
@@ -107,7 +160,7 @@ function SelectedSpecimens()
             .enter().append("circle")
             .attr("r", function(d){ return d.radius; })
             .style("fill", function(d){ return d.color; })
-            .on("click", function(d){ makeSpecimenPopup(d.specimen);})
+            .on("click", function(d){ if (d3.event.defaultPrevented) return; makeSpecimenPopup(d.specimen);})
             .on("mouseover", function(d){ d3.select(this).style("stroke", "black");})                  
             .on("mouseout", function(d){ d3.select(this).style("stroke", "none");})
             .call(force.drag);
@@ -187,6 +240,10 @@ function SelectedSpecimens()
         };
     }
 
+	function setRadius(total)
+	{
+		return (1 + 100/(1+Math.sqrt(total))); 		
+	}
 
     /*
     function update() 

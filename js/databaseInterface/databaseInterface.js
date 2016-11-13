@@ -10,31 +10,48 @@ function createHierarchyFile()
 		user_info = {user_id: "-1", user_role: "2"};
 		
     waitingDialog.show('Getting Database...');
+	
+	var name = "lol";
     $.ajax({
-        url: 'js/databaseInterface/php/generate_json_hierarchy.php',
+        url: 'js/databaseInterface/php/generateCharactersList.php',
         type: 'POST',
-        data: {id:user_info},
+        data: {id:name},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
-			
-			sunburst.remove();
-			//sunburst = new Sunburst();
-			sunburst.create();
-			setTimeout(function()
-			{
-				waitingDialog.hide();
-				selection = [];
-				filteredSelection = ["all"];
-				updateShownVisualizationAndOptions();
-			}, 1000);
-			
+			allCharactersList.receiveListFromDatabase(data);
+			$.ajax({
+				url: 'js/databaseInterface/php/generate_json_hierarchy.php',
+				type: 'POST',
+				data: {id:user_info},
+				success: function(data) 
+				{
+					
+					sunburst.remove();
+					//sunburst = new Sunburst();
+					sunburst.create();
+					
+					setTimeout(function()
+					{
+						waitingDialog.hide();
+						selection = [];
+						filteredSelection = ["all"];
+						updateShownVisualizationAndOptions();
+					}, 1000);
+					
+				},
+				error:function(data)
+				{
+					alert("error");
+				}
+			});
         },
         error:function(data)
         {
             alert("error");
         }
     });
+	
+    
     
 
 }
@@ -42,17 +59,13 @@ function createHierarchyFile()
 function createCharactersFile()
 {
     var name = "lol";
-    var ready = false;
     $.ajax({
         url: 'js/databaseInterface/php/generateCharactersList.php',
         type: 'POST',
         data: {id:name},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
-			allCharactersList.createList();
-			ready = true;
-			createHierarchyFile();
+			allCharactersList.receiveListFromDatabase(data);
         },
         error:function(data)
         {
@@ -73,7 +86,7 @@ function createRanksFile()
         data: {id:name},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+			allRanksList.receiveListFromDatabase(data);
         },
         error:function(data)
         {
@@ -83,6 +96,34 @@ function createRanksFile()
     
 
 }
+
+function createUnitsList()
+{
+	var user = "lol";
+	
+	$.ajax({
+        url: 'js/databaseInterface/php/generateUnitList.php',
+        type: 'POST',
+        data: {id:user},
+        success: function(data) 
+        {
+			if(!data)
+			{
+				console.log("could not get units list");
+			}
+			else
+			{
+				allUnitsList.receiveListFromDatabase(data);
+			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
 
 function validateLogin(name,password)
 {
@@ -220,7 +261,8 @@ function addSpecimen(specimen)
         altitude: specimen.altitude, 
         information: specimen.information, 
         measures:m,
-		user_id: specimen.user_id
+		user_id: specimen.user_id,
+		group_id: specimen.group_id
 	}
     console.log(sp);
 	
@@ -410,7 +452,7 @@ function removeTaxonomy(taxonomy)
 
 function addCharacter(character)
 {
-    
+    console.log(character);
     $.ajax({
         url: 'js/databaseInterface/php/addCharacter.php',
         type: 'POST',

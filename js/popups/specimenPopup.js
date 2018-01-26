@@ -1,6 +1,6 @@
 
 var inputList = {};
-
+var accessOptionToChange;
 /*
  * Gets info from selected specimen and shows it in bootstrap's popup
  */
@@ -23,6 +23,20 @@ function makeSpecimenPopup(specimen)
 			infoLabel.innerHTML = "specimen's visibility: private, added by "+specimen.user_name+" <br> <br>";
 		else
 			infoLabel.innerHTML = "specimen's visibility: public <br> <br>";
+	}
+	//console.log(specimen);
+	
+	if(specimen.user_name)
+	{
+		var accessList = userLoggedIn.getUserGroupsAsOptionList();
+		accessOptionToChange = new Input();
+		accessOptionToChange.createCombo("text",infoLabel, "Change Access to","","", accessList, "");
+		if(specimen.group_name)
+			accessOptionToChange.setComboOptionByName(specimen.group_name);
+		console.log(accessOptionToChange)
+		console.log(specimen.group_name)
+		accessOptionToChange.toggleEdition(false);
+		//inputList['general_measures'].push(newInput1);
 	}
 	
 	var speciesOpt = [];
@@ -221,7 +235,8 @@ function editSpecimenFields(specimen)
     var submitButton = document.getElementById("submitButton");
     submitButton.style = "display:block;";
 	
-	
+	if(accessOptionToChange)
+		accessOptionToChange.toggleEdition(true);
     
     for (var key in inputList) 
     {
@@ -276,6 +291,28 @@ function editSpecimenFields(specimen)
                 }
             
         }
+		
+		var access = accessOptionToChange.getValue();
+		
+		if(access == "private (you and administrators)")
+		{
+			specimen.user_id = userLoggedIn.getID();
+			specimen.group_id = -1;
+		}
+		else
+		{
+			if(access == "public (everyone)")
+			{
+				specimen.user_id = -1;
+				specimen.group_id = -1;
+			}
+			else
+			{
+				specimen.user_id = userLoggedIn.getID();
+				specimen.group_id = userLoggedIn.getIndexByGroupName(access);
+			}
+		}
+		console.log(specimen);
         //console.log(specimen);
 		editSpecimen(specimen);
     };

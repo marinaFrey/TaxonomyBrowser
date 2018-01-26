@@ -3,37 +3,14 @@ var SCATTERPLOT_VIZ = 1;
 var COORD_PARAL_VIZ = 2;
 var DOTS_VIZ = 3;
 var MAPS_VIZ = 4;
+var BOXPLOT_VIZ = 5;
 var active_visualization = 3;
 
+var boxplotViz;
 var mapsViz;
 var selViz;
 var dotsViz;
 var paralCoordViz;
-
-/* SUNBURST EVENTS */
-
-function showNodeInfo()
-{
-	console.log("info");
-}
-
-function addNode()
-{
-	console.log("add");
-	//document.images["addButton"].src= "images/edit2.png";
-}
-
-function editNode()
-{
-	console.log("edit");
-}
-
-function removeNode()
-{
-	console.log("remove");
-}
-
-/* SELECTED SPECIMEN EVENTS */
 
 /*
  * Shows Filtering popup
@@ -51,18 +28,13 @@ function showAnalysisPopup()
 /* VISUALIZATION EVENTS */
 
 
-function showBars()
-{
-
-}
-
 function showSunburstbySpecies()
 {
 	if(!lockInteraction)
 	{
 		document.images["byspecies"].src="images/species2.png";
 		document.images["byspecimen"].src ="images/specimen.png";
-		console.log("showbyspecies");
+		//console.log("showbyspecies");
 		sunburst.togglePartition(false);
 	}
 }
@@ -77,6 +49,36 @@ function showSunburstbySpecimen()
 	}
 }
 
+function showBoxPlot()
+{
+	document.images["boxplot"].src="images/boxplot.png";
+    document.images["coord"].src="images/coord2.png";
+    document.images["dots"].src ="images/bullets2.png";
+	document.images["map"].src = "images/map2.png";
+	document.images["nosel"].style.display =  "none";
+    document.images["nofiltersel"].style.display =  "none";
+	
+	active_visualization = BOXPLOT_VIZ;
+	
+	multipleCombos.hide();
+	comboX.hide();
+    comboY.show();
+    comboSize.hide();
+    comboColor.hide();
+    dynamicCheckboxText.style.display = 'none';	
+    dynamicCheckbox.style.display = 'none';
+	
+	svg_selected.selectAll("*").remove();
+    document.getElementById("maps").style = "display:none;";
+    document.getElementById("sel_viz").style = "display:block;";
+	
+	boxplotViz = new boxPlotVisualization();
+    boxplotViz.create();
+	
+	if(selection[0])
+		boxplotViz.update();
+}
+
 /*
  * Changes yellow border (to show wich visualization is selected) on the icons
  * Hides comboboxes not used and updates options
@@ -84,11 +86,12 @@ function showSunburstbySpecimen()
  */
 function showParallelCoord()
 {
+    document.images["boxplot"].src="images/boxplot2.png";
     document.images["coord"].src="images/coord.png";
     document.images["dots"].src ="images/bullets2.png";
 	document.images["map"].src = "images/map2.png";
-	document.images["nosel"].style = "display:none;";
-    document.images["nofiltersel"].style = "display:none;";
+	document.images["nosel"].style.display =  "none";
+    document.images["nofiltersel"].style.display =  "none";
 
     
 	active_visualization = COORD_PARAL_VIZ;
@@ -101,7 +104,7 @@ function showParallelCoord()
     dynamicCheckbox.style.display = 'none';
 	
 	var list = generateNumericMeasuresList();
-	
+	//console.log(list);
 	multipleCombos.updateOptions(list);
 	multipleCombos.show();
 
@@ -124,6 +127,7 @@ function showParallelCoord()
 	if(selection[0])
 		paralCoordViz.update();
 	
+	
 }
 
 /*
@@ -134,11 +138,12 @@ function showParallelCoord()
 function showDots()
 {
 
+	document.images["boxplot"].src="images/boxplot2.png";
     document.images["coord"].src="images/coord2.png";
     document.images["dots"].src ="images/bullets.png";
 	document.images["map"].src = "images/map2.png";
-	document.images["nosel"].style = "display:none;";
-    document.images["nofiltersel"].style = "display:none;";
+	document.images["nosel"].style.display =  "none";
+    document.images["nofiltersel"].style.display =  "none";
 	active_visualization = DOTS_VIZ;
 	
     multipleCombos.hide();
@@ -151,21 +156,23 @@ function showDots()
     
 	var list = generateNumericMeasuresList();
 	
+	
     comboX.updateOptions(list);
     comboY.updateOptions(list);
     comboSize.updateOptions(list);
+    //comboSize.updateOptions(list.unshift({name:"none", isNum: true, group: "standard"}));
     comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
     if(firstTimeCombos)
     {
         comboX.setSelectedOption(0);
-        comboY.setSelectedOption(1);
-        comboSize.setSelectedOption(2);
+        comboY.setSelectedOption(0);
+        comboSize.setSelectedOption(0);
         firstTimeCombos = false;
     }
     
-    document.getElementById("maps").style = "display:none;";
-    document.getElementById("sel_viz").style = "display:block;";
+    document.getElementById("maps").style.display =  "none";
+    document.getElementById("sel_viz").style.display =  "none";
     svg_selected.selectAll("*").remove();
     
 	dotsViz = new dotsVisualization;
@@ -182,11 +189,12 @@ function showDots()
  */
 function showMap()
 {
+	document.images["boxplot"].src="images/boxplot2.png";
 	document.images["coord"].src="images/coord2.png";
     document.images["dots"].src ="images/bullets2.png";
 	document.images["map"].src = "images/map.png";
-	document.images["nosel"].style = "display:none;";
-    document.images["nofiltersel"].style = "display:none;";
+	document.images["nosel"].style.display =  "none";
+    document.images["nofiltersel"].style.display =  "none";
     
 	active_visualization = MAPS_VIZ;
 	
@@ -204,8 +212,8 @@ function showMap()
     comboColor.updateOptions([{name:"specimen",isNum:false}]);
     
     svg_selected.selectAll("*").remove();
-    document.getElementById("maps").style = "display:block;";
-    document.getElementById("sel_viz").style = "display:none;";
+    document.getElementById("maps").style.display =  "block";
+    document.getElementById("sel_viz").style.display =  "none";
     
 	mapsViz = new mapVisualization;
     mapsViz.create();
@@ -218,7 +226,8 @@ function showMap()
 
 function updateShownVisualization()
 {
-	
+	counting.updateInAnalysis();
+
 	switch(active_visualization)
 	{
 		case SELECTED_VIZ:
@@ -235,30 +244,41 @@ function updateShownVisualization()
 		
 		case DOTS_VIZ:
 			multipleCombos.hide();
-			dotsViz.update();
+			//dotsViz.update();
+			showDots();
 		break;
 		
 		case MAPS_VIZ:
 			multipleCombos.hide();
 			mapsViz.update(selection);
 		break;
+		
+		case BOXPLOT_VIZ:
+			showBoxPlot();
+		break;
+		
 	}
 	
 }
 
 function updateFromFiltering()
 {
+
 	selectedSpecimenViz.update();
+	
+	
 	//selectedNumber.update();
     //analysis.update();
     if(filteredSelection.length == 0)
     {
-        document.images["nofiltersel"].style = "display:block;";
-        document.getElementById("sel_viz").style = "display:none;";
-        document.getElementById("maps").style = "display:none;";
+        document.images["nofiltersel"].style.display =  "block";
+        document.getElementById("sel_viz").style.display =  "none";
+        document.getElementById("maps").style.display =  "none";
     }
     else
     {
+		counting.updateInAnalysis();
+
         switch(active_visualization)
         {
             case SELECTED_VIZ:
@@ -280,6 +300,10 @@ function updateFromFiltering()
             case MAPS_VIZ:
                 showMap();
             break;
+			
+			case BOXPLOT_VIZ:
+				showBoxPlot();
+			break;
         }
     }
     
@@ -295,17 +319,19 @@ function updateShownVisualizationAndOptions()
     
     if(selection.length == 0)
     {
-        document.images["nosel"].style = "display:block;";
-        document.getElementById("sel_viz").style = "display:none;";
-        document.getElementById("maps").style = "display:none;";
+        document.images["nosel"].style.display =  "block";
+		document.images["nofiltersel"].style.display =  "none";
+        document.getElementById("sel_viz").style.display =  "none";
+        document.getElementById("maps").style.display =  "none";
     }
     else
     {
-        document.images["nofiltersel"].style = "display:none;";
-        document.images["nosel"].style = "display:none;";
+        document.images["nofiltersel"].style.display =  "none";
+        document.images["nosel"].style.display =  "none";
         
         var newOptionsList = createStandardOptionsList().concat(generateMeasuresList());
         updateFilterOptions(newOptionsList);
+		counting.updateInAnalysis();
 
         if(filters.length > 0)
             applyFilters();
@@ -332,6 +358,10 @@ function updateShownVisualizationAndOptions()
             case MAPS_VIZ:
                 showMap();
             break;
+			
+			case BOXPLOT_VIZ:
+				showBoxPlot();
+			break;
         }
     }
 

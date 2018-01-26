@@ -1,0 +1,2 @@
+[27-Nov-2016 08:44:56 America/Chicago] PHP Warning:  Invalid argument supplied for foreach() in /home1/leandrorey/public_html/inf/taxonomybrowsertesting/js/databaseInterface/php/editSpecimen.php on line 37
+[27-Nov-2016 08:44:57 America/Chicago] PHP Warning:  Invalid argument supplied for foreach() in /home1/leandrorey/public_html/inf/taxonomybrowsertesting/js/databaseInterface/php/taxonomybrowser.class.php on line 876

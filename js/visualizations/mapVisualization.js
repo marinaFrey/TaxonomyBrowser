@@ -161,8 +161,8 @@ function mapVisualization()
         // in this case it's possible there is some specimen selected, but none with location info
         if(!hasMarker)
         {
-            document.getElementById("maps").style = "display:none;";
-            document.images["nofiltersel"].style = "display:block;";
+            document.getElementById("maps").style.display =  "none";
+            document.images["nofiltersel"].style.display =  "block";
         }
         
     }

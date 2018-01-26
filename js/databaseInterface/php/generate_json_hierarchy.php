@@ -25,13 +25,15 @@
 		else
 			setHierarchy($r,$c,$taxonomy_database);
         
-        
+		echo json_encode($r);
+		
+        /*
         $myfile = fopen("../../../data/data2.json", "w") or die("Unable to open file!");
         $txt = json_encode($r);
         fwrite($myfile, $txt);
         fclose($myfile);
         
-        echo 1;
+        echo 1;*/
 
     }
 ?>

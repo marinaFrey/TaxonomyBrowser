@@ -4,8 +4,8 @@
  */
 function SelectedSpecimens()
 {
-    var width = $("#selected_view").width(),
-        height = $("#selected_view").height() -10,
+    var width = $("#selected_view_svg").width(),
+        height = $("#selected_view_svg").height() -10,
         padding = 6, // separation between nodes
         maxRadius = 12;
 
@@ -14,9 +14,14 @@ function SelectedSpecimens()
     var nodes; 
     var groups; // list with the name of each species shown
     var y;  // ordinal scale to position clusters
+	var x;
+	var rScale;
     var force;
     var ptr = this;
+	var div;
 
+	var context;
+	var dataContainer;
     /*
      * initializes what is needed for the visualization
      */
@@ -25,12 +30,18 @@ function SelectedSpecimens()
         // scale defining the position of each cluster
         y = d3.scale.ordinal()
             .rangePoints([0, height], 1);  
-
+			
+		rScale = d3.scale.linear();
+			
         // creating force layout to simulate gravity
         force = d3.layout.force()
             .size([width, height])
             .gravity(0.2)
             .charge(-15);//(-7) 
+			
+		div = d3.select("body").append("div")   
+			.attr("class", "tooltip")               
+			.style("opacity", 0);
     }
     
     /*
@@ -39,23 +50,20 @@ function SelectedSpecimens()
     this.update = function()
     {
         svg_selected_specimens.selectAll("*").remove();
-        
+
+		
         // checking how many different species are being shown to get number of clusters needed
         number_of_clusters = 0;
         nodes = [];
         groups = [];
-        for(var i = 0; i < selection.length; i++)
-        {
-            if(selection[i].children && selection[i].children[0].measures)
-            {
-                groups.push(selection[i].name);
-                number_of_clusters++;
-            }
-        }
+		var colors = [];
+        
 
-        y.domain(d3.range(number_of_clusters))
+		
+		
+        
                 
-        groups.sort(function(){return .5 - Math.random();});
+        
         
 		var gravityValue = 0.2;
 		var chargeValue = -15;
@@ -63,16 +71,34 @@ function SelectedSpecimens()
         // if there is no filter applied, all selection is used 
         if(filteredSelection[0] == "all")
         {   
-			if(selection.length > 1200)
+			for(var i = 0; i < selection.length; i++)
+			{
+				if(selection[i].children && selection[i].children[0].measures)
+				{
+					colors[selection[i].name] = selection[i].color;
+					groups.push(selection[i].name);
+					number_of_clusters++;
+				}
+			}
+			y.domain(d3.range(number_of_clusters))
+			groups.sort(function(){return .5 - Math.random();});
+			
+			if(selection.length > 600)
 			{
 				gravityValue = 0.35;
-				chargeValue = -10;
+				chargeValue = -6;
 			}
 			else
 			{
 				if(selection.length < 100)
 				{
-					chargeValue = -150;
+					if(selection.length < 25)
+					{
+						gravityValue = 0.01;
+						chargeValue = -250;
+					}
+					else
+						chargeValue = -130;
 				}
 				else
 				{
@@ -98,7 +124,7 @@ function SelectedSpecimens()
                         radius: r,//setRadius(selection.length),
                         color: selection[i].color, 
                         cx: width / 2,
-                        cy:  y(pos), 
+						cy:  y(pos), 
                         specimen: selection[i]
                     });
                 }
@@ -107,16 +133,36 @@ function SelectedSpecimens()
         }
         else
         {
-			if(filteredSelection.length > 1200)
+			//console.log(filteredSelection);
+			for(var i = 0; i < filteredSelection.length; i++)
+			{
+				if(groups.map(function(e) { return e; }).indexOf(selection[filteredSelection[i]].name) == -1)
+				{
+					colors[selection[filteredSelection[i]].name] = selection[filteredSelection[i]].color;
+					groups.push(selection[filteredSelection[i]].name);
+					number_of_clusters++;
+				}
+			}
+			
+			y.domain(d3.range(number_of_clusters))
+			groups.sort(function(){return .5 - Math.random();});
+			
+			if(filteredSelection.length > 600)
 			{
 				gravityValue = 0.35;
-				chargeValue = -10;
+				chargeValue = -6;
 			}
 			else
 			{
 				if(filteredSelection.length < 100)
 				{
-					chargeValue = -130;
+					if(filteredSelection.length < 25)
+					{
+						gravityValue = 0.01;
+						chargeValue = -250;
+					}
+					else
+						chargeValue = -130;
 				}
 				else
 				{
@@ -138,7 +184,7 @@ function SelectedSpecimens()
                 // defining circle with species color
                 nodes.push(
                 {
-                    radius: r,//setRadius(filteredSelection.length),
+                    radius: r,
                     color: selection[filteredSelection[i]].color, 
                     cx: width / 2,
                     cy:  y(pos), 
@@ -147,45 +193,203 @@ function SelectedSpecimens()
             }
         }
 
-        force
-            .nodes(nodes)
-			.gravity(gravityValue)
-            .charge(chargeValue)
-            .on("tick", ptr.tick)
-            .start();
-            
-        // creating circle
-        circle = svg_selected_specimens.selectAll("circle")
-            .data(nodes)
-            .enter().append("circle")
-            .attr("r", function(d){ return d.radius; })
-            .style("fill", function(d){ return d.color; })
-            .on("click", function(d){ if (d3.event.defaultPrevented) return; makeSpecimenPopup(d.specimen);})
-            .on("mouseover", function(d){ d3.select(this).style("stroke", "black");})                  
-            .on("mouseout", function(d){ d3.select(this).style("stroke", "none");})
-            .call(force.drag);
-          
-        // changing duration of circle expansion depending on how many circles there is to create
-        var orderingDuration = (nodes.length/20)*(nodes.length/10);
-        
-        // transitioning circle size to create effect and
-        // to make the circles position themselves more easily
-        circle.transition()
-            .duration(orderingDuration)
-            .delay(function(d, i) { return 5; })
-            .attrTween("r", function(d) 
-            {
-                var i = d3.interpolate(d.radius/10, d.radius);
-                return function(t) { return d.radius = i(t); };
-            });
-    
+		counting.updateInAnalysis();
+		var speciesNumbersHTML = "";
+		var totalNumber = 0;
+		for(var i = 0; i < groups.length; i++)
+        {
+			var numberOfSelectedFromSpecies = counting.getNumberSelectedFromSpecies(groups[i])
+			if(numberOfSelectedFromSpecies)
+			{
+				speciesNumbersHTML += "<b> <font color="+colors[groups[i]]+">"+groups[i]+":</b> "+numberOfSelectedFromSpecies+" </font><br>";
+				totalNumber += numberOfSelectedFromSpecies;
+			}
+		}
+		speciesNumbersHTML += "<b>Total:</b> "+totalNumber+"<br>";
+
+
+		if(nodes.length > 600)
+		{
+			var zoom = d3.behavior.zoom();
+			document.getElementById("selected_view_svg").style.display =  "none";
+			document.getElementById("selected_view_canvas").style.display =  "block";
+
+			force = d3.layout.force()
+				.size([width, height]);
+				
+			context = canvas.node().getContext("2d");
+			
+			canvas
+				.on("mousemove", function(d)
+				{ 
+					// showing tooltip with x, y and circle size values
+					div
+						.transition()        
+						.duration(200)      
+						.style("opacity", .9);
+						
+					div 
+						.html(speciesNumbersHTML)  
+						.style("left", (d3.event.pageX + 10) + "px")     
+						.style("top", (d3.event.pageY - 60) + "px"); 
+				})                  
+				.on("mouseout", function(d)
+				{ 
+					div
+						.transition()        
+						.duration(500)      
+						.style("opacity", 0);   
+				});
+			
+			force
+			  .nodes(nodes)
+			  .gravity(gravityValue)
+			  .charge(chargeValue)
+			  //.links(graph.links)
+			  .on("tick", ptr.tickCanvas)
+			  .alpha(0.1)
+			  .start();
+			
+			canvas
+				.call(zoom.x(rScale).y(rScale).scaleExtent([1, 8]).on("zoom", ptr.tickCanvas))
+
+
+		}
+		else
+		{
+			document.getElementById("selected_view_svg").style.display =  "block";
+			document.getElementById("selected_view_canvas").style.display =  "none";
+			
+			svg_selected_specimens//.append("clipPath")
+				//.attr("id","circle-area")
+				.append("rect")
+				//.attr("x",0)
+				//.attr("y",0)
+				.attr("width", width )
+				.attr("height", height )
+				.attr("fill", "white")
+				.on("mousemove", function(d)
+				{ 
+					// showing tooltip with x, y and circle size values
+					div
+						.transition()        
+						.duration(200)      
+						.style("opacity", .9);
+						
+					div 
+						.html(speciesNumbersHTML)  
+						.style("left", (d3.event.pageX + 10) + "px")     
+						.style("top", (d3.event.pageY - 60) + "px"); 
+				})                  
+				.on("mouseout", function(d)
+				{ 
+					div
+						.transition()        
+						.duration(500)      
+						.style("opacity", 0);   
+				});;
+			
+				
+			
+			force
+				.nodes(nodes)
+				.size([width, height])
+				.gravity(gravityValue)
+				.charge(chargeValue)
+				.on("tick", ptr.tick);
+				
+			// creating circle
+			circle = svg_selected_specimens.selectAll("circle")
+				.data(nodes)
+				.enter().append("circle")
+				.attr("r", function(d){ return d.radius; })
+				.style("fill", function(d){ return d.color; })
+				//.style("display", "none")
+				.call(force.drag);
+			
+			var numberOfCircles = nodes.length;
+			
+			// changing duration of circle expansion depending on how many circles there is to create
+			var orderingDuration = (numberOfCircles/20)*(numberOfCircles/10);
+			
+			var index = numberOfCircles/1.7;
+			// transitioning circle size to create effect and
+			// to make the circles position themselves more easily
+			
+			
+			circle.transition()
+				.duration(orderingDuration)
+				.delay(function(d, i) { return 5; })
+				.attrTween("r", function(d) 
+				{
+					var i = d3.interpolate(d.radius/10, d.radius);
+					return function(t) { return d.radius = i(t); };
+				})
+				.each("end", function(e, i) 
+				{
+					index ++;
+					if (index >= numberOfCircles) 
+					{
+						index = - numberOfCircles;
+						console.log("hover");
+						ptr.enableMouseEvents(true);
+					}
+				});
+				
+			//force.on("end", function(){ptr.enableMouseEvents(true);});
+			force.start();
+		}
     }
 
+	
+	this.enableMouseEvents = function(enable)
+	{
+		if(enable)
+		{
+			circle
+				.on("click", function(d){ if (d3.event.defaultPrevented) return; makeSpecimenPopup(d.specimen);})
+				.on("mouseover", function(d){ d3.select(this).style("stroke", "black");})                  
+				.on("mouseout", function(d){ d3.select(this).style("stroke", "none");})
+				.style("display", "block");
+		}
+	
+	}
+	
+	this.tickCanvas = function() 
+	{
+		context.clearRect(0, 0, width, height + 20);
+
+		force.alpha(0.05);
+		
+		nodes.forEach(function(d) 
+		{
+			context.beginPath();
+			
+			
+			d.x = d.x + (d.cx-d.x)/500;
+			d.y = d.y + (d.cy-d.y)/500;
+			
+			d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
+			d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
+			
+			//context.moveTo(d.x, d.y);
+			context.arc(d.x, d.y, (d.radius), 0, 2 * Math.PI);
+			//
+			//console.log(d.cx+','+d.cy)
+			context.fillStyle = d.color;
+			context.fill();
+			context.closePath();
+		});
+		
+	}
+	
+	
     /*
      * Updates circle's position according to force applied
      */
     this.tick = function(e)
     {
+		force.alpha(0.05);
         circle
             .each(ptr.gravity(.2 * e.alpha))
             .each(ptr.collide(0.5))
@@ -239,10 +443,11 @@ function SelectedSpecimens()
             });
         };
     }
+	
 
 	function setRadius(total)
 	{
-		return (1 + 100/(1+Math.sqrt(total))); 		
+		return (0.1 + 70/(1+Math.sqrt(total))); 		
 	}
 
     /*
@@ -275,3 +480,4 @@ function SelectedSpecimens()
         force.start();
     }*/
 }
+

@@ -5,6 +5,14 @@ var node;
  */
 function Sunburst()
 {
+	//var cw = $('#viz').width();
+	//$('#viz').css({'height':cw+'px'});
+	
+	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+	var b = {
+	  w: 90, h: 40, s: 3, t: 10
+	};
+	
     //var node;
 	var transitionDuration = 1000;
 	var rootDepth = 0;
@@ -18,8 +26,8 @@ function Sunburst()
     var this_pointer;
 	var clickedList = [];
     var normalOpacity = 0.3;
-    var width = $("#viz").width(),
-        height = 700,
+    var width = $("#sunburst_viz").width(),
+        height = $("#sunburst_viz").height(), //700
         radius = Math.min(width, height) / 2;
         
     //x is the rotation of the element, relative to the center of the circle, defined by the "transform" property
@@ -28,7 +36,7 @@ function Sunburst()
     //y is simple distance from the center 
     var y = d3.scale.linear().range([0, radius]);
 
-    var svg = d3.select("#viz").append("svg")
+    var svg = d3.select("#sunburst_viz").append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -56,9 +64,10 @@ function Sunburst()
         .innerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 - 1/10000)); })
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy/2 + 1/10000)); });
 
-    var color = d3.scale.category20c();
-	var childrenColor = d3.scale.category10();
-    var colorTypes = {0:'blue',1:'pink',2:'purple',3:'orange',4:'green',5:'red'};
+    //var color = d3.scale.category20c();
+	var childrenColor = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf','#BBE08B','#586fd3', '#ead098', '#61f4f4', '#f4aa55' , '#c7ce00' , '#55edbd' , '#D1ED55' , '#6dd7e8','#a8db5c','#DB676F','#a5e20b','#e28928','#5eb218','#82f2c7','#ef626b','#f7846a','#e045a7','#1894ba','#4e8c0c','#e04fea','#a674db']
+	//var childrenColor = d3.scale.category10();
+    //var colorTypes = {0:'blue',1:'pink',2:'purple',3:'orange',4:'green',5:'red'};
 	var TaxonsColorsList = 
 			{
 				0: ['#C6DBEF','#9ECAE1','#6BAED6', '#3182BD'], 
@@ -84,21 +93,33 @@ function Sunburst()
     /*
      * creates sunburst
      */
-    this.create = function()
+    this.create = function(taxTree)
     {	
+
         this_pointer = this;
+		var cNum = 0;
+		node = taxTree;
+		//node = JSON.parse(taxTree);
 		
-        d3.json("data/data2.json", function(error, root) 
-        {
+		initializeBreadcrumbTrail();
+		
+        //d3.json("data/data2.json", function(error, root) 
+        //{
             // saving node root
-            node = root;
-			rootNode = root;
+            //node = root;
+			rootNode = node;
             // creating g elements for each node on sunburst
 
+			
+			g = svg.selectAll("g").remove();
+			
             g = svg.selectAll("g")
-                .data(partition.nodes(node))
-                .enter().append("g");
+                .data(partition.nodes(node).filter(function(d) { return d.rank; }))
+                .enter()
+				.append("g");
 				
+			//svg.selectAll("g").filter(function(d) { return !d.rank; }).remove();
+			
             defineColoring(node, 0,0);
             
             // creating path
@@ -137,8 +158,10 @@ function Sunburst()
                     
                     if(d.rank == "7")
                     {
-                        //d.color = randomColor();
-						d.color = childrenColor(d.name);
+						//console.log(childrenColor(d.name));
+						//d.color = childrenColor(d.name);
+						d.color = childrenColor[cNum];
+						cNum = (cNum+1) % childrenColor.length;
                     }
                     return d.color; 
                 })
@@ -283,7 +306,7 @@ function Sunburst()
             setInteraction(true);
 
             this_pointer.togglePartition(showByChildrenNumbers);
-        });     
+        //});     
         d3.select('svg').style("height", height + "px");  
     }
     
@@ -293,11 +316,12 @@ function Sunburst()
     //function click(d) 
     this.click = function(d) 
     {
-
+		d3.event.preventDefault();
         // remove all mouse events
 		setInteraction(false);
 
-
+		updateBreadcrumbs(getAncestors(d), "100%");
+		
 		rootDepth = d.depth;
 		var clickedNode = d;
 		rootNode = d;
@@ -365,7 +389,7 @@ function Sunburst()
 		setShownOnChildren(rootNode);
 		
         g = svg.selectAll("g")
-            .data(partition.nodes(node))
+            .data(partition.nodes(node).filter(function(d) { return d.rank; }))
             .enter().append("g");
 
 		text
@@ -444,7 +468,9 @@ function Sunburst()
         if( d.selected == false)
         {      
 			clickedList.push({clickedNode:d, toSelect:true});
-            d3.select(this.parentNode.childNodes[0]).style("opacity", 1);
+			d3.select(d.path).style("opacity", 1);
+			d3.select(d.path).style("stroke", "black");
+			
             selection.push(d);
             if(d.children)
                 setSelectionOnChildren(d);
@@ -454,7 +480,9 @@ function Sunburst()
         else
         {
 			clickedList.push({clickedNode:d, toSelect:false});
-            d3.select(this.parentNode.childNodes[0]).style("opacity", normalOpacity);
+			d3.select(d.path).style("opacity", normalOpacity);
+			d3.select(d.path).style("stroke", "white");
+			
             selection.splice(selection.indexOf(d),1);
             if(d.children)
                 unsetSelectionOnChildren(d);		
@@ -487,16 +515,24 @@ function Sunburst()
 		{
 			lockInteraction = false;
 			// events for texts
-            d3.selectAll('text')
-				.on("click", this_pointer.click)
-				.on("contextmenu", rightClick);
+            //d3.selectAll('text')
+			text
+				.on("click", rightClick)
+				.on("contextmenu", this_pointer.click);
+				//.on("mouseover", null)
+				//.on("mouseout", null);	
             
             // events for paths
-            d3.selectAll('path')
-				.on("click", this_pointer.click)
-				.on("contextmenu", rightClick);
+            //d3.selectAll('path')
+			path
+				.on("click", rightClick)
+				.on("contextmenu", this_pointer.click)
+				.on("mouseover", null)
+				.on("mouseout", null);	
 		}
 	}
+	
+	
 
 	// Interpolate the scales!
     function arcTween(d) 
@@ -665,7 +701,7 @@ function Sunburst()
 		//$('div[data-toolbar="user-options"]').on('toolbarItemClick',
 			function( event, buttonClicked ) 
 			{
-
+				console.log("using toolbar");
 				if(buttonClicked.id == "tooltip_info")
 				{
 					makeTaxonomyPopup(d);
@@ -729,6 +765,7 @@ function Sunburst()
             if(d.children[i].selected == false)
             {
                 d3.select(d.children[i].path).style("opacity", 1);
+				d3.select(d.children[i].path).style("stroke", "black");
 				if(!d.children[i].children)
 					d.children[i].color = d.color;
                 d.children[i].selected = true;
@@ -751,6 +788,7 @@ function Sunburst()
             if(d.children[i].selected == true)
             {
                 d3.select(d.children[i].path).style("opacity", normalOpacity);
+				d3.select(d.children[i].path).style("stroke", "white");
                 selection.splice(selection.indexOf(d.children[i]),1);
                 d.children[i].selected = false;
             }
@@ -811,4 +849,93 @@ function Sunburst()
     {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
+	
+	/***********************************************/
+	/**************** BREADCRUMBS *****************/
+	/*********************************************/
+	
+	function initializeBreadcrumbTrail() 
+	{
+		// Add the svg area.
+		var trail = d3.select("#breadcrumbs_viz").append("svg")
+			.attr("width", width)
+			.attr("height", 50)
+			.attr("id", "trail");
+	}
+
+	// Generate a string that describes the points of a breadcrumb polygon.
+	function breadcrumbPoints(d, i) 
+	{
+		var points = [];
+		points.push("0,0");
+		points.push(b.w + ",0");
+		points.push(b.w + b.t + "," + (b.h / 2));
+		points.push(b.w + "," + b.h);
+		points.push("0," + b.h);
+		if (i > 0) 
+		{ 
+			// Leftmost breadcrumb; don't include 6th vertex.
+			points.push(b.t + "," + (b.h / 2));
+		}
+		return points.join(" ");
+	}
+
+	// Update the breadcrumb trail to show the current sequence and percentage.
+	function updateBreadcrumbs(nodeArray, percentageString) 
+	{
+
+		// Data join; key function combines name and depth (= position in sequence).
+		var g = d3.select("#trail")
+			.selectAll("g")
+			.data(nodeArray, function(d) { return d.name + d.depth; });
+
+		// Add breadcrumb and label for entering nodes.
+		var entering = g.enter().append("svg:g");
+
+		entering.append("svg:polygon")
+			.attr("points", breadcrumbPoints)
+			.style("fill", function(d) { return d.color; })
+			.on("click", this_pointer.click)
+			.on("contextmenu", this_pointer.click);
+
+		entering.append("svg:text")
+			.attr("x", (b.w + b.t) / 2)
+			.attr("y", b.h / 2)
+			.attr("dy", "0.35em")
+			.attr("text-anchor", "middle")
+			.style("fill","black")
+			//.style("font-weight", "bold")
+			.style("font-size","13px")
+			.text(function(d) { return d.name; })
+			.on("click", this_pointer.click)
+			.on("contextmenu", this_pointer.click);
+
+		// Set position for entering and updating nodes.
+		g.attr("transform", function(d, i) 
+		{
+			return "translate(" + i * (b.w + b.s) + ", 0)";
+		});
+
+		// Remove exiting nodes.
+		g.exit().remove();
+
+		// Make the breadcrumb trail visible, if it's hidden.
+		d3.select("#trail")
+			.style("visibility", "");
+
+	}
+	
+	// Given a node in a partition layout, return an array of all of its ancestor
+	// nodes, highest first, but excluding the root.
+	function getAncestors(currentNode) 
+	{
+		var anscestorsList = [];
+		var current = currentNode;
+		while (current.parent) 
+		{
+			anscestorsList.unshift(current);
+			current = current.parent;
+		}
+		return anscestorsList;
+	}
 }

@@ -6,7 +6,7 @@ function ParallelCoordinates()
 {   
 	var margin = {top: 30, right: 10, bottom: 10, left: 10},
 		width = $("#sel_viz").width()  - margin.left - margin.right,
-		height = $("#sel_viz").height() /*- margin.top - margin.bottom*/;
+		height = $("#sel_viz").height() - margin.top - margin.bottom;
     //var height =  $("#sel_viz").height() ;
 	//var width = $("#sel_viz").width() - 40;
 
@@ -40,6 +40,7 @@ function ParallelCoordinates()
         svg_selected
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
+		console.log(height);
         dimensions = multipleCombos.getSelectedOptions();
         var values = [];
         var dataset = [];

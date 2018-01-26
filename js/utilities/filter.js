@@ -7,15 +7,16 @@ function FilterPopup()
 	var infoLabel;
 	var addButton;
 	var measuresList;
+	var toBeDeletedList;
     // options for filtering numeric variables
 	var operationsListNumeric = [{name:"exists",isNum:false},
                                     {name:"doesn't exist",isNum:false},
                                     {name:"is",isNum:true},
                                     {name:"is not",isNum:true},
                                     {name:"is smaller than",isNum:true},
-                                    {name:"is bigger than",isNum:true},
+                                    {name:"is greater than",isNum:true},
                                     {name:"is smaller or equal to",isNum:true},
-                                    {name:"is bigger or equal to",isNum:true}];
+                                    {name:"is greater or equal to",isNum:true}];
     // options for filtering string variables
 	var operationsListString = [{name:"exists",isNum:false},
                                 {name:"doesn't exist",isNum:false},{name:"is",isNum:true}, 
@@ -57,6 +58,7 @@ function FilterPopup()
 		var main_div = document.createElement('div');
 		var space_div = document.createElement('div');
 		space_div.setAttribute('class',"col-sm-1");
+		space_div.style="display:flex;justify-content:center;align-items:center;";
 		main_div.appendChild(space_div);
 		var measure_div = document.createElement('div');
 		measure_div.setAttribute('class',"col-sm-4");
@@ -80,10 +82,19 @@ function FilterPopup()
         var input = document.createElement("input");
         var oImg=document.createElement("img");
         var br = document.createElement("br");
-        
+        var check = document.createElement("img");
+		
+		check.setAttribute('src', 'images/checked.png');
+		check.style.width= '32px';
+		check.style.width= '32px';
+		check.style.opacity = 0;
+		space_div.appendChild(check);
+		
         // populating combobox with all measures and additional information
 		comboMeasure.createFilterCombo("comboMeasure", measure_div, function()
         {
+			check.hasBeenApplied = false;
+			check.style.opacity = 0;
 			if(comboMeasure.getGroupName() == ACCESS_OPTION_NAME)
 			{
 				comboOption.changeStyle("opacity:0;");
@@ -152,7 +163,7 @@ function FilterPopup()
 		oImg.style.width= '32px';
 		oImg.onclick = function()
 		{
-			ptr.removeFilter(comboMeasure, comboOption, input, br, this);
+			ptr.removeFilter(comboMeasure, comboOption, input, br, check, this);
 		};
 		rmv_div.appendChild(oImg);
 		main_div.appendChild(br);
@@ -160,14 +171,22 @@ function FilterPopup()
         comboMeasure.makeClick();
         
         // adding filter to filter list
-		filters.push({comboMeasure: comboMeasure, comboOption: comboOption, input: input});
+		filters.push({check: check, comboMeasure: comboMeasure, comboOption: comboOption, input: input, br:br, rmvButton:oImg});
 	}
 	/*
      * Removes filter from list and interface
      */
-	this.removeFilter = function(comboM, comboO, inputLine, br, rmvButton)
+	this.removeFilter = function(comboM, comboO, inputLine, br, check, rmvButton)
 	{
 
+		comboM.setOpacity(0);
+		comboO.setOpacity(0);	
+		inputLine.style.opacity = 0;
+		rmvButton.style.opacity = 0;
+		check.style.opacity = 0;
+		inputLine.toBeDeleted = true;
+		
+		/*
 		var comboMeasureParentDiv = comboM.getParentDiv();
 		while (comboMeasureParentDiv.hasChildNodes()) 
 		{
@@ -201,17 +220,36 @@ function FilterPopup()
 		{
 			comboBrParentDiv.removeChild(comboBrParentDiv.lastChild);
 		}
-		comboBrParentDiv.remove();
+		comboBrParentDiv.remove();*/
 	
 		
-		filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(comboM),1);
-		
+		//filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(comboM),1);
+		//applyFilters();
+		//$('#filterModal').modal('show');
 	}
 	/*
      * Shows popup
      */
 	this.show = function()
 	{
+		for (var i = 0; i < filters.length; i++)
+		{
+			if(filters[i].comboMeasure.getGroupName() != "ACCESS")
+			{
+				filters[i].comboOption.setOpacity(1);
+				filters[i].input.style.opacity = 1;
+			}
+
+			filters[i].comboMeasure.setOpacity(1);
+			filters[i].rmvButton.style.opacity = 1;
+			filters[i].input.toBeDeleted = false;
+			
+			if(filters[i].check.hasBeenApplied)
+				filters[i].check.style.opacity = 1;
+			else
+				filters[i].check.style.opacity = 0;
+		}
+		
 		$('#filterModal').modal('show');
 	}
 }
@@ -273,6 +311,55 @@ function removeFilters()
  */
 function applyFilters()
 {
+	for (var i =  filters.length-1; i >= 0; i--)
+	{
+		if(filters[i].input.toBeDeleted)
+		{
+			var comboMeasureParentDiv = filters[i].comboMeasure.getParentDiv();
+			while (comboMeasureParentDiv.hasChildNodes()) 
+			{
+				comboMeasureParentDiv.removeChild(comboMeasureParentDiv.lastChild);
+			}
+			comboMeasureParentDiv.remove();
+			
+			var comboOptionParentDiv = filters[i].comboOption.getParentDiv();
+			while (comboOptionParentDiv.hasChildNodes()) 
+			{
+				comboOptionParentDiv.removeChild(comboOptionParentDiv.lastChild);
+			}
+			comboOptionParentDiv.remove();
+			
+			var comboLabelParentDiv = filters[i].input.parentNode;
+			while (comboLabelParentDiv.hasChildNodes()) 
+			{
+				comboLabelParentDiv.removeChild(comboLabelParentDiv.lastChild);
+			}
+			comboLabelParentDiv.remove();
+			
+			var comboRmvButtonParentDiv = filters[i].rmvButton.parentNode;
+			while (comboRmvButtonParentDiv.hasChildNodes()) 
+			{
+				comboRmvButtonParentDiv.removeChild(comboRmvButtonParentDiv.lastChild);
+			}
+			comboRmvButtonParentDiv.remove();
+			
+			var comboBrParentDiv = filters[i].br.parentNode;
+			while (comboBrParentDiv.hasChildNodes()) 
+			{
+				comboBrParentDiv.removeChild(comboBrParentDiv.lastChild);
+			}
+			comboBrParentDiv.remove();
+			
+			filters.splice(filters.map(function(e) {return e.comboMeasure; }).indexOf(filters[i].comboMeasure),1);
+			
+			//filters.splice(i,1);
+		}
+		else
+		{
+			filters[i].check.style.opacity = 1;
+			filters[i].check.hasBeenApplied = true;
+		}
+	}
     // cleans current filtered selection
     filteredSelection = [];
     var characterLst = allCharactersList.getList();
@@ -296,7 +383,6 @@ function applyFilters()
 						case "private (you and administrators)":
 							if(!selection[i].user_name || selection[i].group_name)
 							{
-								console.log(selection[i]);
 								accept = false;
 							}
 						break;
@@ -627,7 +713,7 @@ function applyFilters()
 							}
 						break;
 						// has to be numeric
-						case "is bigger than":
+						case "is greater than":
 							if(selection[i].measures)
 							{
 								var exists = false;
@@ -662,7 +748,7 @@ function applyFilters()
 							}
 						break;
 						// has to be numeric
-						case "is bigger or equal to":
+						case "is greater or equal to":
 							if(selection[i].measures)
 							{
 								var exists = false;

@@ -9,6 +9,7 @@ function numberOfSelectedViz()
     var labels_analysis = [];
     var parent_div = document.getElementById("number_sel_viz");
     var analysis_div = document.getElementById("counting_text");
+	var counter;
     
     this.update = function()
     {
@@ -16,7 +17,7 @@ function numberOfSelectedViz()
         this.removeAll();
         if(filteredSelection[0] != "all")
         {
-            var counter = [];
+            counter = [];
             for (var i = 0; i < filteredSelection.length; i++)
             {
 				if(!selection[filteredSelection[i]].rank)
@@ -60,7 +61,23 @@ function numberOfSelectedViz()
             }
         }
     }
+	
+	this.getNumberSelectedFromSpecies = function(speciesName)
+	{
+		if(counter)
+		{
+			var index = counter.map(function(e) { return e.name; }).indexOf(speciesName);
 
+			if(index != -1)
+				return counter[index].size;
+			else
+				return null;
+		}
+		else
+			return null;
+	}
+
+	
     this.removeAll = function()
     {
          for (var i = 0; i < labels.length; i++)
@@ -79,7 +96,7 @@ function numberOfSelectedViz()
         //console.log(filteredSelection);
         if(filteredSelection[0] != "all")
         {
-            var counter = [];
+            counter = [];
             for (var i = 0; i < filteredSelection.length; i++)
             {
 				if(!selection[filteredSelection[i]].rank)
@@ -112,7 +129,7 @@ function numberOfSelectedViz()
         }
         else
         {
-            var counter = [];
+            counter = [];
             for (var i = 0; i < selection.length; i++)
             {
 				if(!selection[i].rank)

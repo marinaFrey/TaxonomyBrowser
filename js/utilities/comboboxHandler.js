@@ -15,6 +15,7 @@ function ComboBox()
 	var type;
     var isNum;
 	var optionElementList;
+	var defaultValue;
     
 	/*
      * creates combobox with its name on a label by its right
@@ -79,7 +80,6 @@ function ComboBox()
 	this.createFilterCombo = function(combo_id,parent, clickFunction)
 	{
 		id = combo_id;
-
 		combo = document.createElement("SELECT");
 		combo.setAttribute("id", id);
         parent.appendChild(combo);
@@ -271,11 +271,33 @@ function ComboBox()
 		combo.selectedIndex = itemId;
 	}
 	
+	this.setSelectedOptionByName = function(name)
+	{
+		var list = combo.options;
+		for(var i = 0; i < combo.options.length; i++)
+		{
+			if(combo.options[i].text == name)
+			{
+				combo.selectedIndex = i;
+			}
+		}
+
+	}
+	
     this.makeClick = function()
     {
         combo.clickFunction();
     }
 	
+	this.setDefaultValue = function(value)
+	{
+		defaultValue = value;
+	}
+	
+	this.getDefaultValue = function()
+	{
+		return defaultValue;
+	}
     
     /*
      * hide combobox
@@ -301,6 +323,8 @@ function ComboBox()
 	this.remove = function()//(parent)
 	{
 		combo.remove();
+		if(txtLabel)
+			txtLabel.remove();
 		/*var parent = document.getElementById(parent);
 		if(type == VIZ_COMBO)
 			parent.removeChild(txtLabel);
@@ -312,11 +336,20 @@ function ComboBox()
 		combo.disabled = isDisabled;
 	}
 	
+	this.setOpacity = function(opacity)
+	{
+		combo.style.opacity = opacity;
+	}
+	
 	this.changeStyle = function(style)
 	{
 		combo.style = style;
 	}
     
+	this.setSize = function(size)
+	{
+		combo.style.width = size+"px";
+	}
     /*
      * set if combobox is to be used with numeric data
      * used with filtering comboboxes
@@ -368,15 +401,54 @@ function MultipleComboboxes()
 	this.initialize = function()
 	{
 		
-		combos[0] = new ComboBox();
-		combos[0].create("X1","mcombo1");
+		var newCombo = new ComboBox();
+		newCombo.create("X1","mcombo1");
 		
-		combos[1] = new ComboBox();
-		combos[1].create("X2","mcombo2");
+		var rmvButton =document.createElement("img");
+		rmvButton.setAttribute('src', 'images/remove.png');
+		rmvButton.style.width= '16px';
+		rmvButton.style.width= '16px';
+		rmvButton.comboPointer = newCombo;
+		document.getElementById("comboboxes").appendChild(rmvButton);
+		rmvButton.onclick = function()
+		{
+			ptr.removeCombo(this.comboPointer);
+		};
+		
+		combos.push({combo: newCombo, removeButton: rmvButton});
+		
+		newCombo = new ComboBox();
+		newCombo.create("X2","mcombo2");
         
-        combos[2] = new ComboBox();
-		combos[2].create("X3","mcombo3");
+		rmvButton =document.createElement("img");
+		rmvButton.setAttribute('src', 'images/remove.png');
+		rmvButton.style.width= '16px';
+		rmvButton.style.width= '16px';
+		rmvButton.comboPointer = newCombo;
+		document.getElementById("comboboxes").appendChild(rmvButton);
+		rmvButton.onclick = function()
+		{
+			ptr.removeCombo(this.comboPointer);
+		};
+		
+		combos.push({combo: newCombo, removeButton: rmvButton});
+		
+        newCombo = new ComboBox();
+		newCombo.create("X3","mcombo3");
         
+		rmvButton =document.createElement("img");
+		rmvButton.setAttribute('src', 'images/remove.png');
+		rmvButton.style.width= '16px';
+		rmvButton.style.width= '16px';
+		rmvButton.comboPointer = newCombo;
+		document.getElementById("comboboxes").appendChild(rmvButton);
+		rmvButton.onclick = function()
+		{
+			ptr.removeCombo(this.comboPointer);
+		};
+		
+		combos.push({combo: newCombo, removeButton: rmvButton});
+		
 		comboNumber = 3;
 		
         // creatin add button
@@ -389,7 +461,7 @@ function MultipleComboboxes()
 		{
 			ptr.addCombo();
 		};
-		
+
 	}
 	
     /*
@@ -397,17 +469,30 @@ function MultipleComboboxes()
      */
 	this.addCombo = function()
 	{
-		combos[comboNumber] = new ComboBox();
-		combos[comboNumber].createBefore("X"+(comboNumber+1),"mcombo"+(comboNumber+1), addButton); 		
-        combos[comboNumber].updateOptions(generateNumericMeasuresList());
-        combos[comboNumber].setSelectedOption(comboNumber);
+		var newCombo = new ComboBox();
+		newCombo.createBefore("X"+(comboNumber+1),"mcombo"+(comboNumber+1), addButton); 		
+        newCombo.updateOptions(generateNumericMeasuresList());
+		newCombo.setSize(120);
+        newCombo.setSelectedOption(comboNumber);
+
+		var rmvButton =document.createElement("img");
+		rmvButton.setAttribute('src', 'images/remove.png');
+		rmvButton.style.width= '16px';
+		rmvButton.style.width= '16px';
+		rmvButton.comboPointer = newCombo;
+		document.getElementById("comboboxes").insertBefore(rmvButton, addButton);
+		rmvButton.onclick = function()
+		{
+			//console.log(this.comboPointer);
+			ptr.removeCombo(this.comboPointer);
+		};
+		
+		combos.push({combo: newCombo, removeButton: rmvButton});
+		
 		comboNumber++;
 		
         updateShownVisualization();
-		if(comboNumber == 6)
-		{
-			addButton.style.display = 'none';
-		}
+
 		
 	}
 	
@@ -418,12 +503,16 @@ function MultipleComboboxes()
 	{
 		for(var i = 0; i < combos.length; i++)
 		{
-			if(combos[i] == comboToRemove)
+			if(combos[i].combo == comboToRemove)
 			{
-				combos[i].splice(i,1);
+				combos[i].combo.remove();
+				combos[i].removeButton.remove();
+				combos.splice(i,1);
 				comboNumber--;
 			}
 		}
+		updateShownVisualization();
+
 	}
 	
     /*
@@ -433,7 +522,7 @@ function MultipleComboboxes()
 	{
 		for(var i = 0; i < combos.length; i++)
 		{
-			combos[i].updateOptions(list);
+			combos[i].combo.updateOptions(list);
 		}
 	}
 	
@@ -445,7 +534,7 @@ function MultipleComboboxes()
 		var list = [];
 		for(var i= 0; i < combos.length; i++)
 		{
-			list.push(combos[i].getSelectedOption());
+			list.push(combos[i].combo.getSelectedOption());
 		}
 		return list;
 	}
@@ -457,7 +546,8 @@ function MultipleComboboxes()
 	{
 		for(var i= 0; i < combos.length; i++)
 		{
-			combos[i].hide();
+			combos[i].combo.hide();
+			combos[i].removeButton.style.display = "none";
 		}
 		addButton.style.display = 'none';
 	}
@@ -469,7 +559,8 @@ function MultipleComboboxes()
 	{
 		for(var i= 0; i < combos.length; i++)
 		{
-			combos[i].show();
+			combos[i].combo.show();
+			combos[i].removeButton.style.display = "inline";
 		}
 		addButton.style.display = 'inline';
 	}
@@ -482,7 +573,7 @@ function MultipleComboboxes()
     {
         for(var i= 0; i < combos.length; i++)
 		{
-			combos[i].setSelectedOption(i);
+			combos[i].combo.setSelectedOption(i);
 		}
     }
 	
@@ -512,7 +603,7 @@ function initializeComboboxes()
     
     // creating dynamic axis label
     dynamicCheckboxText = document.createElement("H0");
-    var t = document.createTextNode(" Dynamic Axis ");
+    var t = document.createTextNode(" Dynamic Lenses ");
     dynamicCheckboxText.style = "margin-right:100px;font-size: 20px;display:inline;";
     dynamicCheckboxText.appendChild(t);
     document.getElementById("comboboxes").appendChild(dynamicCheckboxText);
@@ -543,7 +634,52 @@ function initializeComboboxes()
 /*
  * gets all species list of measures names and checks if value should be a number
  * returns an object list with all measure names, avoiding duplicates
- */
+ *//*
+ function generateMeasuresList()
+{
+	console.log("LOLO");
+	var m_list = [];
+	var check_m_list = [];
+	var characterLst = allCharactersList.getList();
+
+	for (var i = 0; i < selection.length; i++)
+	{
+		if(selection[i].measures)
+		{
+			for(var charId_key in  selection[i].measures) 
+			{
+				check_m_list[charId_key] = true;
+			}
+		}
+	}
+	
+
+	for(var charId_key in  check_m_list) 
+	{
+		
+		if(characterLst[charId_key].character_type_name == "real number" || 
+			characterLst[charId_key].character_type_name == "integer number")
+		{
+			m_list.push({
+				id: charId_key, 
+				name: characterLst[charId_key].character_name, 
+				group: characterLst[charId_key].character_group_name,
+				isNum: true});
+		}
+		else
+		{
+			m_list.push({
+				id: charId_key, 
+				name: characterLst[charId_key].character_name, 
+				group: characterLst[charId_key].character_group_name,
+				isNum: false});
+		}
+
+	}
+	console.log(m_list);
+	return m_list;
+}*/
+
 function generateMeasuresList()
 {
 	var m_list = [];
@@ -621,6 +757,55 @@ function generateMeasuresList()
 function generateNumericMeasuresList()
 {
 	var m_list = [];
+	var check_m_list = [];
+	var characterLst = allCharactersList.getList();
+
+	if(filteredSelection[0] != "all")
+	{
+		for (var i = 0; i < filteredSelection.length; i++)
+		{
+			if(selection[filteredSelection[i]].measures)
+			{
+				for(var charId_key in  selection[filteredSelection[i]].measures) 
+				{
+					check_m_list[charId_key] = true;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (var i = 0; i < selection.length; i++)
+		{
+			if(selection[i].measures)
+			{
+				for(var charId_key in  selection[i].measures) 
+				{
+					check_m_list[charId_key] = true;
+				}
+			}
+		}
+	}
+
+	for(var charId_key in  check_m_list) 
+	{
+		
+		if(characterLst[charId_key].character_type_name == "real number" || 
+			characterLst[charId_key].character_type_name == "integer number")
+			m_list.push({
+				id: charId_key, 
+				name: characterLst[charId_key].character_name, 
+				group: characterLst[charId_key].character_group_name,
+				isNum: true});
+
+	}
+	
+	return m_list;
+}
+
+function generateTotalNumericMeasuresList()
+{
+	var m_list = [];
 	var characterLst = allCharactersList.getList();
 	for (var i = 0; i < selection.length; i++)
 	{
@@ -668,3 +853,4 @@ function generateNumericMeasuresList()
 	}
 	return m_list;
 }
+

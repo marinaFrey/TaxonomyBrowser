@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<head>
+    <title>Taxonomy Browser</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="images/icon_site.png">
+	
+    
+</head>
+<body>
+
+<!-- MENU 
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" rel="home" href="#">Taxonomy Browser</a>
+	</div>
+	
+	<div class="collapse navbar-collapse">
+		
+		<ul class="nav navbar-nav">
+			<li><a href="#" onClick="return makeCharactersManagerPopup();">Characteristics</a></li>
+			<li><a href="#" onClick="return exportSelection();">Export Selected Specimens</a></li>
+			<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Options <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Clean Database and Import New Data</a></li>
+                <li class="divider"></li>
+                <li><a href="#">About</a></li>
+              </ul>
+            </li>
+		</ul>
+
+		<div class="col-sm-1 col-md-1 pull-right">
+			<button type="button" class="btn btn-default navbar-btn" onClick="return showLoginPopup();">Login</button>
+		</form>
+		</div>
+		
+	</div>
+</div>-->
+
+<!-- TESTANDO NOVO MENU -->
+
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <h5> ----</h5>
+        
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4" style="background-color:#bf83ea;text-align: center" >
+            <!--<img name="taxtreetitle" src="images/taxonomyTree.png" width="300" height="50" border="0" title="here you can select by right-clicking any specimen you want to visualize">-->
+            <h3><b><font color="white">Taxonomy Tree</font></b></h3> 
+        </div>
+        <div class="col-sm-2"  style="background-color:#75C9FF;;text-align: center">
+            <!--<img name="filteringtitle" src="images/filtering.png" width="180" height="50" border="0" title="here you can filter the selected specimen you want to visualize">-->
+			<h3><b><font color="white">Specimens</font></b></h3>
+		</div>
+        <div class="col-sm-6" style="background-color:#b5f279;text-align: center">
+            <!--<img name="viztitle" src="images/visualization.png" width="300" height="45" border="0" title="here you can see the visualizations!">-->
+			<h3 style="color: white;"><b>Visualizations</b></h3> <!-- #b5f279 -->
+		</div>
+    </div>
+    
+	<!-- SETTINGS -->
+	<div class="row">
+        <!-- radio buttons to select type of partitioning made in sunburst -->
+        <div class="col-sm-4" id="taxtreeoptions" style="background-color:#bf83ea;text-align: center">
+            <img name="byspecies" id="byspecies" src="images/species2.png" width="110" height="100" border="0" alt="javascript button" onClick="return showSunburstbySpecies();" style="cursor: pointer;" title="partition taxonomy tree by number of species">
+            <img name="byspecimen" id="byspecimen" src="images/specimen.png" width="110" height="100" border="0" alt="javascript button" onClick="return showSunburstbySpecimen();" style="cursor: pointer;" title="partition taxonomy tree by number of specimens">
+        <!--
+            <div class="col-sm-2" style="text-align: center" >
+                
+                <label><input type="radio" name="mode" value="count" style="vertical-align: bottom;" autocomplete="off"> By number of species</label>
+            </div>
+            <div class="col-sm-2"style="text-align: center" >
+                <label><input type="radio" name="mode" value="size" style="vertical-align: bottom;" autocomplete="off" checked > By number of specimens</label>
+                
+            </div>-->
+            
+        </div>
+        
+        <!-- icons for filtering -->
+		<div class="col-sm-2" id="filteringoptions" style="background-color:#75C9FF;;text-align: center">
+			<!--<img name="filterRemoveButton" src="images/filter_remove.png" width="80" height="80" border="0" alt="javascript button" onClick="return removeFilters();" title="remove all filters from selection"> -->
+			<img name="analysis" id="analysis" src="images/analysis_button_round.png" width="70" height="90" border="0" alt="javascript button" onClick="return showAnalysisPopup();" style="cursor: pointer;margin-top:5px;margin-bottom:5px" title="analysis of selected specimens">
+			<img name="filterEditButton" id="filterEditButton" src="images/filter_edit.png" width="70" height="90" border="0" alt="javascript button" onClick="return openFilters();" style="cursor: pointer;margin-top:5px;margin-bottom:5px" title="filter manager">
+			<img name="export" id="export" src="images/export_button_round.png" width="70" height="90" border="0" alt="javascript button" onClick="return exportSelection();" style="cursor: pointer;margin-top:5px;margin-bottom:5px" title="export selected specimens"> 
+            <!--<img name="filterUpdateButton" src="images/filter_update.png" width="64" height="64" border="0" alt="javascript button" onClick="return applyFilters();">	-->	
+		</div>
+        <!-- icons for selecting wich visualization to show -->
+        <div class="col-sm-6" id="vizoptions"  style="background-color:#b5f279;text-align: center">
+            <!--<img name="bars" src="images/bars.png" width="180" height="140" border="0" alt="javascript button" onClick="return showBars();"style= " border: 4px solid yellow;border-radius: 38px;" >-->
+            <!--<img name="matrix" src="images/matriz.png" width="180" height="140" border="0" alt="javascript button" onClick="return addNode();"style=" border: 4px solid #6D6D6D;border-radius: 38px;" >-->
+            <img name="boxplot" id="boxplot" src="images/boxplot2.png" width="110" height="100" border="0" alt="javascript button" onClick="return showBoxPlot();" style="cursor: pointer;" title="show box plot visualization" >
+            <img name="coord" id="coord" src="images/coord2.png" width="110" height="100" border="0" alt="javascript button" onClick="return showParallelCoord();" style="cursor: pointer;" title="show parallel coordinates visualization" >
+            <img name="dots" id="dots" src="images/bullets2.png" width="110" height="100" border="0" alt="javascript button" onClick="return showDots();" style="cursor: pointer;" title="show scatterplot visualization">
+            <img name="map" id="map" src="images/map2.png" width="110" height="100" border="0" alt="javascript button" onClick="return showMap();" style="cursor: pointer;" title="show map visualization">
+            
+        </div>
+        
+
+		
+	</div>
+	
+    <div class="row">
+        <h5></h5>
+    </div>
+    
+	<!-- VISUALIZATIONS -->
+	<div class="row" >
+        <!-- sunburst -->
+		<div class="col-sm-4"  id="viz" style="text-align:center" data-toolbar="user-options" >
+			<div id="breadcrumbs_viz" height="parent"></div>
+			<div id="sunburst_viz" height="parent"></div>
+		</div>
+        <!-- specimens selected -->
+		<div class="col-sm-2"  id="selected_view" >
+			<div id="selected_view_svg" height="parent"></div>
+			<div id="selected_view_canvas" height="parent"></div>
+		</div>
+        <!-- other visualizations -->
+		<div class="col-sm-6" id="right_viz" style="text-align:center;height:width">
+            <!-- image that shows when there is nothing selected -->
+				<p style='text-align:center;'><img name="nosel"  src="images/no_selection.png" border="0" style="display:flex;justify-content:center;align-items:center; margin: auto;"></p>
+
+            <!-- image that shows when the filter removes all specimens -->
+				<p style='text-align:center;'><img name="nofiltersel"  src="images/no_filter_selection.png" border="0" style="display:none;justify-content:center;align-items:center; margin: auto;"></p>
+            
+            
+            <!-- visualizations -->
+            <div id="sel_viz" height="parent"></div>
+            <!-- google maps API -->
+            <div id="maps"> </div>
+		</div>
+			
+	</div>
+  
+  <!-- CHOOSING VISUALIZATION -->
+    <div class="row">
+        <div class="col-sm-4" style="text-align:center"></div>
+        
+        <!--
+        <div class="col-sm-2" style="text-align:center">
+            <img name="analysis" src="images/analysis_button.png" width="128" height="128" border="0" alt="javascript button" onClick="return showAnalysisPopup();">
+        </div>-->
+        <!-- text with number of specimens selected by filtering -->
+        <div class="col-sm-2" style="text-align:center">
+            <div ></div>
+            
+        </div>
+        <!-- comboboxes for selecting variables to visualize -->
+        <div class="col-sm-6"  id="comboboxes" style="text-align: center"></div>
+    
+    </div>
+
+</div>
+
+
+<script>
+
+    var comboX;
+    var comboY;
+    var comboSize;
+    var comboColor;
+	
+    var dynamicCheckbox;
+    var dynamicCheckboxText;
+    var makeDynamicAxis = false;
+    var firstTimeMultipleCombos = true;
+    var firstTimeCombos = true;
+    var userLoggedIn;
+	var lockInteraction = false;
+    
+    // all selected taxonomy and specimen from sunburst
+    var selection = [];
+    // all created filters
+	var filters = [];
+    // all selected specimen that fit the filters created
+    var filteredSelection = ["all"];
+    
+	var cw = $('#sel_viz').width();
+	$('#sel_viz').css({'height':cw/1.4+'px'});
+	
+	var cws = $('#sunburst_viz').width();
+	$('#sunburst_viz').css({'height':cws*1.1+'px'});
+	
+	var cws = $('#breadcrumbs_viz').width();
+	$('#breadcrumbs_viz').css({'height':'50px'});
+	
+	// svg for selected specimen visualization
+	var svg_selected_specimens = d3.select("#selected_view_svg").append("svg")
+            .attr("width", $("#selected_view_svg").width())
+            .attr("height", 700)
+			.append("g");
+			
+	var canvas = d3.select("#selected_view_canvas").append("canvas")
+				.attr("width", $("#selected_view_canvas").width())
+				.attr("height", 700);
+    
+	// svg for showing visualization of the selection
+	var svg_selected = d3.select("#sel_viz").append("svg")
+            .attr("width", $("#sel_viz").width())
+            .attr("height", $("#sel_viz").height())
+			.append("g");
+			
+	//var svg_matrix_viz = d3.select("#matrix_viz").append("svg")
+		//	.attr("width", 700)
+		//	.attr("height", 700);
+			
+	//var svg_treemap_viz = d3.select("#treemap_viz").append("svg")
+	//		.attr("width", 860)
+	//		.attr("height", 600);
+			
+	var taxTreeData;
+    
+	var allCharactersList = new Characters();
+	//allCharactersList.createList();
+	
+	
+	var allRanksList = new Ranks();
+	allRanksList.createList();
+	
+	var allUnitsList = new Units();
+	allUnitsList.createList();
+	
+	setTimeout(function()
+	{
+		allCharactersList.createCharTypesList();
+	}, 250);
+	
+    // creating sunburst
+    var sunburst = new Sunburst();
+    //sunburst.create();
+    
+    var selectedSpecimenViz = new SelectedSpecimens();
+    selectedSpecimenViz.create();
+    
+    // creating scatterplot comboboxes and checkbox for dynamic axis
+    initializeComboboxes();
+	
+    // creating multiple combobxes for parallel coordinates
+	var multipleCombos = new MultipleComboboxes();
+	multipleCombos.initialize();
+	multipleCombos.hide();
+	
+    // creating filter popup
+	var filterPopup = new FilterPopup();
+	filterPopup.create();
+    
+    // creating text with number of selected for each selected species
+    //var selectedNumber = new numberOfSelectedViz();
+    
+    // creating analysis
+    var analysis = new Analysis();
+    analysis.createPopup();
+	
+    // hiding maps div and showing normal visualization div
+	document.getElementById("maps").style.display =  "none";
+    document.getElementById("sel_viz").style.display =  "none";
+    
+    createHierarchyFile();
+    //resetPassword("lol");
+	
+    
+</script>
+</body>
+</html>

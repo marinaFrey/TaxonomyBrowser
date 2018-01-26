@@ -1,11 +1,14 @@
+
 /*
  * Gets analysis from filtered results and shows it in bootstrap's popup
  */
 function Analysis()
 {
     var analysisList = [];
-    var counting;
     var measureCombo;
+	//var matrixViz;
+	//var treemapViz;
+	//var boxplotViz;
     var populationSize = null;
     var average = null;
     var sum = null;
@@ -22,6 +25,17 @@ function Analysis()
         title.innerHTML = "Counting<br>"; 
         document.getElementById("counting_title").appendChild(title);
         
+		//matrixViz = new matrixVisualization();
+		//matrixViz.create();
+		//matrixViz.update();
+		
+		//treemapViz = new treemapVisualization();
+		//treemapViz.create();
+		
+		//boxplotViz = new boxPlotVisualization();
+		//boxplotViz.create();
+		//treemapViz.update();
+		
         counting = new numberOfSelectedViz();
         
         var title = document.createElement("H2");
@@ -56,6 +70,10 @@ function Analysis()
         counting.updateInAnalysis();
         measureCombo.updateOptions(generateNumericMeasuresList());
         this.recalculateAnalysis();
+		//treemapViz.update();
+		//boxplotViz.update(measureCombo.getSelectedOption());
+		
+		//matrixViz.update();
     }
 
     this.createAnalysis = function(name, analysisFunction)
@@ -80,6 +98,7 @@ function Analysis()
     this.recalculateAnalysis = function()
     {
         selectedMeasure = measureCombo.getSelectedOption();
+		//boxplotViz.update(selectedMeasure);
         
         for (var i = 0; i < analysisList.length; i++)
         {
@@ -208,7 +227,6 @@ function Analysis()
             
             if(filteredSelection[0] != "all")
             {
-                console.log(filteredSelection);
                 for (var i = 0; i < filteredSelection.length; i++)
                 {
                     if(selection[filteredSelection[i]].measures)

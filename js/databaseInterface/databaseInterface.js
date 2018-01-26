@@ -18,6 +18,7 @@ function createHierarchyFile()
         data: {id:name},
         success: function(data) 
         {
+			//console.log(data);
 			allCharactersList.receiveListFromDatabase(data);
 			$.ajax({
 				url: 'js/databaseInterface/php/generate_json_hierarchy.php',
@@ -25,10 +26,13 @@ function createHierarchyFile()
 				data: {id:user_info},
 				success: function(data) 
 				{
-					
+					//console.log(data);
 					sunburst.remove();
 					//sunburst = new Sunburst();
-					sunburst.create();
+					
+					taxTreeData = JSON.parse(data);
+					sunburst.create(taxTreeData);
+					
 					
 					setTimeout(function()
 					{
@@ -65,6 +69,7 @@ function createCharactersFile()
         data: {id:name},
         success: function(data) 
         {
+			//console.log(data);
 			allCharactersList.receiveListFromDatabase(data);
         },
         error:function(data)
@@ -86,6 +91,7 @@ function createRanksFile()
         data: {id:name},
         success: function(data) 
         {
+			//console.log(data);
 			allRanksList.receiveListFromDatabase(data);
         },
         error:function(data)
@@ -113,6 +119,7 @@ function createUnitsList()
 			}
 			else
 			{
+				//console.log(data);
 				allUnitsList.receiveListFromDatabase(data);
 			}
         },
@@ -141,6 +148,7 @@ function validateLogin(name,password)
 			}
 			else
 			{
+				//console.log(data);
 				showUsersInformation(data);
 				createHierarchyFile();
 				hideLoginPopup();
@@ -148,10 +156,47 @@ function validateLogin(name,password)
         },
         error:function(data)
         {
-            alert("error");
+            alert("error:"+data);
         }
     });
 	
+}
+
+function getAllUsers()
+{
+	waitingDialog.show('Loading Users From Database...');
+	
+	var user_info = "non";
+	$.ajax({
+        url: 'js/databaseInterface/php/getUsers.php',
+        type: 'POST',
+        data: {id:user_info},
+        success: function(data) 
+        {
+            //console.log(data); // Inspect this in your console
+			var users = data;
+			$.ajax({
+				url: 'js/databaseInterface/php/generate_groups_list.php',
+				type: 'POST',
+				data: {id:user_info},
+				success: function(data) 
+				{
+					//console.log(data); // Inspect this in your console
+					waitingDialog.hide();
+					makeUsersManagerPopup(users, data);
+					
+				},
+				error:function(data)
+				{
+					alert("error");
+				}
+			});			
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
 }
 
 function editUser(user_info)
@@ -164,7 +209,7 @@ function editUser(user_info)
         data: {id:user_info},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
 			if(!data)
 			{
 				showLoginConfigurationErrorBlock("Could not login with provided password.");
@@ -174,6 +219,27 @@ function editUser(user_info)
 				showUsersInformation(data);
 				$('#loginConfigurationModal').modal('hide');
 			}
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+	
+}
+
+function editUsers(users_info)
+{
+	//var user = {name:name, password:password};
+
+	$.ajax({
+        url: 'js/databaseInterface/php/editUsers.php',
+        type: 'POST',
+        data: {id:users_info},
+        success: function(data) 
+        {
+            //console.log(data); // Inspect this in your console
+
         },
         error:function(data)
         {
@@ -211,6 +277,26 @@ function addUser(user_info)
 	
 }
 
+function removeUser(user_id)
+{
+	var usr = {id: user_id};
+    $.ajax({
+        url: 'js/databaseInterface/php/deleteUser.php',
+        type: 'POST',
+        data: {id:usr},
+        success: function(data) 
+        {
+            //console.log(data); // Inspect this in your console
+        },
+        error:function(data)
+        {
+            alert("error");
+        }
+    });
+    
+    
+}
+
 function resetPassword(user_info)
 {
 	var user = {user_name:"marina", email:"marina.fortes.rey@gmail.com"};
@@ -221,7 +307,7 @@ function resetPassword(user_info)
         data: {id:user},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
 			if(!data)
 			{
 
@@ -272,7 +358,7 @@ function addSpecimen(specimen)
         data: {id:sp},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -302,7 +388,9 @@ function editSpecimen(specimen)
         longitude:specimen.longitude, 
         altitude: specimen.altitude, 
         information: specimen.information, 
-        measures:m
+        measures:m,
+		user_id:specimen.user_id,
+		group_id:specimen.group_id
         }
     
     $.ajax({
@@ -311,7 +399,7 @@ function editSpecimen(specimen)
         data: {id:sp},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -353,7 +441,7 @@ function removeSpecimen(sp)
         data: {id:species_id},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -384,7 +472,7 @@ function addTaxonomy(taxonomy, taxonomy_parent)
         data: {id:tx},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -417,7 +505,7 @@ function editTaxonomy(taxonomy)
         data: {id:tx},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -438,7 +526,7 @@ function removeTaxonomy(taxonomy)
         data: {id:tx},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             createHierarchyFile();
         },
         error:function(data)
@@ -459,7 +547,7 @@ function addCharacter(character)
         data: {id:character},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             allCharactersList.createFile();
         },
         error:function(data)
@@ -480,7 +568,7 @@ function editCharacter(character)
         data: {id:character},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             allCharactersList.createFile();
         },
         error:function(data)
@@ -502,7 +590,7 @@ function removeCharacter(character)
         data: {id:char_id},
         success: function(data) 
         {
-            console.log(data); // Inspect this in your console
+            //console.log(data); // Inspect this in your console
             allCharactersList.createFile();
         },
         error:function(data)

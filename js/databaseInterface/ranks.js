@@ -10,6 +10,7 @@ function Ranks()
 	
 	this.receiveListFromDatabase = function(list)
 	{
+		console.log(list);
 		rankList = JSON.parse(list);
 	}
 	/*

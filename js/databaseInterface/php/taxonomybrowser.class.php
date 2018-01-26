@@ -20,11 +20,16 @@ class taxonomybrowser
 		$this->Connection = mysql_pconnect($server, $user, $password);
 		if(empty($this->Connection))
 		{
-			throw new web2bbException('Não foi possível conectar na base de dados.');
+			echo "error connecting";
+			return;
+			#throw new web2bbException('Não foi possível conectar na base de dados.');
 		}
 		if(!mysql_select_db($database, $this->Connection))
 		{
-			throw new web2bbException('Não foi possível selecionar a base de dados.');
+			echo "error selecting";
+			echo mysql_select_db($database, $this->Connection);
+			return;
+			#throw new web2bbException('Não foi possível selecionar a base de dados.');
 		}
 		
 		mysql_query("SET NAMES 'utf8'");
@@ -1048,6 +1053,101 @@ class taxonomybrowser
 		return true;
 	}
 //------------------------------------------------------------------------------
+// TaxonomyBrowser Model updateSpecimenAndAuthentication Method
+//------------------------------------------------------------------------------
+public function updateSpecimenAndAuthentication($specimen_id, $taxonomy_id, $extra_taxonomy_ids, $collection_id, $collected_by, $collected_data, $latitude, $longitude, $information, $bibliographies_ids, $charactersMeasures, $user_id, $group_id)
+{
+	$specimen_id = mysql_real_escape_string($specimen_id);
+	$taxonomy_id = mysql_real_escape_string($taxonomy_id);
+	$collection_id = mysql_real_escape_string($collection_id);
+	$collected_by = mysql_real_escape_string($collected_by);
+	$collected_data = mysql_real_escape_string($collected_data);
+	$latitude = mysql_real_escape_string($latitude);
+	$longitude = mysql_real_escape_string($longitude);
+	$user_id = mysql_real_escape_string($user_id);
+	$group_id = mysql_real_escape_string($group_id);
+	
+	if(empty($collected_data))
+	{
+		$collected_data = 'NULL';
+	}
+	else
+	{
+		$collected_data = "'$collected_data'";
+	}
+	if(empty($latitude) && !is_numeric($latitude))
+	{
+		$latitude = 'NULL';
+	}
+	else
+	{
+		$latitude = "'$latitude'";
+	}
+	if(empty($longitude) || !is_numeric($longitude))
+	{
+		$longitude = 'NULL';
+	}
+	else
+	{
+		$longitude = "'$longitude'";
+	}
+	
+	if(empty($user_id) || !is_numeric($user_id))
+	{
+		$user_id = 'NULL';
+	}
+	else
+	{
+		$user_id = "'$user_id'";
+	}
+	
+	if(empty($group_id) || !is_numeric($group_id))
+	{
+		$group_id = 'NULL';
+	}
+	else
+	{
+		$group_id = "'$group_id'";
+	}
+	
+	$query = "UPDATE taxonomybrowser.specimens SET
+		taxonomy_id = '$taxonomy_id',
+		collection_id = '$collection_id',
+		collected_by = '$collected_by',
+		collected_data = $collected_data,
+		latitude = $latitude,
+		longitude = $longitude,
+		information = '$information',
+		user_id = $user_id,
+		group_id = $group_id
+		WHERE taxonomybrowser.specimens.specimen_id = '$specimen_id'";
+	
+	$result = mysql_query($query, $this->Connection);
+	
+	if(!$result)
+	{
+		return false;
+	}
+	
+	//talvez colocar transactions para manter consistencia nesse tipo de acao
+	//todos que retornar falso tem que removert o insert anterior pra manter o banco consistente
+
+	if(!empty($extra_taxonomy_ids) && !$this->updateExtraTaxonomy($specimen_id, $extra_taxonomy_ids))
+	{
+		return false;
+	}
+	if(!empty($bibliographies_ids) && !$this->updateBibliographySpecimen($specimen_id, $bibliographies_ids))
+	{
+		return false;
+	}
+	if(!$this->updateMeasures($specimen_id, $charactersMeasures))
+	{
+		return false;
+	}
+
+	return true;
+}
+//------------------------------------------------------------------------------
 // TaxonomyBrowser Model addSpecimen Method
 //------------------------------------------------------------------------------
 	public function addSpecimen($taxonomy_id, $extra_taxonomy_ids, $collection_id, $collected_by, $collected_data, $latitude, $longitude, $information, $bibliographies_ids, $charactersMeasures)
@@ -1445,15 +1545,21 @@ class taxonomybrowser
 	public function getSpecimensByTaxonomyIdAndUserID($taxonomy_id, $user_id)
 	{
 
-		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id, group_id FROM taxonomybrowser.specimens WHERE taxonomy_id = '$taxonomy_id' AND (user_id = '$user_id' OR user_id IS NULL OR group_id = (SELECT urs.group_id FROM taxonomybrowser.usersgroup AS urs WHERE '$user_id' = urs.user_id AND group_id = urs.group_id)) ORDER BY collection_id";
+		$query = "SELECT specimen_id, taxonomy_id, collection_id, collected_by, collected_data, latitude, longitude, information, user_id, group_id FROM taxonomybrowser.specimens WHERE taxonomy_id = '$taxonomy_id' AND (user_id = '$user_id' OR user_id IS NULL OR group_id = (SELECT urs.group_id FROM taxonomybrowser.usersgroup AS urs WHERE '$user_id' = urs.user_id AND group_id = urs.group_id )) ORDER BY collection_id";
+				  
 		$result = mysql_query($query, $this->Connection);
         
 		$nodes = array();
 		
+		if(!$result)
+			return $nodes;
+			
 		if(mysql_num_rows($result) == 0)
 		{
 			return $nodes;
 		}
+		
+			
 		
 		for($i = 0; $i < mysql_num_rows($result); ++$i)
 		{
@@ -2057,7 +2163,7 @@ class taxonomybrowser
 	{
 	
 		//$query = "SELECT taxonomy_rank_id, taxonomy_rank_name FROM taxonomyrank ORDER BY taxonomy_rank_name";
-		$query = "SELECT taxonomy_rank_id, taxonomy_rank_name FROM taxonomybrowser.taxonomyrank";
+		$query = "SELECT * FROM taxonomybrowser.taxonomyrank";
 		$result = mysql_query($query, $this->Connection);
 		$nodes = array();
 		if(mysql_num_rows($result) == 0)
@@ -2467,7 +2573,7 @@ class taxonomybrowser
 		print_r(md5($password));
 		*/
 		
-		$query_groups = "SELECT grps.group_id, grps.group_name FROM taxonomybrowser.usersgroup AS rel INNER JOIN taxonomybrowser.groups AS grps WHERE rel.user_id = '$user_id'";
+		$query_groups = "SELECT grps.group_id, grps.group_name FROM taxonomybrowser.usersgroup AS rel INNER JOIN taxonomybrowser.groups AS grps ON grps.group_id = rel.group_id WHERE rel.user_id = '$user_id'";
 		$result_groups = mysql_query($query_groups, $this->Connection);
 
 		$groupList = array();
@@ -2494,7 +2600,16 @@ class taxonomybrowser
 			}
 
 			
-			//session_start();
+			$user_information = array();
+			$user_information['user_id'] = $user_id;
+			$user_information['user_name'] = $user_name;
+			$user_information['full_name'] = $full_name;
+			$user_information['role_id'] = $role_id;
+			
+			session_start();
+			
+			$_SESSION['user_is_logged_in'] = true;
+			$_SESSION['user_information'] = $user_information;
 			
 			//mata os cookies dos scrollbars
 			//clearAllScrollBarCookies();
@@ -2571,6 +2686,12 @@ class taxonomybrowser
 		return false;
 		
 	}	
+	
+	public function sendEmail($to,$subject,$body)
+	{
+		return mail($to,$subject,$body);
+	}
+	
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model addUser Method
 //------------------------------------------------------------------------------
@@ -2600,6 +2721,60 @@ class taxonomybrowser
 		 
 		 return false;
 	}
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model updateUserRole Method
+//------------------------------------------------------------------------------
+	public function updateUserRole($usr_id, $rle_id)
+	{
+		$user_id = mysql_real_escape_string($usr_id);
+		$role_id = mysql_real_escape_string($rle_id);
+
+		
+		$query = '';
+
+		$query = "UPDATE taxonomybrowser.users SET role_id = '$role_id' WHERE users.user_id = '$user_id'";
+
+		$result = mysql_query($query, $this->Connection);
+		
+		if($result)
+		{
+			return true;
+		}
+		 
+		 return false;
+	}	
+	
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model updateUserGroups Method
+//------------------------------------------------------------------------------
+	public function updateUserGroups($usr_id, $groups)
+	{
+		$user_id = mysql_real_escape_string($usr_id);
+	
+		$query = '';
+		
+		$query = "DELETE FROM taxonomybrowser.usersgroup WHERE user_id = '$user_id' ";
+		$result = mysql_query($query, $this->Connection);
+		
+		if($groups)
+		{
+			foreach ($groups as $group_id => $group_name) 
+			{
+				$query2 = "INSERT INTO taxonomybrowser.usersgroup (user_id, group_id) VALUES ('$user_id', '$group_id')";
+				$result2 = mysql_query($query2, $this->Connection);
+			}
+		}
+		#$query = "UPDATE taxonomybrowser.users SET role_id = '$role_id' WHERE users.user_id = '$user_id'";
+
+		#$result = mysql_query($query, $this->Connection);
+		
+		#if($result)
+		#{
+		#	return true;
+		#}
+		 
+		# return false;
+	}	
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model updateUser Method
 //------------------------------------------------------------------------------
@@ -2724,7 +2899,11 @@ public function updateUserReturningUserInfo($user_id, $role_id, $user_name, $use
 		$user_id = mysql_real_escape_string($user_id);
 		$query = "DELETE FROM taxonomybrowser.users WHERE users.user_id = '$user_id'";
 		$result = mysql_query($query, $this->Connection);
-		if($result)
+		
+		$query2 = "DELETE FROM taxonomybrowser.usersgroup WHERE user_id = '$user_id' ";
+		$result2 = mysql_query($query2, $this->Connection);
+		
+		if($result && $result2)
 		{
 			return true;
 		}
@@ -2734,38 +2913,92 @@ public function updateUserReturningUserInfo($user_id, $role_id, $user_name, $use
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model Private Function (countAdministratorUsers)
 //------------------------------------------------------------------------------
-	private function countAdministratorUsers()
-	{
-		$query = "SELECT COUNT( users.user_id ) FROM taxonomybrowser.users, taxonomybrowser.roles WHERE users.role_id = roles.role_id AND roles.role_name =  'administrator'";
-		return (int)mysql_evaluate($query);
-	}		
+private function countAdministratorUsers()
+{
+	$query = "SELECT COUNT( users.user_id ) FROM taxonomybrowser.users, taxonomybrowser.roles WHERE users.role_id = roles.role_id AND roles.role_name =  'administrator'";
+	return (int)mysql_evaluate($query);
+}		
 
-	public function getUsers()
+	//------------------------------------------------------------------------------
+// TaxonomyBrowser Model getUsers Method
+//------------------------------------------------------------------------------
+public function getGroups()
+{
+	$query = "SELECT group_id, group_name FROM taxonomybrowser.groups";
+	$result = mysql_query($query, $this->Connection);
+	$nodes = array();
+	if(mysql_num_rows($result) == 0)
 	{
-		$query = "SELECT user_id, role_id, user_name, full_name FROM taxonomybrowser.users ORDER BY full_name";
-		$result = mysql_query($query, $this->Connection);
-		$nodes = array();
-		if(mysql_num_rows($result) == 0)
-		{
-			return $nodes;
-		}
-		
-		for($i = 0; $i < mysql_num_rows($result); ++$i)
-		{
-			$tmp = array();
-			$tmp['user_id'] = mysql_result($result ,$i, "user_id");
-			$tmp['role_id'] = mysql_result($result ,$i, "role_id");
-			$tmp['user_name'] = mysql_result($result, $i, "user_name");
-			$tmp['full_name'] = mysql_result($result, $i, "full_name");
-			array_push($nodes, $tmp);
-		}
-		
-		mysql_free_result($result);
-		
-		$nodes = stripslashesDeep($nodes);
-		
 		return $nodes;
 	}
+	
+	for($i = 0; $i < mysql_num_rows($result); ++$i)
+	{
+		$nodes[mysql_result($result ,$i, "group_id")] = mysql_result($result ,$i, "group_name");
+	}
+	
+	mysql_free_result($result);
+	
+	$nodes = stripslashesDeep($nodes);
+	
+	return $nodes;
+}
+
+//------------------------------------------------------------------------------
+// TaxonomyBrowser Model getUsers Method
+//------------------------------------------------------------------------------
+public function getUsers()
+{
+	$query = "SELECT user_id, role_id, user_name, full_name, email FROM taxonomybrowser.users ORDER BY full_name";
+	$result = mysql_query($query, $this->Connection);
+	$nodes = array();
+	if(mysql_num_rows($result) == 0)
+	{
+		return $nodes;
+	}
+	
+	for($i = 0; $i < mysql_num_rows($result); ++$i)
+	{
+		$tmp = array();
+		$tmp['user_id'] = mysql_result($result ,$i, "user_id");
+		$tmp['role_id'] = mysql_result($result ,$i, "role_id");
+		$tmp['user_name'] = mysql_result($result, $i, "user_name");
+		$tmp['full_name'] = mysql_result($result, $i, "full_name");
+		$tmp['email'] = mysql_result($result, $i, "email");
+		
+		$user_id =  mysql_result($result ,$i, "user_id");
+		$query_groups = "SELECT grps.group_id, grps.group_name FROM taxonomybrowser.usersgroup AS rel INNER JOIN taxonomybrowser.groups AS grps ON grps.group_id = rel.group_id WHERE rel.user_id = '$user_id'";
+		
+		$result_groups = mysql_query($query_groups, $this->Connection);
+		
+		if($result_groups)
+		{
+			if(mysql_num_rows($result_groups) != false)
+			{
+				if(mysql_num_rows($result_groups))
+				{
+					$groupList = array();
+					for($j = 0; $j < mysql_num_rows($result_groups); ++$j)
+					{
+						$groupList[mysql_result($result_groups ,$j, "group_id")] = mysql_result($result_groups ,$j, "group_name");
+					}
+					$tmp['user_groups'] = $groupList;
+				}
+				else
+					$tmp['user_groups'] = null;
+			}
+			else
+				$tmp['user_groups'] = null;
+		}
+		array_push($nodes, $tmp);
+	}
+	
+	mysql_free_result($result);
+	
+	$nodes = stripslashesDeep($nodes);
+	
+	return $nodes;
+}
 //------------------------------------------------------------------------------
 // TaxonomyBrowser Model getUser Method
 //------------------------------------------------------------------------------
@@ -3414,7 +3647,7 @@ public function updateUserReturningUserInfo($user_id, $role_id, $user_name, $use
 //------------------------------------------------------------------------------
 	public function getCharactersWithAssociativeArray()
 	{
-		$query = "SELECT character_id, character_group_id, character_type_id, unit_id, character_name, character_enums, information FROM taxonomybrowser.characters ORDER BY character_name";
+		$query = "SELECT * FROM taxonomybrowser.characters ORDER BY character_name";
 		$result = mysql_query($query, $this->Connection);
 		$nodes = array();
 		if(mysql_num_rows($result) == 0)

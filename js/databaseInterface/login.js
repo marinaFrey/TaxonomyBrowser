@@ -255,6 +255,37 @@ function User()
 		return this.role;
 	}
 	
+	this.getUserName = function()
+	{
+		return this.userName;
+	}
+	
+	this.getFullName = function()
+	{
+		return this.fullName;
+	}
+	
+	this.getEmail = function ()
+	{
+		return this.email;
+	}
+	
+	this.getGroups = function ()
+	{
+		if(this.groups)
+			return this.groups;
+		else	
+		{
+			var g = {}
+			return g;
+		}
+	}
+	
+	this.setGroups = function (groups)
+	{
+		this.groups = groups;
+	}
+	
 	this.getUserGroupsAsOptionList = function()
 	{
 		var new_list = [

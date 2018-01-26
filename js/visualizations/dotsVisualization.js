@@ -4,8 +4,10 @@
  */
 function dotsVisualization()
 {
+	
+	
     var margin = {top: 30, right: 10, bottom: 10, left: 10};
-    var h =  $("#sel_viz").height() + margin.top + margin.bottom ;
+    var h =  $("#sel_viz").height(); //+ margin.top - margin.bottom ;
 	var w = $("#sel_viz").width() - 40;
     var dataset;
 	var circlePadding = 40;
@@ -37,10 +39,12 @@ function dotsVisualization()
     this.update = function()
     {
         svg_selected.selectAll("*").remove();
-
+		
+		svg_selected
+            .attr("transform", "translate(0,5)");
         //svg_selected
         //    .attr("transform", "translate( 0 ," + (margin.top*-1) + ")");
-        
+        console.log(h);
         var y = {};
         // gets variables that define the x and y axis and the size of each circle
         var dimensions = [comboX.getSelectedOption(),comboY.getSelectedOption(),comboSize.getSelectedOption()];
@@ -135,16 +139,17 @@ function dotsVisualization()
         
         if(dataset.length == 0)
         {
-            document.images["nofiltersel"].style = "display:block;";
-            document.getElementById("sel_viz").style = "display:none;";
-            document.getElementById("maps").style = "display:none;";
+            document.images["nofiltersel"].style.display =  "block";
+			document.images["nosel"].style.display =  "none";
+            document.getElementById("sel_viz").style.display =  "none";
+            document.getElementById("maps").style.display =  "none";
             return;
         }
         else
         {
-            document.images["nofiltersel"].style = "display:none;";
-            document.images["nosel"].style = "display:none;";
-            document.getElementById("sel_viz").style = "display:block;";
+            document.images["nofiltersel"].style.display =  "none";
+            document.images["nosel"].style.display =  "none";
+            document.getElementById("sel_viz").style.display =  "block";
         }
         
         // if the user has chosen to make a dynamic axis, a fisheye scale is created for x and y
@@ -293,6 +298,10 @@ function dotsVisualization()
                 svg_selected.select(".y.axis").call(yAxis);
             });
         }
+		else
+		{
+			svg_selected.on("mousemove", null);
+		}
         
         /*
          * Positions the dots based on data.
